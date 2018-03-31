@@ -8,7 +8,23 @@
 
 #import <UIKit/UIKit.h>
 
+
+/**
+ 类型
+ */
+typedef enum HGBImageColorProcessingImageType
+{
+    HGBImageColorProcessingImageTypeWhiteAndBlack,//黑白图片
+    HGBImageColorProcessingImageTypeDusk,//黄昏
+    HGBImageColorProcessingImageTypeSnow,//雪
+    HGBImageColorProcessingImageTypeOther//原图
+
+
+}HGBImageColorProcessingImageType;
+
+
 @interface UIImage (HGBImageTool)
+
 #pragma mark  剪切图片
 /**
  *   剪切图片
@@ -76,6 +92,23 @@
  *  return             旋转后图片
  */
 - (UIImage *)getRoundImage;
+#pragma mark  获取色彩处理图片
+/**
+ *   获取色彩处理图片
+ *
+ *  @param type    0 黑白图片
+ *
+ *  return             色彩处理后图片
+ */
++ (UIImage *)getColorProcessingImageWithType:(HGBImageColorProcessingImageType )type;
+#pragma mark 图片组合
+/**
+ 图片组合
+ @param images 图片集合
+ @param imageRects 图片对应位置
+ @return 组合后图片
+ */
+-(UIImage *)imageDrawdWithImages:(NSArray<UIImage *>*)images andWithImageRects:(NSArray<NSString *>*)imageRects;
 #pragma mark  图片方向大小-根据屏幕方向
 /**
  *   图片方向大小-根据屏幕方向

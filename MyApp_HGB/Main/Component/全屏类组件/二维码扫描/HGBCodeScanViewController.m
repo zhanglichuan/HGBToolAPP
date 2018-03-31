@@ -139,7 +139,7 @@
  @param prompt 提示
  */
 -(void)alertWithPrompt:(NSString *)prompt{
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:nil message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action=[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
     }];

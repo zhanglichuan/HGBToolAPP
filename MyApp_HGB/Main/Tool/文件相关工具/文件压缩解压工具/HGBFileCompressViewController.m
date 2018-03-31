@@ -74,7 +74,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"xml工具请查看右上角文件管理查看沙盒文件:":@[ @"zip解压",@"7z解压",@"rar解压",@"压缩为zip"]};
+    self.dataDictionary=@{@"xml工具请查看右上角文件管理查看沙盒文件:":@[ @"zip解压", @"7z解压", @"rar解压",@"压缩为zip"]};
     self.keys=@[@"xml工具请查看右上角文件管理查看沙盒文件:"];
 
 
@@ -121,19 +121,19 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     if(indexPath.section==0){
         if (indexPath.row==0){
-            [HGBCompressedFileTool unArchive:@"1.zip" andPassword:nil toDestinationPath:@"Documents/1" andWithCompleteBlock:^(BOOL status, NSDictionary *messageInfo) {
+            [HGBCompressedFileTool unArchive:@"project://1.zip" andPassword:nil toDestination:@"document://1" andWithCompleteBlock:^(BOOL status, NSDictionary *messageInfo) {
                 NSLog(@"%@",messageInfo);
             }];
         }else if (indexPath.row==1){
-            [HGBCompressedFileTool unArchive:@"1.7z" andPassword:nil toDestinationPath:@"Documents/2" andWithCompleteBlock:^(BOOL status, NSDictionary *messageInfo) {
+            [HGBCompressedFileTool unArchive:@"project://1.7z" andPassword:nil toDestination:@"document://2" andWithCompleteBlock:^(BOOL status, NSDictionary *messageInfo) {
                 NSLog(@"%@",messageInfo);
             }];
         }else if (indexPath.row==2){
-            [HGBCompressedFileTool unArchive:@"1.rar" andPassword:nil toDestinationPath:@"Documents/3" andWithCompleteBlock:^(BOOL status, NSDictionary *messageInfo) {
+            [HGBCompressedFileTool unArchive:@"project://1.rar" andPassword:nil toDestination:@"document://3" andWithCompleteBlock:^(BOOL status, NSDictionary *messageInfo) {
                 NSLog(@"%@",messageInfo);
             }];
         }else if (indexPath.row==3){
-            [HGBCompressedFileTool archiveToZipWithFilePaths:@[@"build"] toDestinationPath:@"Documents/4.zip" andWithCompleteBlock:^(BOOL status, NSDictionary *messageInfo) {
+            [HGBCompressedFileTool archiveToZipWithSource:@[@"project://build"] toDestination:@"document://4.zip" andWithCompleteBlock:^(BOOL status, NSDictionary *messageInfo) {
                 NSLog(@"%@",messageInfo);
             }];
         }

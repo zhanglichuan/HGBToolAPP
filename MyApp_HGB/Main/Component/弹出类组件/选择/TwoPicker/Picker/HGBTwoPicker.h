@@ -13,13 +13,21 @@
  两项选择代理
  */
 @protocol HGBTwoPickerDelegate <NSObject>
+@optional
 /**
  选择
 
  @param arr 信息
  */
 -(void)twoPicker:(HGBTwoPicker *)picker didSelectedWithTitleArr:(NSArray *)arr;
-@optional
+/**
+ 选择
+
+ @param firstIndex 第一坐标
+ @param secondIndex 第二坐标
+ */
+-(void)twoPicker:(HGBTwoPicker *)picker didSelectedWithFirstIndex:(NSInteger)firstIndex andWithSecondIndex:(NSInteger)secondIndex;
+
 /**
  取消
  */
@@ -51,9 +59,24 @@
  */
 @property(strong,nonatomic)NSArray *selectedItems;
 /**
+ 第一选中项-
+ */
+@property(assign,nonatomic)NSInteger firstSelectedIndex;
+
+/**
+ 第二选中项
+ */
+@property(assign,nonatomic)NSInteger secondSelectedIndex;
+
+
+/**
  数据源:dic-arr
  */
 @property (nonatomic,strong)NSDictionary *dataSource;
+/**
+ 是否排序
+ */
+@property(nonatomic,assign)BOOL isSequence;
 /**
  创建
  */

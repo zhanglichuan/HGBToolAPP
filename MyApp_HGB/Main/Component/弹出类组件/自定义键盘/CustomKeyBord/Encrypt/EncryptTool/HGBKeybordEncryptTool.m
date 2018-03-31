@@ -18,6 +18,14 @@
 #import <CommonCrypto/CommonDigest.h>
 #import "HGBKeybordTTAlgorithmSM4.h"
 
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 @implementation HGBKeybordEncryptTool
 
 #pragma mark DES
@@ -30,6 +38,14 @@
  */
 +(NSString *)encryptStringWithDES:(NSString *)string andWithKey:(NSString *)key{
 
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
+        return nil;
+    }
     NSString *encryptString= [HGBKeyboardDESUtil encrypt:string WithKey:key];
     return encryptString;
 }
@@ -41,6 +57,14 @@
  @return 解密后字符串
  */
 +(NSString *)decryptStringWithDES:(NSString *)string andWithKey:(NSString *)key{
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
+        return nil;
+    }
     NSString *decryptString= [HGBKeyboardDESUtil decrypt:string WithKey:key];
     return decryptString;
 }
@@ -53,10 +77,12 @@
  @return 加密后字符串
  */
 +(NSString *)encryptStringWithAES256:(NSString *)string andWithKey:(NSString *)key{
-    if(key==nil||key.length==0){
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
         return nil;
     }
-    if(string==nil){
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
         return nil;
     }
     NSString *encryptString= [NSString AES256Encrypt:string WithKey:key];
@@ -71,37 +97,19 @@
  */
 +(NSString *)decryptStringWithAES256:(NSString *)string
                           andWithKey:(NSString *)key{
-    if(key==nil||key.length==0){
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
         return nil;
     }
-    if(string==nil){
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
         return nil;
     }
     NSString *decryptString= [NSString AES256DecryptString:string WithKey:key];
     return decryptString;
 }
 
-#pragma mark 哈希字符串拼接
-/**
- 哈希字符串拼接
 
- @param dic 字典
- @return hash字符串
- */
-+(NSString *)transDicToHashString:(NSDictionary *)dic andWithSalt:(NSString *)salt{
-    if(salt==nil||salt.length==0){
-        return nil;
-    }
-    NSArray *keys=[dic allKeys];
-    keys=[keys sortedArrayUsingSelector:@selector(compare:)];
-    NSString *reslut=[NSString string];
-    for(NSString *key in keys){
-        reslut=[reslut stringByAppendingString:[dic objectForKey:key]];
-    }
-    reslut=[reslut stringByAppendingString:salt];
-    reslut=[HGBKeybordMD5 MD5ForLower32Bate:reslut];
-    return reslut;
-}
 #pragma mark SM4国密算法-ECB
 /**
  *  TTAlgorithmSM4-ECB加密
@@ -111,7 +119,12 @@
  *  @return 获取的对象
  */
 + (NSString *)encryptStringWithTTAlgorithmSM4_ECB:(NSString *)string andWithKey:(NSString *)key{
-    if(key==nil||key.length!=16){
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
         return nil;
     }
 
@@ -131,7 +144,12 @@
  */
 
 +(NSString *)decryptStringWithTTAlgorithmSM4_ECB:(NSString *)string andWithKey:(NSString *)key{
-    if(key==nil||key.length!=16){
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
         return nil;
     }
     HGBKeybordTTAlgorithmSM4

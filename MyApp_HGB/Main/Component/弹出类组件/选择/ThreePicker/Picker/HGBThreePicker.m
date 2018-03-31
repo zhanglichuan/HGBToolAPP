@@ -188,7 +188,9 @@ static HGBThreePicker *obj=nil;
         firstStr=self.selectedItems[0];
     }
     NSArray *keyArr = [self.dataSource allKeys];
-    keyArr=[keyArr sortedArrayUsingSelector:@selector(compare:)];
+    if(self.isSequence){
+        keyArr=[keyArr sortedArrayUsingSelector:@selector(compare:)];
+    }
     int i=0,j=0,k=0;
     for(i=0;i<keyArr.count;i++){
         NSString *key=keyArr[i];
@@ -199,7 +201,11 @@ static HGBThreePicker *obj=nil;
         }
     }
     if(i==keyArr.count){
-        i=0;
+        if(keyArr.count>self.firstSelectedIndex&&self.firstSelectedIndex>0){
+            i=(int)self.firstSelectedIndex;
+        }else{
+            i=0;
+        }
     }
     _firstIndex=i;
     self.firstTypesArr=[NSMutableArray arrayWithArray:keyArr];
@@ -208,7 +214,9 @@ static HGBThreePicker *obj=nil;
     
     NSDictionary *seconddic = [_dataSource objectForKey:keyStr];
     NSArray *secondArr = [seconddic allKeys];
-    secondArr=[secondArr sortedArrayUsingSelector:@selector(compare:)];
+    if(self.isSequence){
+        secondArr=[secondArr sortedArrayUsingSelector:@selector(compare:)];
+    }
     
     for(j=0;j<secondArr.count;j++){
         NSString *key=secondArr[j];
@@ -219,7 +227,11 @@ static HGBThreePicker *obj=nil;
         }
     }
     if(j==secondArr.count){
-        j=0;
+        if(secondArr.count>self.secondSelectedIndex&&self.secondSelectedIndex>0){
+            j=(int)self.secondSelectedIndex;
+        }else{
+            j=0;
+        }
     }
     _secondIndex=j;
     self.secondTypesArr=[NSMutableArray arrayWithArray:secondArr];
@@ -235,7 +247,11 @@ static HGBThreePicker *obj=nil;
         }
     }
     if(k==threadArr.count){
-        k=0;
+        if(threadArr.count>self.threeSelectedIndex&&self.threeSelectedIndex>0){
+            k=(int)self.threeSelectedIndex;
+        }else{
+            k=0;
+        }
     }
     _threadIndex=k;
      self.threadypesArr=[NSMutableArray arrayWithArray:threadArr];
@@ -303,6 +319,10 @@ static HGBThreePicker *obj=nil;
 {
     if(self.delegate&&[self.delegate respondsToSelector:@selector(threePicker: didSelectedWithTitleArr:)]){
         [self.delegate threePicker:self didSelectedWithTitleArr:self.souceArr];
+
+    }
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(threePicker: didSelectedWithFirstIndex:andWithSecondIndex:andWithThreeIndex:)]){
+        [self.delegate threePicker:self didSelectedWithFirstIndex:_firstIndex andWithSecondIndex:_secondIndex andWithThreeIndex:_threadIndex];
 
     }
     [self popViewDisappearWithSucessBlock:^{
@@ -382,7 +402,9 @@ static HGBThreePicker *obj=nil;
         keyStr = [self.firstTypesArr objectAtIndex:_firstIndex];
         NSDictionary *seconddic = [_dataSource objectForKey:keyStr];
         NSArray *secondArr = [seconddic allKeys];
-         secondArr=[secondArr sortedArrayUsingSelector:@selector(compare:)];
+        if(self.isSequence){
+            secondArr=[secondArr sortedArrayUsingSelector:@selector(compare:)];
+        }
          self.secondTypesArr=[NSMutableArray arrayWithArray:secondArr];
         
         NSArray *threadArr = [seconddic objectForKey:[secondArr objectAtIndex:_secondIndex]];
@@ -398,7 +420,9 @@ static HGBThreePicker *obj=nil;
         keyStr = [self.firstTypesArr objectAtIndex:_firstIndex];
         NSDictionary *seconddic = [_dataSource objectForKey:keyStr];
         NSArray *secondArr = [seconddic allKeys];
-        secondArr=[secondArr sortedArrayUsingSelector:@selector(compare:)];
+        if(self.isSequence){
+           secondArr=[secondArr sortedArrayUsingSelector:@selector(compare:)];
+        }
         self.secondTypesArr=[NSMutableArray arrayWithArray:secondArr];
         NSArray *threadArr = [seconddic objectForKey:[secondArr objectAtIndex:_secondIndex]];
         self.threadypesArr=[NSMutableArray arrayWithArray:threadArr];
@@ -410,7 +434,9 @@ static HGBThreePicker *obj=nil;
         keyStr = [self.firstTypesArr objectAtIndex:_firstIndex];
         NSDictionary *seconddic = [_dataSource objectForKey:keyStr];
         NSArray *secondArr = [seconddic allKeys];
-        secondArr=[secondArr sortedArrayUsingSelector:@selector(compare:)];
+        if(self.isSequence){
+            secondArr=[secondArr sortedArrayUsingSelector:@selector(compare:)];
+        }
         self.secondTypesArr=[NSMutableArray arrayWithArray:secondArr];
         NSArray *threadArr = [seconddic objectForKey:[secondArr objectAtIndex:_secondIndex]];
         self.threadypesArr=[NSMutableArray arrayWithArray:threadArr];

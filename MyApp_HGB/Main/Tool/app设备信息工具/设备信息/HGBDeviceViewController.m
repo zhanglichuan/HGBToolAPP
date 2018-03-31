@@ -161,6 +161,9 @@
     NSLog(@"电池状态:%@-电压:%f-电量:%ld-电量百分比:%ld-总电量:%lu",battery.status,battery.voltage,battery.levelMAH,battery.levelPercent,battery.capacity);
     [battery stopBatteryMonitoring];
 }
+-(void)batteryStatusUpdate:(HGBBatteryTool *)battery didFailedWithError:(NSDictionary *)errorInfo{
+    NSLog(@"电池信息获取失败");
+}
 #pragma mark get
 -(NSDictionary *)dataDictionary{
     if(_dataDictionary==nil){

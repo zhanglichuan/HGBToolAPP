@@ -10,13 +10,31 @@
 #import <UIKit/UIKit.h>
 
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
+//快捷url提示
+/**
+ project://工程包内
+ home://沙盒路径
+ http:// https://网络路径
+ document://  或defaults://沙盒Documents文件夹
+ caches://沙盒Caches
+ tmp://沙盒Tmp文件夹
+
+ */
+
+
 
 /**
  错误类型
  */
 typedef enum HGBOutAppOpenFileToolErrorType
 {
-    HGBOutAppOpenFileToolErrorTypePath//路径错误
+    HGBOutAppOpenFileToolErrorTypePath=20//路径错误
 
 }HGBOutAppOpenFileToolErrorType;
 
@@ -55,35 +73,27 @@ typedef enum HGBOutAppOpenFileToolErrorType
 @end
 
 @interface HGBOutAppOpenFileTool : NSObject
+#pragma mark init
++(instancetype)shareInstance;
 #pragma mark 设置
 /**
- 设置代理
-
- @param delegate 代理
+ 代理
  */
-+(void)setQuickLookDelegate:(id<HGBOutAppOpenFileToolDelegate>)delegate;
+@property(assign,nonatomic)id<HGBOutAppOpenFileToolDelegate>delegate;
 /**
- 设置失败提示
-
- @param withoutFailPrompt 失败提示标志
+ 失败提示
  */
-+(void)setQuickLookWithoutFailPrompt:(BOOL)withoutFailPrompt;
+@property(assign,nonatomic)BOOL withoutFailPrompt;
 #pragma mark open
-/**
- 快速浏览文件
 
- @param path 路径
- @param parent 父控制器
- */
-+(void)lookFileAtPath:(NSString *)path inParent:(UIViewController *)parent;
 
 
 /**
  快速浏览文件
 
- @param url 路径
+ @param source 路径或url
  @param parent 父控制器
  */
-+(void)lookFileAtUrl:(NSString *)url inParent:(UIViewController *)parent;
+-(void)lookFileAtSource:(NSString *)source inParent:(UIViewController *)parent;
 @end
 

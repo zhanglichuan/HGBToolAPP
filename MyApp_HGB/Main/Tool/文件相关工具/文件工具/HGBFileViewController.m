@@ -114,35 +114,35 @@
     if(indexPath.section==0){
 
         if (indexPath.row==0){
-           NSLog(@"%d", [HGBFileTool archiverWithObject:@{@"name":@"huang"} filePath:@"Documents/1.plist"]);
+            NSLog(@"%d", [HGBFileTool archiverWithObject:@{@"name":@"huang"} toDestination:@"document://1.plist"]);
         }else if (indexPath.row==1){
-            NSLog(@"%@",[HGBFileTool unarcheiverWithfilePath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/1.plist" ]]);
+            NSLog(@"%@",[HGBFileTool unarcheiverWithFileSource:@"document://1.plist"] );
 
         }else if (indexPath.row==2){
 
-            NSLog(@"%d",[HGBFileTool archiverEncryptWithObject:@{@"name":@"huang"} filePath:@"Documents/1.plist"]);
+            NSLog(@"%d",[HGBFileTool archiverEncryptWithObject:@{@"name":@"huang"} toDestination:@"document://1.plist" andWithKey:nil]);
         }else if (indexPath.row==3){
-             NSLog(@"%@",[HGBFileTool unarcheiverWithEncryptFilePath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/1.plist" ]]);
+             NSLog(@"%@",[HGBFileTool unarcheiverWithEncryptFileSource:@"document://1.plist" andWithKey:nil]);
         }
 
 
     }else if(indexPath.section==1){
         if(indexPath.row==0){
-            NSLog(@"%d",[HGBFileTool createDirectoryPath:@"Documents/huang"]);
-            [HGBFileTool archiverEncryptWithObject:@"hello" filePath:@"Documents/huang/1.txt"];
+            NSLog(@"%d",[HGBFileTool createDirectorySource:@"document://huang"]);
+            [HGBFileTool archiverEncryptWithObject:@"hello" toDestination:@"document://huang/1.txt" andWithKey:nil];
         }else if(indexPath.row==1){
 
-            NSLog(@"%d",[HGBFileTool copyFilePath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/huang/1.txt"] ToPath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/huang/2.txt"]]);
+            NSLog(@"%d",[HGBFileTool copyFileSource:@"document://huang/1.txt" toDestination:@"document://huang/2.txt"]);
         }else if(indexPath.row==2){
-            NSLog(@"%d",[HGBFileTool moveFilePath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/huang/2.txt"] ToPath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/huang/3.txt"]]);
+            NSLog(@"%d",[HGBFileTool moveFileSource:@"document://huang/2.txt" toDestination:@"document://huang/3.txt"]);
         }else if(indexPath.row==3){
-            NSLog(@"%d",[HGBFileTool removeFilePath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/huang/3.txt"]]);
+            NSLog(@"%d",[HGBFileTool removeFileSource:@"document://huang/3.txt"]);
         }else if(indexPath.row==4){
-             NSLog(@"%d",[HGBFileTool isExitAtFilePath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/huang/3.txt"]]);
+             NSLog(@"%d",[HGBFileTool isExitAtFileSource:@"document://huang/3.txt"]);
         }else if(indexPath.row==5){
-            NSLog(@"%@",[HGBFileTool getDirectSubPathsInDirectoryPath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"]]);
+            NSLog(@"%@",[HGBFileTool getDirectSubPathsInDirectorySource:@"document://"]);
         }else if(indexPath.row==6){
-            NSLog(@"%@",[HGBFileTool getAllSubPathsInDirectoryPath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"]]);
+            NSLog(@"%@",[HGBFileTool getAllSubPathsInDirectorySource:@"document://"]);
         }
     }
 }

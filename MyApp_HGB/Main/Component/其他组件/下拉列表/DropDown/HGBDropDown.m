@@ -10,6 +10,12 @@
 #import "HGBDropView.h"
 #import "HGBDropConst.h"
 
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
 @interface HGBDropDown()<UITableViewDelegate, UITableViewDataSource>{
     
 }
@@ -126,7 +132,7 @@
             [self.topicContainerView addSubview:[self.delegate viewForTopicInDropDown:self]];;
             
         }else{
-            NSLog(@"请通过- (UIView *)viewForTopicInDropDown:(ZFDropDown *)dropDown协议方法返回一个自定义topic view");
+            HGBLog(@"请通过- (UIView *)viewForTopicInDropDown:(ZFDropDown *)dropDown协议方法返回一个自定义topic view");
         }
     }
 }
@@ -273,7 +279,7 @@
         if ([self.itemArray[indexPath.row] isKindOfClass:[NSString class]]) {
             text = self.itemArray[indexPath.row];
         }else{
-            NSLog(@"当前dropDown样式为kDropDownPatternDefault, 请替换为kDropDownPatternCustom");
+            HGBLog(@"当前dropDown样式为kDropDownPatternDefault, 请替换为kDropDownPatternCustom");
             return [[UITableViewCell alloc] init];
         }
         

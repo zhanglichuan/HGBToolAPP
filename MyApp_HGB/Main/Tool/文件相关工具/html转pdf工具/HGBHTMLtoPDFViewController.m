@@ -112,7 +112,7 @@
     if(indexPath.section==0){
 
         if (indexPath.row==0){
-            [HGBHTMLToPDFTool createPDFWithHTMLPath:@"www/index.html" pathForPDF:@"Documents/1.pdf" compeleteBlock:^(BOOL status, NSDictionary *messageInfo) {
+            [[HGBHTMLToPDFTool shareInstance] createPDFWithHTMLFile:@"project://CordovaBundle/www/index.html" toPDFFileDestination:@"document://1.pdf" compeleteBlock:^(BOOL status, NSDictionary *messageInfo) {
                 NSLog(@"%d-%@",status,messageInfo);
             }];
         }

@@ -116,82 +116,82 @@
         if (indexPath.row==0){
             [HGBSEDataBaseTool shareInstance];
         }else if (indexPath.row==1){
-            [HGBSEDataBaseTool createTableWithTableName:@"test" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
-            [HGBSEDataBaseTool createTableWithTableName:@"test1" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
-            [HGBSEDataBaseTool createTableWithTableName:@"test2" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
-            [HGBSEDataBaseTool createTableWithTableName:@"test3" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
+            [[HGBSEDataBaseTool shareInstance] createTableWithTableName:@"test" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
+            [[HGBSEDataBaseTool shareInstance] createTableWithTableName:@"test1" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
+            [[HGBSEDataBaseTool shareInstance] createTableWithTableName:@"test2" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
+            [[HGBSEDataBaseTool shareInstance] createTableWithTableName:@"test3" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
         }else if (indexPath.row==2){
-            [HGBSEDataBaseTool encryptTableWithValueKeys:@[@"name"] andWithEncryptSecretKey:@"12121" inTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] encryptTableWithValueKeys:@[@"name"] andWithEncryptSecretKey:@"12121" inTableName:@"test"];
 
         }else if (indexPath.row==3){
-            NSLog(@"%@",[HGBSEDataBaseTool queryTableNames]);
+            NSLog(@"%@",[[HGBSEDataBaseTool shareInstance] queryTableNames]);
         }else if (indexPath.row==4){
-            [HGBSEDataBaseTool renameTableWithTableName:@"test2" andWithNewTableName:@"test0"];
+            [[HGBSEDataBaseTool shareInstance] renameTableWithTableName:@"test2" andWithNewTableName:@"test0"];
         }else if (indexPath.row==5){
-            [HGBSEDataBaseTool dropTableWithTableName:@"test3"];
+            [[HGBSEDataBaseTool shareInstance] dropTableWithTableName:@"test3"];
             
         }else if (indexPath.row==6){
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang1"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang2"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang3"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang4"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang5"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang6"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang7"} withTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] addNode:@{@"name":@"huang1"} withTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] addNode:@{@"name":@"huang2"} withTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] addNode:@{@"name":@"huang3"} withTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] addNode:@{@"name":@"huang4"} withTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] addNode:@{@"name":@"huang5"} withTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] addNode:@{@"name":@"huang6"} withTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] addNode:@{@"name":@"huang7"} withTableName:@"test"];
             
         }else if (indexPath.row==7){
-            [HGBSEDataBaseTool removeNodesWithCondition:@{@"name":@"huang4"} inTableWithTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] removeNodesWithCondition:@{@"name":@"huang4"} inTableWithTableName:@"test"];
             
         }else if (indexPath.row==8){
-            [HGBSEDataBaseTool updateNodeWithCondition:@{@"name":@"huang7"} andWithChangeDic:@{@"name":@"huang0"}  inTableWithTableName:@"test"];
+            [[HGBSEDataBaseTool shareInstance] updateNodeWithCondition:@{@"name":@"huang7"} andWithChangeDic:@{@"name":@"huang0"}  inTableWithTableName:@"test"];
             
         }else if (indexPath.row==9){
-            NSLog(@"%@",[HGBSEDataBaseTool queryNodesWithCondition:@{} inTableWithTableName:@"test"]);
+            NSLog(@"%@",[[HGBSEDataBaseTool shareInstance] queryNodesWithCondition:@{} inTableWithTableName:@"test"]);
         }else if (indexPath.row==10){
-            NSLog(@"%@",[HGBSEDataBaseTool queryNodeKeysWithTableName:@"test"]);
+            NSLog(@"%@",[[HGBSEDataBaseTool shareInstance] queryNodeKeysWithTableName:@"test"]);
 
             
         }
 
     }else if(indexPath.section==2){
         if (indexPath.row==0){
-            [HGBSEDataBaseTool shareInstance];
+            [HGBDataBaseTool  shareInstance];
         }else if (indexPath.row==1){
-            [HGBDataBaseTool encryptDataBaseWithKey:@"hello"];
+            [[HGBDataBaseTool shareInstance] encryptDataBaseWithKey:@"hello"];
         }else if (indexPath.row==2){
-            [HGBSEDataBaseTool createTableWithTableName:@"test" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
-            [HGBSEDataBaseTool createTableWithTableName:@"test1" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
-            [HGBSEDataBaseTool createTableWithTableName:@"test2" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
-            [HGBSEDataBaseTool createTableWithTableName:@"test3" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
+            [[HGBDataBaseTool shareInstance] createTableWithTableName:@"test" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
+            [[HGBDataBaseTool shareInstance] createTableWithTableName:@"test1" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
+            [[HGBDataBaseTool shareInstance] createTableWithTableName:@"test2" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
+            [[HGBDataBaseTool shareInstance] createTableWithTableName:@"test3" andWithKeys:@[@"id",@"name"] andWithPrimaryKey:@"id"];
         }else if (indexPath.row==3){
-            [HGBSEDataBaseTool encryptTableWithValueKeys:@[@"name"] andWithEncryptSecretKey:@"12121" inTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] encryptTableWithValueKeys:@[@"name"] andWithEncryptSecretKey:@"12121" inTableName:@"test"];
 
         }else if (indexPath.row==4){
-            NSLog(@"%@",[HGBSEDataBaseTool queryTableNames]);
+            NSLog(@"%@",[[HGBDataBaseTool shareInstance] queryTableNames]);
         }else if (indexPath.row==5){
-            [HGBSEDataBaseTool renameTableWithTableName:@"test2" andWithNewTableName:@"test0"];
+            [[HGBDataBaseTool shareInstance] renameTableWithTableName:@"test2" andWithNewTableName:@"test0"];
         }else if (indexPath.row==6){
-            [HGBSEDataBaseTool dropTableWithTableName:@"test3"];
+            [[HGBDataBaseTool shareInstance] dropTableWithTableName:@"test3"];
 
         }else if (indexPath.row==7){
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang1"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang2"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang3"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang4"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang5"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang6"} withTableName:@"test"];
-            [HGBSEDataBaseTool addNode:@{@"name":@"huang7"} withTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] addNode:@{@"name":@"huang1"} withTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] addNode:@{@"name":@"huang2"} withTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] addNode:@{@"name":@"huang3"} withTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] addNode:@{@"name":@"huang4"} withTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] addNode:@{@"name":@"huang5"} withTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] addNode:@{@"name":@"huang6"} withTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] addNode:@{@"name":@"huang7"} withTableName:@"test"];
 
         }else if (indexPath.row==8){
-            [HGBSEDataBaseTool removeNodesWithCondition:@{@"name":@"huang4"} inTableWithTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] removeNodesWithCondition:@{@"name":@"huang4"} inTableWithTableName:@"test"];
 
         }else if (indexPath.row==9){
-            [HGBSEDataBaseTool updateNodeWithCondition:@{@"name":@"huang7"} andWithChangeDic:@{@"name":@"huang0"}  inTableWithTableName:@"test"];
+            [[HGBDataBaseTool shareInstance] updateNodeWithCondition:@{@"name":@"huang7"} andWithChangeDic:@{@"name":@"huang0"}  inTableWithTableName:@"test"];
 
         }else if (indexPath.row==10){
-             NSLog(@"%@",[HGBSEDataBaseTool queryNodesWithCondition:@{} inTableWithTableName:@"test"]);
+             NSLog(@"%@",[[HGBDataBaseTool shareInstance] queryNodesWithCondition:@{} inTableWithTableName:@"test"]);
         }else if (indexPath.row==11){
-            NSLog(@"%@",[HGBSEDataBaseTool queryNodeKeysWithTableName:@"test"]);
+            NSLog(@"%@",[[HGBDataBaseTool shareInstance] queryNodeKeysWithTableName:@"test"]);
 
 
         }

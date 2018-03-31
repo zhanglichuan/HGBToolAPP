@@ -10,9 +10,9 @@
 
 #import "HGBWChatShareHeader.h"
 
-#define ReslutCode @"reslutCode"
-#define ReslutMessage @"reslutMessage"
-#define ReslutError @"reslutError"
+#define ReslutCode @"resultCode"
+#define ReslutMessage @"resultMessage"
+
 
 
 
@@ -32,7 +32,7 @@
     }else{
         [WXApi registerApp:@"wxc3d27f07b30b3b66"];
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(application_DataBase_willTerminateHandle:) name:UIApplicationWillTerminateNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(application_DataBase_willTerminateHandle:) name:UIApplicationWillTerminateNotification object:nil];
 
 }
 #pragma mark 微信分享

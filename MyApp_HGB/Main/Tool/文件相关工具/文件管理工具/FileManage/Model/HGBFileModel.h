@@ -71,4 +71,8 @@ typedef enum HGBFilePathType
  文件地址类型
  */
 @property(assign,nonatomic)HGBFilePathType filePathType;
+/**
+ 是否被选中
+ */
+@property(assign,nonatomic)BOOL isSelect;
 @end

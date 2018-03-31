@@ -8,6 +8,14 @@
 
 #import "HGBTableSelectorIndexView.h"
 
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 @interface HGBTableSelectorIndexView ()
 
 /**
@@ -36,9 +44,7 @@
     if (self) {
         if (indexTitles.count) {
             if (self.indexTitles.count > self.sectionsCount){
-#ifdef DEBUG
-                NSLog(@"Error: sectionsCount必须大于或等于indexTitles的数量");
-#endif
+                HGBLog(@"Error: sectionsCount必须大于或等于indexTitles的数量");
                 return nil;
             }
             self.backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.5];

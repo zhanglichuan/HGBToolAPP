@@ -63,7 +63,7 @@
     [self.view addSubview:lockView];
     //背景
     self.view.backgroundColor = [UIColor colorWithPatternImage:self.style.backgrondImage];
-    NSLog(@"%@",self.style.backgrondImage);
+
     
     
     self.promptLab=[[UILabel alloc]initWithFrame:CGRectMake(0, 160*hScale, kWidth,96*hScale)];
@@ -127,7 +127,7 @@
 }
 #pragma mark handle
 -(void)cancelButtonHandle:(UIButton *)_b{
-    NSLog(@"cancel");
+
     if([_b.titleLabel.text isEqualToString:@"返回"]){
         if(self.delegate&&[self.delegate respondsToSelector:@selector(lockSetDidCanceled:)]){
             [self.delegate lockSetDidCanceled:self];
@@ -137,8 +137,11 @@
     }else if([_b.titleLabel.text isEqualToString:@"重试"]){
         self.pass1=@"";
         self.pass2=@"";
+
         [self.confirmButton setTitle:@"继续" forState:(UIControlStateNormal)];
+
         [self.confirmButton setTitleColor:self.style.buttonUnableForeColor forState:(UIControlStateNormal)];
+         self.confirmButton.enabled=NO;
         self.confirmButton.backgroundColor=self.style.buttonUnableBackColor;
         [self.cancelButton setTitle:@"返回" forState:(UIControlStateNormal)];
         self.promptLab.text=@"请绘制图形密码";
@@ -146,7 +149,7 @@
     [self.backView removeSelector];
 }
 -(void)confirmButtonHandle:(UIButton *)_b{
-    NSLog(@"confirm");
+   
     if([_b.titleLabel.text isEqualToString:@"继续"]){
         
         self.pass1=self.password;

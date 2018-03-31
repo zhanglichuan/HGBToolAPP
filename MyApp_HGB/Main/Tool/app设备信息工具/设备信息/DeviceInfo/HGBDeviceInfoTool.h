@@ -9,6 +9,11 @@
 #import <Foundation/Foundation.h>
 
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 
 @interface HGBDeviceInfoTool : NSObject
 #pragma mark 获取手机唯一标识
@@ -35,7 +40,7 @@
 
  @return 广告标识符
  */
-- (NSString *)getIDFA;
++ (NSString *)getIDFA;
 #pragma mark 获取ip
 /**
  获取IP地址
@@ -111,6 +116,12 @@
  */
 + (NSString *)getDeviceModelName;
 #pragma mark 设备信息2
+/**
+ 检查设备是否越狱
+
+ @return 是否越狱
+ */
++(BOOL)isJailBreakCheck;
 /**
  获取设备上次重启的时间
 

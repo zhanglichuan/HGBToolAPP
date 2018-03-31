@@ -8,6 +8,13 @@
 
 #import "HGBScreenShotTool.h"
 
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 @implementation HGBScreenShotTool
 /**
  截屏
@@ -15,6 +22,10 @@
  @param view 要截屏的界面
  */
 +(UIImage *)shotCurrentScreenWithView:(UIView *)view{
+    if(view==nil){
+        HGBLog(@"view不能为空");
+        return nil;
+    }
     CGSize boundsSize = view.bounds.size;
     
     UIGraphicsBeginImageContextWithOptions(boundsSize, NO, 0.0);
@@ -28,9 +39,13 @@
 /**
  截屏
  
- @param view 要截屏的界面
+ @param webview 要截屏的界面
  */
 +(UIImage *)shotFullScreenWithView:(UIWebView *)webview{
+    if(webview==nil){
+        HGBLog(@"webview不能为空");
+        return nil;
+    }
     CGFloat scale = [UIScreen mainScreen].scale;
     CGSize boundsSize = webview.bounds.size;
     CGFloat boundsWidth = boundsSize.width;

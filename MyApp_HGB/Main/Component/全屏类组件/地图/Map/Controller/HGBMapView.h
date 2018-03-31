@@ -13,6 +13,11 @@
 #import "HGBMapAnnotationModel.h"
 
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 
 @interface HGBMapView : UIViewController
 

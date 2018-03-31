@@ -10,15 +10,18 @@
 #import "HGBCommonCameraStyle.h"
 
 
-
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
 
 /**
  错误类型
  */
 typedef enum HGBCommonCameraErrorType
 {
-    HGBCommonCameraErrorTypeDevice,//设备受限
-    HGBCommonCameraErrorTypeAuthority//权限受限
+    HGBCommonCameraErrorTypeDevice=10,//设备受限
+    HGBCommonCameraErrorTypeAuthority=11//权限受限
 
 }HGBCommonCameraErrorType;
 

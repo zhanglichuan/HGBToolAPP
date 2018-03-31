@@ -8,7 +8,49 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
+//快捷url提示
+/**
+ project://工程包内
+ home://沙盒路径
+ http:// https://网络路径
+ document://沙盒Documents文件夹
+ caches://沙盒Caches
+ tmp://沙盒Tmp文件夹
+
+ */
 @interface HGBSandBoxTool : NSObject
+#pragma mark url
+/**
+ url校验存在
+
+ @param url url
+ @return 是否存在
+ */
++(BOOL)urlExistCheck:(NSString *)url;
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysisToPath:(NSString *)url;
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysis:(NSString *)url;
+/**
+ url封装
+
+ @return 封装后url
+ */
++(NSString *)urlEncapsulation:(NSString *)url;
 #pragma mark bundle
 /**
  获取主资源文件路径

@@ -7,6 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
 /**
  索引
  */

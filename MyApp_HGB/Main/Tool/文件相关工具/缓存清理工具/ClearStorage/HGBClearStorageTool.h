@@ -8,7 +8,33 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
+//快捷url提示
+/**
+ project://工程包内
+ home://沙盒路径
+ http:// https://网络路径
+ document://  或defaults://沙盒Documents文件夹
+ caches://沙盒Caches
+ tmp://沙盒Tmp文件夹
+
+ */
 @interface HGBClearStorageTool : NSObject
+/**
+ 清除缓存
+
+ @param source 缓存URL或路径
+ */
++(BOOL)clearStrorageAtSource:(NSString *)source;
+/**
+ 清除http Caches缓存
+ */
++(BOOL)clearHttpCachesStrorage;
 /**
  清除缓存
 

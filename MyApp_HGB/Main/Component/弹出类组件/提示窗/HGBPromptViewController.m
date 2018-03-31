@@ -124,33 +124,33 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [HGBAlertTool setTitleColor:nil];
-    [HGBAlertTool setTitleFontSize:0];
-    [HGBAlertTool setSubTitleFontSize:0];
-    [HGBAlertTool setSubTitleColor:nil];
-    [HGBAlertTool setButtonTitleColor:nil];
-    [HGBAlertTool setButtonTitleFontSize:0];
+    [[HGBAlertTool shareInstance] setTitleColor:nil];
+    [[HGBAlertTool shareInstance] setTitleFontSize:0];
+    [[HGBAlertTool shareInstance] setSubTitleFontSize:0];
+    [[HGBAlertTool shareInstance] setSubTitleColor:nil];
+    [[HGBAlertTool shareInstance] setButtonTitleColor:nil];
+    [[HGBAlertTool shareInstance] setButtonTitleFontSize:0];
     if(indexPath.section==0){
         if (indexPath.row==0){
-            [HGBAlertTool alertWithPrompt:@"hello1" InParent:self];
+            [[HGBAlertTool shareInstance] alertWithPrompt:@"hello1" InParent:self];
 
         }else if (indexPath.row==1){
-            [HGBAlertTool alertPromptWithTitle:@"hello2" andWithPrompt:@"hello world2" InParent:self];
+            [[HGBAlertTool shareInstance] alertPromptWithTitle:@"hello2" andWithPrompt:@"hello world2" InParent:self];
 
         }else if (indexPath.row==2){
-            [HGBAlertTool alertWithTitle:@"hello 3" andWithPrompt:@"hello world3" andWithClickBlock:^(NSInteger index) {
+            [[HGBAlertTool shareInstance] alertWithTitle:@"hello 3" andWithPrompt:@"hello world3" andWithClickBlock:^(NSInteger index) {
                 NSLog(@"hello world3");
             } InParent:self];
 
 
 
         }else if (indexPath.row==3){
-            [HGBAlertTool alertWithTitle:@"hello4" andWithPrompt:@"hello world4" andWithConfirmButtonTitle:@"hello4" andWithClickBlock:^(NSInteger index) {
+            [[HGBAlertTool shareInstance] alertWithTitle:@"hello4" andWithPrompt:@"hello world4" andWithConfirmButtonTitle:@"hello4" andWithClickBlock:^(NSInteger index) {
                  NSLog(@"hello world4");
             } InParent:self];
 
         }else if (indexPath.row==4){
-            [HGBAlertTool alertWithTitle:@"hello5" andWithPrompt:@"hello world5" andWithConfirmButtonTitle:@"hello5-0" andWithCancelButtonTitle:@"hello5-1" andWithClickBlock:^(NSInteger index) {
+            [[HGBAlertTool shareInstance] alertWithTitle:@"hello5" andWithPrompt:@"hello world5" andWithConfirmButtonTitle:@"hello5-0" andWithCancelButtonTitle:@"hello5-1" andWithClickBlock:^(NSInteger index) {
                 if(index==0){
                     NSLog(@"hello5-0");
 
@@ -160,17 +160,17 @@
             } InParent:self];
 
         }else if (indexPath.row==5){
-            [HGBAlertTool alertWithTitle:@"hello6" andWithPrompt:@"hello world6" andWithButtonTitles:@[@"hello6-0",@"hello6-1",@"hello6-2",@"hello6-3"] andWithClickBlock:^(NSInteger index) {
+            [[HGBAlertTool shareInstance] alertWithTitle:@"hello6" andWithPrompt:@"hello world6" andWithButtonTitles:@[@"hello6-0",@"hello6-1",@"hello6-2",@"hello6-3"] andWithClickBlock:^(NSInteger index) {
                 NSLog(@"hello6-%ld",index);
             } InParent:self];
         }else if (indexPath.row==6){
-            [HGBAlertTool setTitleColor:[UIColor redColor]];
-            [HGBAlertTool setTitleFontSize:7];
-            [HGBAlertTool setSubTitleFontSize:6];
-            [HGBAlertTool setSubTitleColor:[UIColor grayColor]];
-            [HGBAlertTool setButtonTitleColor:[UIColor yellowColor]];
-            [HGBAlertTool setButtonTitleFontSize:10];
-            [HGBAlertTool alertWithTitle:@"hello7" andWithPrompt:@"hello world7" andWithButtonTitles:@[@"hello7-0",@"hello7-1",@"hello6-7",@"hello7-3"] andWithClickBlock:^(NSInteger index) {
+            [[HGBAlertTool shareInstance] setTitleColor:[UIColor redColor]];
+            [[HGBAlertTool shareInstance] setTitleFontSize:7];
+            [[HGBAlertTool shareInstance] setSubTitleFontSize:6];
+            [[HGBAlertTool shareInstance] setSubTitleColor:[UIColor grayColor]];
+            [[HGBAlertTool shareInstance] setButtonTitleColor:[UIColor yellowColor]];
+            [[HGBAlertTool shareInstance] setButtonTitleFontSize:10];
+            [[HGBAlertTool shareInstance] alertWithTitle:@"hello7" andWithPrompt:@"hello world7" andWithButtonTitles:@[@"hello7-0",@"hello7-1",@"hello6-7",@"hello7-3"] andWithClickBlock:^(NSInteger index) {
                 NSLog(@"hello7-%ld",index);
             } InParent:self];
         }
@@ -179,51 +179,51 @@
     }else if (indexPath.section==1){
         if (indexPath.row==0){
 
-            [HGBAlertTool sheetWithButtonTitles:@[@"1",@"2",@"3",@"4",@"5"] andWithClickBlock:^(NSInteger index) {
+            [[HGBAlertTool shareInstance] sheetWithButtonTitles:@[@"1",@"2",@"3",@"4",@"5"] andWithClickBlock:^(NSInteger index) {
                  NSLog(@"hello1-%ld",index);
             } InParent:self];
         }else if (indexPath.row==1){
-            [HGBAlertTool sheetWithTitle:@"hello1" andWithPrompt:@"hello world1" andWithButtonTitles:@[@"1",@"2",@"3",@"4",@"5"] andWithClickBlock:^(NSInteger index) {
+            [[HGBAlertTool shareInstance] sheetWithTitle:@"hello1" andWithPrompt:@"hello world1" andWithButtonTitles:@[@"1",@"2",@"3",@"4",@"5"] andWithClickBlock:^(NSInteger index) {
                  NSLog(@"hello1-%ld",index);
             } InParent:self];
         }else if (indexPath.row==2){
-            [HGBAlertTool setTitleColor:[UIColor redColor]];
-            [HGBAlertTool setTitleFontSize:7];
-            [HGBAlertTool setSubTitleFontSize:6];
-            [HGBAlertTool setSubTitleColor:[UIColor grayColor]];
-            [HGBAlertTool setButtonTitleColor:[UIColor yellowColor]];
-            [HGBAlertTool setButtonTitleFontSize:10];
-            [HGBAlertTool sheetWithTitle:@"hello2" andWithPrompt:@"hello world2" andWithButtonTitles:@[@"1",@"2",@"3",@"4",@"5"] andWithClickBlock:^(NSInteger index) {
+            [[HGBAlertTool shareInstance] setTitleColor:[UIColor redColor]];
+            [[HGBAlertTool shareInstance] setTitleFontSize:7];
+            [[HGBAlertTool shareInstance] setSubTitleFontSize:6];
+            [[HGBAlertTool shareInstance] setSubTitleColor:[UIColor grayColor]];
+            [[HGBAlertTool shareInstance] setButtonTitleColor:[UIColor yellowColor]];
+            [[HGBAlertTool shareInstance] setButtonTitleFontSize:10];
+            [[HGBAlertTool shareInstance] sheetWithTitle:@"hello2" andWithPrompt:@"hello world2" andWithButtonTitles:@[@"1",@"2",@"3",@"4",@"5"] andWithClickBlock:^(NSInteger index) {
                 NSLog(@"hello2-%ld",index);
             } InParent:self];
         }
     }else if (indexPath.section==2){
         if (indexPath.row==0){
 
-            [HGBPromgressHud showHUDResult:@"hello6" ToView:self.view];
+            [[HGBHUD shareInstance] showHUDResult:@"hello6" ToView:self.view];
         }else if (indexPath.row==1){
-            [HGBPromgressHud setShowTitle:@"hello7"];
-            [HGBPromgressHud showHUDResult:@"hello7" ToView:self.view];
+            [[HGBHUD shareInstance] setTitle:@"hello7"];
+            [[HGBHUD shareInstance] showHUDResult:@"hello7" ToView:self.view];
 
         }else if (indexPath.row==2){
-            [HGBPromgressHud setShowDuration:5];
-            [HGBPromgressHud setShowTitle:@"提示"];
-            [HGBPromgressHud showHUDResult:@"hello8" ToView:self.view];
+            [[HGBHUD shareInstance] setDuration:5];
+            [[HGBHUD shareInstance] setTitle:@"提示"];
+            [[HGBHUD shareInstance] showHUDResult:@"hello8" ToView:self.view];
 
         }else if (indexPath.row==3){
-            [HGBPromgressHud setShowTitle:@"提示"];
-            [HGBPromgressHud showHUDResult:@"hello" WithoutBackToView:self.view];
+            [[HGBHUD shareInstance] setTitle:@"提示"];
+            [[HGBHUD shareInstance] showHUDResult:@"hello" WithoutBackToView:self.view];
 
         }else if (indexPath.row==4){
-            [HGBPromgressHud showHUDSaveToView:self.view];
-            [NSTimer scheduledTimerWithTimeInterval:1 repeats:NO block:^(NSTimer * _Nonnull timer) {
-                [HGBPromgressHud hideSave];
-            }];
-            
+            [[HGBHUD shareInstance] showHUDSaveToView:self.view];
+            [self performSelector:@selector(hideSave) withObject:self afterDelay:1];
+
         }
     }
 }
 
-
+-(void)hideSave{
+    [[HGBHUD shareInstance] hideSave];
+}
 
 @end

@@ -8,12 +8,33 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "UIImage+HGBImageTool.h"
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
+
+/**
+ 类型
+ */
+typedef enum HGBImageToolColorProcessingImageType
+{
+    HGBImageToolColorProcessingImageTypeWhiteAndBlack,//黑白图片
+    HGBImageToolColorProcessingImageTypeDusk,//黄昏
+    HGBImageToolColorProcessingImageTypeSnow,//雪
+    HGBImageToolColorProcessingImageTypeOther//原图
+
+
+}HGBImageToolColorProcessingImageType;
+
 
 /**
  图片处理工具
  */
 @interface HGBImageTool : NSObject
+
 #pragma mark 颜色转图片
 /**
  颜色转图片
@@ -26,12 +47,12 @@
 /**
  *   剪切图片
  *
- *  @param srcImage    原图片
+ *  @param image    原图片
  *  @param rect        剪切尺寸
  *
  *  return             剪切后图片
  */
-+(UIImage*)cropImage:(UIImage*)srcImage withRect:(CGRect)rect;
++(UIImage*)cropImage:(UIImage*)image withRect:(CGRect)rect;
 
 #pragma mark 图片尺寸变换
 /**
@@ -96,9 +117,29 @@
  *
  *  @param image    原图片
  *
- *  return             旋转后图片
+ *  return             圆形图片
  */
 + (UIImage *)getRoundImage:(UIImage *)image;
+#pragma mark  获取色彩处理图片
+/**
+ *   获取色彩处理图片
+ *
+ *  @param image    原图片
+ *  @param type    0 黑白图片
+ *
+ *  return             色彩处理后图片
+ */
++ (UIImage *)getColorProcessingImage:(UIImage *)image andWithType:(HGBImageToolColorProcessingImageType )type;
+#pragma mark 图片组合
+/**
+ 图片组合
+
+ @param baseImage 基础图片
+ @param images 图片集合
+ @param imageRects 图片对应位置
+ @return 组合后图片
+ */
++(UIImage *)imageDrawWithBaseImage:(UIImage *)baseImage andWithImages:(NSArray<UIImage *>*)images andWithImageRects:(NSArray<NSString *>*)imageRects;
 #pragma mark  图片方向-根据屏幕方向
 /**
  *   图片方向-根据屏幕方向

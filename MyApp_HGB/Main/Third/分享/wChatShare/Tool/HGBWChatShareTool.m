@@ -11,9 +11,8 @@
 #import "WechatAuthSDK.h"
 #import "WXApiObject.h"
 
-#define ReslutCode @"reslutCode"
-#define ReslutMessage @"reslutMessage"
-#define ReslutError @"reslutError"
+#define ReslutCode @"resultCode"
+#define ReslutMessage @"resultMessage"
 
 
 @interface HGBWChatShareTool ()

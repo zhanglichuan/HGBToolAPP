@@ -132,7 +132,7 @@
     
     // 重绘
     if(self.endFlag==NO){
-        NSLog(@"move");
+
         [self setNeedsDisplay];
     }
 }
@@ -156,7 +156,7 @@
     }
     // 重绘
     self.endFlag=YES;
-    NSLog(@"stop");
+   
     [self setNeedsDisplay];
     
     // 调用代理方法

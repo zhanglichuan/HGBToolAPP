@@ -103,7 +103,7 @@
     @[ IOS_VPN @"/" IP_ADDR_IPv6, IOS_VPN @"/" IP_ADDR_IPv4, IOS_WIFI @"/" IP_ADDR_IPv6, IOS_WIFI @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4 ] ;
     
     NSDictionary *addresses = [self getAllIPAddresses];
-    NSLog(@"addresses: %@", addresses);
+
     
     __block NSString *address;
     [searchArray enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop)
@@ -119,7 +119,7 @@
     }else{
         address=addresses[@"utun0/ipv6"];
     }
-    NSLog(@"%@",address);
+    
     return address ? address : @"0.0.0.0";
 }
 /**

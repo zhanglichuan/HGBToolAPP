@@ -15,9 +15,10 @@
  */
 typedef enum HGBUnlockStatus
 {
-    HGBUnlockStatusSucess,//成功
-    HGBUnlockStatusFail,//失败
-    HGBUnlockStatusCancel//取消
+
+    HGBUnlockStatusSucess=1,//成功
+    HGBUnlockStatusCancel=2,//取消
+    HGBUnlockStatusFail=99//失败
 
 }HGBUnlockStatus;
 

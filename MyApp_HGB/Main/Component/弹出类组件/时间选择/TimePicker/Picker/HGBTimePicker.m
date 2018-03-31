@@ -299,7 +299,7 @@ static  HGBTimePicker *obj=nil;
     if(!self.stopTime){
         self.stopTime=[NSDate date];
     }
-    NSLog(@"huang:%@-%@",[self.f stringFromDate:self.startTime],[self.f stringFromDate:self.stopTime]);
+   
     NSArray *startArr=[self transTimeToHourMinuteSecondArr:self.startTime];
     NSString *startHour=startArr[0];
     NSString *startMin=startArr[1];
@@ -375,7 +375,10 @@ static  HGBTimePicker *obj=nil;
     
     
     self.time=[self.f dateFromString:timeStr];
-    
+    if(self.backTimeFormat&&self.backTimeFormat.length!=0){
+        self.f.dateFormat=self.backTimeFormat;
+        timeStr=[self.f stringFromDate:self.time];
+    }
      if(self.delegate&&[self.delegate respondsToSelector:@selector(timePicker: didSelectedTime:)]){
         [self.delegate timePicker:self didSelectedTime:self.time];
     }

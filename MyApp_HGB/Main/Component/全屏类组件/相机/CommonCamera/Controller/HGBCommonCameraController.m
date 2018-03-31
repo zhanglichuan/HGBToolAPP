@@ -13,11 +13,21 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <CoreLocation/CoreLocation.h>
 
-#define ReslutCode @"reslutCode"
-#define ReslutMessage @"reslutMessage"
 
 
-@interface HGBCommonCameraController () <UIImagePickerControllerDelegate,UINavigationControllerDelegate,HGBCommonCameraViewDelegate,UIAlertViewDelegate>
+
+
+#define ReslutCode @"resultCode"
+#define ReslutMessage @"resultMessage"
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
+@interface HGBCommonCameraController () <UIImagePickerControllerDelegate,UINavigationControllerDelegate,HGBCommonCameraViewDelegate>
 
 @property (strong,nonatomic) UIImagePickerController *imagePicker;
 @property(strong,nonatomic)HGBCommonCameraView *cameraView;
@@ -27,10 +37,6 @@
 @property(strong,nonatomic)NSMutableArray *promptViewArray;
 @property(strong,nonatomic)NSMutableArray *promptViewCopyArray;
 
-/**
- 提示图
- */
-@property(strong,nonatomic)UIAlertView *alert;
 /**
  导航栏
  */
@@ -59,6 +65,7 @@
     self.deviceType=YES;
     [self createNavigationItemWithType:1 andWithImageIndex:self.flashId];//导航栏
     [self viewSetUp];//ui
+
   
 }
 #pragma mark 导航栏
@@ -163,6 +170,7 @@
 
 #pragma mark view
 -(void)viewSetUp{
+    self.view.backgroundColor=[UIColor blackColor];
     
     if(![self.cameraView superview]){
         self.cameraView=[[HGBCommonCameraView alloc]initWithFrame:CGRectMake(0,44, kWidth, kHeight-44)];
@@ -170,57 +178,51 @@
         self.cameraView.style=self.style;
         [self.view addSubview:self.cameraView];
     }
-    
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        NSString *mediaType = AVMediaTypeVideo;//读取媒体类型
-        AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];//读取设备授权状态
-        if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
-            if(self.delegate&&[self.delegate respondsToSelector:@selector(commonCamera:didFailedWithError:)]){
-                [self.delegate commonCamera:self didFailedWithError:@{ReslutCode:@(HGBCommonCameraErrorTypeAuthority),ReslutMessage:@"相机访问权限受限"}];
-            }
-            self.alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请在iPhone的“设置”-“隐私”-“相机”功能中，找到“某某应用”打开相机访问权限" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去设置",nil];
-            [self.alert show];
-            return;
-        }
-        
-        self.imagePicker = [[UIImagePickerController alloc] init];
-        //代理
-        self.imagePicker.delegate = self;
-        //类型
-        self.imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-        self.imagePicker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
-        //隐藏系统相机操作
-        self.imagePicker.showsCameraControls = NO;
-        self.imagePicker.allowsEditing=YES;
-        self.imagePicker.view.frame=self.cameraView.showView.frame;
-        self.imagePicker.cameraOverlayView=self.cameraView.showView;
-        
-        [self.cameraView addSubview:self.imagePicker.view];
-        [self addChildViewController:self.imagePicker];
-
-    } else {
+    if(![self isCanUseCamera]){
+        HGBLog(@"相机访问权限受限");
         if(self.delegate&&[self.delegate respondsToSelector:@selector(commonCamera:didFailedWithError:)]){
-            [self.delegate commonCamera:self didFailedWithError:@{ReslutCode:@(HGBCommonCameraErrorTypeDevice),ReslutMessage:@"相机不可用"}];
+            [self.delegate commonCamera:self didFailedWithError:@{ReslutCode:@(HGBCommonCameraErrorTypeAuthority).stringValue,ReslutMessage:@"相机访问权限受限"}];
         }
-        self.alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"相机不可用" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:nil];
-        [self.alert show];
+        [self jumpToSet];
+        return;
     }
+
+    self.imagePicker = [[UIImagePickerController alloc] init];
+    //代理
+    self.imagePicker.delegate = self;
+    //类型
+    self.imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    self.imagePicker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+    //隐藏系统相机操作
+    self.imagePicker.showsCameraControls = NO;
+    self.imagePicker.allowsEditing=YES;
+    self.imagePicker.view.frame=self.cameraView.showView.frame;
+    self.imagePicker.cameraOverlayView=self.cameraView.showView;
+
+    [self.cameraView addSubview:self.imagePicker.view];
+    [self addChildViewController:self.imagePicker];
     
 }
-#pragma mark --alertdelegate
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(buttonIndex==1){
+#pragma mark --set
+-(void)jumpToSet{
+    UIAlertController *alert=[UIAlertController alertControllerWithTitle:@"提示" message:@"相机访问权限受限" preferredStyle:(UIAlertControllerStyleAlert)];
+    UIAlertAction *action1=[UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
+        [self returnHandler];
+    }];
+    [alert addAction:action1];
+    UIAlertAction *action2=[UIAlertAction actionWithTitle:@"去设置" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
         NSURL * url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-        
+
         if([[UIApplication sharedApplication] canOpenURL:url]) {
-            
+
             NSURL*url =[NSURL URLWithString:UIApplicationOpenSettingsURLString];
             [[UIApplication sharedApplication] openURL:url];
-            
+
         }
-    }else{
         [self returnHandler];
-    }
+    }];
+    [alert addAction:action2];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 #pragma mark handle
 
@@ -278,14 +280,14 @@
         
     } else if (idx == 20) {
         [self cameraTakePicture];
-        NSLog(@"**%ld**",(long)self.flashId);
+
     } else if (idx == 30) {
         self.deviceType=!self.deviceType;
         [self setCameraDeviceWithType:self.deviceType];
     } else if (idx == 40||idx == 41||idx == 42) {
        [self setCameraFlashMode:idx-40];
     } else if (idx == 50) {
-        NSLog(@"--%ld--",(long)self.flashId);
+        
         [self viewSetUp];
         [self.cameraView retakePhoto];
         [self addPromptViews];
@@ -404,6 +406,30 @@
 }
 #pragma mark 隐藏状态栏
 -(BOOL)prefersStatusBarHidden{
+    return YES;
+}
+#pragma mark 权限判断
+/**
+ 相机权限判断
+
+ @return 是否有权限
+ */
+- (BOOL)isCanUseCamera {
+    if (TARGET_IPHONE_SIMULATOR) {
+        return NO;
+    }
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+        HGBLog(@"%@",granted ? @"相机准许":@"相机不准许");
+    }];
+     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+         return NO;
+     }
+
+    NSString *mediaType = AVMediaTypeVideo;//读取媒体类型
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];//读取设备授权状态
+    if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
+        return NO;
+    }
     return YES;
 }
 #pragma mark - UIImagePickerControllerDelegate

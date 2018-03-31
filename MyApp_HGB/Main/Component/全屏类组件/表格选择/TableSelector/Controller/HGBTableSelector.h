@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
 @class HGBTableSelector;
 #pragma mark 表格选择代理
 @protocol  HGBTableSelectorDelegate <NSObject>

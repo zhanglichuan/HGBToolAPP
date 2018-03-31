@@ -110,7 +110,7 @@ static HGBCalenderPicker *obj=nil;
     HGBCalenderView *calenderView=[[HGBCalenderView alloc]initWithFrame:CGRectMake(10,70*hScale,kWidth-20, kWidth-20)];
 
     calenderView.delegate=self;
-
+    calenderView.backDateFormat=self.backDateFormat;
     [self.view addSubview:calenderView];
 }
 #pragma mark 弹出
@@ -171,7 +171,7 @@ static HGBCalenderPicker *obj=nil;
 }
 #pragma mark calenderdelegate
 -(void)calenderView:(HGBCalenderView *)calender didFinishWithYear:(NSInteger)year andWithMonth:(NSInteger)month andWithDay:(NSInteger)day andWithWeek:(NSInteger)week{
-    NSLog(@"%ld-%ld-%ld-%ld",year,month,day,week);
+
     if(self.delegate&&[self.delegate respondsToSelector:@selector(calender:didFinishWithYear:andWithMonth:andWithDay:andWithWeek:)]){
         [self.delegate calender:self didFinishWithYear:year andWithMonth:month andWithDay:day andWithWeek:week];
     }
@@ -181,13 +181,19 @@ static HGBCalenderPicker *obj=nil;
 }
 
 -(void)calenderView:(HGBCalenderView *)calender didFinishWithDate:(NSDate *)date{
-    NSLog(@"%@",date);
+   
     if(self.delegate&&[self.delegate respondsToSelector:@selector(calender:didFinishWithDate:)]){
         [self.delegate calender:self didFinishWithDate:date];
     }
     [self popViewDisappearWithSucessBlock:^{
 
     }];
+}
+-(void)calenderView:(HGBCalenderView *)calender didFinishWithFormatDateString:(NSString *)dateString{
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(calender:didFinishWithFormatDateString:)]){
+        [self.delegate calender:self didFinishWithFormatDateString:dateString];
+    }
+
 }
 #pragma mark buttonHandler
 //确认

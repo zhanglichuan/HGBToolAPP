@@ -14,29 +14,7 @@
 #import "HGBCalenderTool.h"
 #import "HGBCalenderStringTool.h"
 
-#ifndef SYSTEM_VERSION
-#define SYSTEM_VERSION [[[UIDevice currentDevice] systemVersion] floatValue]//系统版本号
-#endif
 
-#ifndef KiOS6Later
-#define KiOS6Later (SYSTEM_VERSION >= 6)
-#endif
-
-#ifndef KiOS7Later
-#define KiOS7Later (SYSTEM_VERSION >= 7)
-#endif
-
-#ifndef KiOS8Later
-#define KiOS8Later (SYSTEM_VERSION >= 8)
-#endif
-
-#ifndef KiOS9Later
-#define KiOS9Later (SYSTEM_VERSION >= 9)
-#endif
-
-#ifndef KiOS10Later
-#define KiOS10Later (SYSTEM_VERSION >= 10)
-#endif
 
 @interface HGBCalenderView ()
 /**
@@ -300,7 +278,7 @@
     [self updateView];
 }
 -(void)yearMonthButtonHandle:(UIButton *)_b{
-    NSLog(@"year month click:%ld",_b.tag);
+
     if(_b.tag==10){
         self.year_show--;
     }else if (_b.tag==11){
@@ -319,7 +297,7 @@
     [self updateView];
 }
 -(void)weekButtonHandle:(UIButton *)_b{
-      NSLog(@"week click:%ld",_b.tag);
+      
     NSInteger week;
     if(_style.isWeekHead){
         week=_b.tag+1;
@@ -334,7 +312,7 @@
     }
 }
 -(void)dayButtonHandle:(UIButton *)_b{
-    NSLog(@"day click:%ld",_b.tag);
+   
 
 
     HGBCalenderDayView *dayview=[self.viewArray objectAtIndex:_b.tag];
@@ -354,12 +332,24 @@
     [self updateView];
     if(day!=0){
          self.selectIndex=_b.tag;
+        NSString *dateString=[NSString stringWithFormat:@"%0.4ld%0.2ld%0.2ld",self.year_show,self.month_show,day];
+        self.dateFormatter.dateFormat=@"yyyyMMdd";
+
+        self.date=[self.dateFormatter dateFromString:dateString];
+        if(self.backDateFormat&&self.backDateFormat.length!=0){
+            self.dateFormatter.dateFormat=self.backDateFormat;
+            dateString=[self.dateFormatter stringFromDate:self.date];
+        }
+
         if(self.delegate&&[self.delegate respondsToSelector:@selector(calenderView:didFinishWithDate:)]){
-           self.dateFormatter.dateFormat=@"yyyyMMdd";
-            NSString *dateString=[NSString stringWithFormat:@"%0.4ld%0.2ld%0.2ld",self.year_show,self.month_show,day];
-            self.date=[self.dateFormatter dateFromString:dateString];
+
             [self .delegate calenderView:self didFinishWithDate:self.date];
         }
+
+        if(self.delegate&&[self.delegate respondsToSelector:@selector(calenderView:didFinishWithFormatDateString:)]){
+            [self .delegate calenderView:self didFinishWithFormatDateString:dateString];
+        }
+
         if(self.delegate&&[self.delegate respondsToSelector:@selector(calenderView:didFinishWithYear:andWithMonth:andWithDay:andWithWeek:)]){
             NSInteger week=[HGBCalenderTool weekForYear:self.year_show andMonth:self.month_show andDay:day];
 
@@ -551,14 +541,14 @@
 
         }
 
-        if(self.year_show==currentYear.integerValue&&(self.month_show==currentMonth.integerValue)&&(dayview.dayLabel.text.integerValue==currentDay.integerValue)){
+        if((self.year_show==currentYear.integerValue)&&(self.month_show==currentMonth.integerValue)&&(dayview.dayLabel.text.integerValue==currentDay.integerValue)&&(i>=index_start&&i<=index_end)){
             dayview.backgroundColor=_style.currnetBackColor;
             dayview.dayLabel.textColor=_style.currnetDayColor;
             dayview.promptLabel.textColor=_style.currnetPromptTextColor;
 
         }
 
-        if(self.year_show==selectYear.integerValue&&(self.month_show==selectMonth.integerValue)&&(dayview.dayLabel.text.integerValue==selectDay.integerValue)){
+        if(self.year_show==selectYear.integerValue&&(self.month_show==selectMonth.integerValue)&&(dayview.dayLabel.text.integerValue==selectDay.integerValue)&&(i>=index_start&&i<=index_end)){
             dayview.backgroundColor=_style.selectBackColor;
             dayview.dayLabel.textColor=_style.selectDayColor;
             dayview.promptLabel.textColor=_style.selectPromptTextColor;

@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 @interface UIColor (HGBHexStringColor)
 /**
  十六进制色值转为颜色

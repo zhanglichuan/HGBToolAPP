@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 @interface HGBColorTool : NSObject
 /**
  十六进制色值转为颜色

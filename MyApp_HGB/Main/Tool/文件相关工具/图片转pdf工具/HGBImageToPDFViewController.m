@@ -14,7 +14,7 @@
 #import "HGBImageToPDFTool.h"
 
 
-@interface HGBImageToPDFViewController ()<HGBImageToPDFToolDelegate>
+@interface HGBImageToPDFViewController ()
 /**
  数据源
  */
@@ -115,7 +115,9 @@
     if(indexPath.section==0){
 
         if (indexPath.row==0){
-            [HGBImageToPDFTool createPDFFileWithImage:[UIImage imageNamed:@"cir1.png"] toDestFilePath:@"Documents/2.pdf" withPassword:@"123456" delegate:self];
+            [[HGBImageToPDFTool shareInstance] createPDFFileWithImage:[UIImage imageNamed:@"cir1.png"] toPDFFileDestination:@"document://2.pdf" withPassword:@"123456" compeleteBlock:^(BOOL status, NSDictionary *messageInfo) {
+                NSLog(@"%d-%@",status,messageInfo);
+            }];
         }
     }
 }

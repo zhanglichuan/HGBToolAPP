@@ -10,6 +10,8 @@
 #import "HGBWeexPluginManager.h"
 #import <WeexSDK/WeexSDK.h>
 #import "WeexSDKManager.h"
+#import <CoreTelephony/CTCellularData.h>
+
 
 #define kWidth [[UIScreen mainScreen] bounds].size.width
 #define kHeight [[UIScreen mainScreen] bounds].size.height
@@ -18,21 +20,31 @@
 #define wScale kWidth / 750.0
 #define hScale kHeight / 1334.0
 
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
 
 
-
-@interface HGBWeexController ()
+@interface HGBWeexController ()<UIAlertViewDelegate>
 @property(strong,nonatomic)WXSDKInstance *instance;
 @property(strong,nonatomic)UIView *weexView;
 /**
  功能按钮
  */
 @property(strong,nonatomic)UIButton *actionButton;
+/**
+ 基础url字符串
+ */
+@property(strong,nonatomic)NSString *baseUrlString;
+
+
 
 @end
 
 @implementation HGBWeexController
-
+#pragma mark life
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor=[UIColor whiteColor];
@@ -52,11 +64,70 @@
     _instance.renderFinish = ^ (UIView *view) {
         [weakSelf.view bringSubviewToFront:weakSelf.actionButton];
     };
-    [self renderInUrl:nil];
+    [self loadJSSource:@"project://WeexBundle/bundlejs/app.weex.js"];
 
 
 }
--(void)renderInUrl:(NSString *)urlString{
+#pragma mark 加载
+/**
+ 加载html
+
+ @param source 路径或url或js字符串
+ */
+-(BOOL)loadJSSource:(NSString *)source{
+    if(source==nil||source.length==0){
+        source=@"";
+    }
+    if([source hasPrefix:@"http://"]||[source hasPrefix:@"https://"]){
+        CTCellularData *cellularData = [[CTCellularData alloc]init];
+        cellularData.cellularDataRestrictionDidUpdateNotifier = ^(CTCellularDataRestrictedState state){
+
+            switch (state) {
+                case kCTCellularDataRestricted:
+                    // app网络权限受限
+                    [self jumpToSet];
+                    break;
+                case kCTCellularDataRestrictedStateUnknown:
+                    // app网络权限不确定
+                    // 各种操作
+                    break;
+                case kCTCellularDataNotRestricted:
+                    break;
+                default:
+                    break;
+            }
+        };
+    }
+
+     if([self isURL:source]){
+        source=[self urlAnalysis:source];
+        source=[self urlFormatString:source];
+
+       return [self loadWeexViewWithString:source andWithType:0];
+    }else{
+       return [self loadWeexViewWithString:source andWithType:1];
+
+    }
+}
+/**
+ 加载js
+
+ @param source 路径或url或js字符串
+ @param baseUrl 基础路径或url或js字符串
+ */
+-(BOOL)loadJSSource:(NSString *)source andWithBaseUrl:(NSString *)baseUrl{
+    self.baseUrlString=[self urlAnalysis:baseUrl];
+    return  [self loadJSSource:source];
+
+}
+/**
+ 加载网页
+
+ @param string url或内容
+ @param type  0:网页 1.js字符串
+ */
+-(BOOL)loadWeexViewWithString:(NSString *)string andWithType:(NSInteger)type
+{
 
     _instance = [[WXSDKInstance alloc] init];
     _instance.viewController = self;
@@ -75,45 +146,34 @@
         [weakSelf2.view bringSubviewToFront:weakSelf2.actionButton];
 
     };
+    [HGBWeexPluginManager registerWeexPlugin];
+    [WeexSDKManager initWeexSDK];
 
+    if(type==0){
 
-    NSURL *url;
-    if(urlString==nil||urlString.length==0){
-        if(self.url&&self.url.length!=0){
-            [HGBWeexPluginManager registerWeexPlugin];
-            [WeexSDKManager initWeexSDK];
-            urlString=self.url;
-        }else{
-            NSString *path=[[NSBundle mainBundle]pathForResource:@"bundlejs" ofType:nil];
+         NSURL *url=[NSURL URLWithString:string];
+        
+        [_instance renderWithURL:url];
+    }else{
 
-            if([self isExitAtFilePath:[path stringByAppendingPathComponent:@"index.js"]]){
-                path=[path stringByAppendingPathComponent:@"index.js"];
-            }else{
-                path=[path stringByAppendingPathComponent:@"app.weex.js"];
-            }
-            urlString=path;
+        NSURL *baseUrl;
+        if(self.baseUrlString){
+            baseUrl=[NSURL URLWithString:self.baseUrlString];
+        }
+
+        [_instance renderView:string options:@{@"bundleUrl":[[baseUrl absoluteString] stringByDeletingLastPathComponent]} data:[string dataUsingEncoding:NSUTF8StringEncoding]];
+
+    }
+     [self.view bringSubviewToFront:self.actionButton];
+
+    if(type==0){
+
+        if(![self urlExistCheck:string]){
+            return NO;
         }
     }
 
-    NSLog(@"%@",urlString);
-    if([urlString containsString:@"http"]||[urlString containsString:@"https"]){
-        url=[NSURL URLWithString:urlString];
-        [_instance renderWithURL:url options:@{@"bundleUrl":[url absoluteString]} data:[[NSData alloc]initWithContentsOfURL:url]];
-        [self.view bringSubviewToFront:self.actionButton];
-        return;
-    }
-    if(urlString&&([urlString containsString:@"file:"])){
-        url = [NSURL URLWithString:urlString];
-    }else{
-        urlString=[self getCompletePathFromSimplifyFilePath:urlString];
-        url = [NSURL fileURLWithPath:urlString];
-
-    }
-    if([self isExitAtFilePath:url.path]){
-        [_instance renderWithURL:url options:@{@"bundleUrl":[url absoluteString]} data:[[NSData alloc]initWithContentsOfURL:url]];
-    }else{
-        NSLog(@"路径不存在");
-    }
+    return YES;
 }
 - (void)dealloc
 {
@@ -170,7 +230,7 @@
             r=kWidth-point.x;
             b=kHeight-point.y;
             CGFloat position=[self getMinFromArray:@[[NSString stringWithFormat:@"%f",t],[NSString stringWithFormat:@"%f",b],[NSString stringWithFormat:@"%f",r],[NSString stringWithFormat:@"%f",l]]];
-            NSLog(@"%@-%f",@[[NSString stringWithFormat:@"%f",t],[NSString stringWithFormat:@"%f",b],[NSString stringWithFormat:@"%f",r],[NSString stringWithFormat:@"%f",l]],position);
+
             if(position==l){
                 self.actionButton.frame=CGRectMake(5,self.actionButton.frame.origin.y , self.actionButton.frame.size.width, self.actionButton.frame.size.height);
             }else if (position==r){
@@ -200,145 +260,191 @@
         return 0;
     }
 }
-#pragma mark 获取文件完整路径
+#pragma mark --set
+-(void)jumpToSet{
+    UIAlertController *alert=[UIAlertController alertControllerWithTitle:@"提示" message:@"网络访问权限受限" preferredStyle:(UIAlertControllerStyleAlert)];
+    UIAlertAction *action1=[UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
+        [self actionButtonHandle:nil];
+    }];
+    [alert addAction:action1];
+    UIAlertAction *action2=[UIAlertAction actionWithTitle:@"去设置" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
+        NSURL * url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
 
-/**
- 将简化路径转化为完整路径
+        if([[UIApplication sharedApplication] canOpenURL:url]) {
 
- @param simplifyFilePath 简化路径
- @return 完整路径
- */
--(NSString *)getCompletePathFromSimplifyFilePath:(NSString *)simplifyFilePath{
-    NSString *path=[simplifyFilePath copy];
-    if(![self isExitAtFilePath:path]){
-        path=[[self getHomeFilePath] stringByAppendingPathComponent:simplifyFilePath];
-        if(![self isExitAtFilePath:path]){
-            path=[[self getDocumentFilePath] stringByAppendingPathComponent:simplifyFilePath];
-            if(![self isExitAtFilePath:path]){
-                path=[[self getMainBundlePath] stringByAppendingPathComponent:simplifyFilePath];
-                if(![self isExitAtFilePath:path]){
-                    path=simplifyFilePath;
-                }
-
-            }
+            NSURL*url =[NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
 
         }
+         [self actionButtonHandle:nil];
+    }];
+    [alert addAction:action2];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+#pragma mark url
+/**
+ *  url字符处理
+ *
+ *  @param urlString 原url
+ *
+ *  @return 新url
+ */
+-(NSString *)urlFormatString:(NSString *)urlString{
+    return [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+}
+/**
+ 判断路径是否是URL
 
+ @param url url路径
+ @return 结果
+ */
+-(BOOL)isURL:(NSString*)url{
+    if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"/User"]||[url hasPrefix:@"/var"]||[url hasPrefix:@"http://"]||[url hasPrefix:@"https://"]||[url hasPrefix:@"file://"]){
+        return YES;
+    }else{
+        return NO;
     }
-    return path;
 }
 /**
- 将简化目标路径转化为完整路径
+ url校验存在
 
- @param simplifyFilePath 简化路径
- @return 完整路径
+ @param url url
+ @return 是否存在
  */
--(NSString *)getDestinationCompletePathFromSimplifyFilePath:(NSString *)simplifyFilePath{
-    if(!([simplifyFilePath containsString:[self getHomeFilePath]]||[simplifyFilePath containsString:[self getMainBundlePath]])){
-        simplifyFilePath=[[self getHomeFilePath] stringByAppendingPathComponent:simplifyFilePath];
+-(BOOL)urlExistCheck:(NSString *)url{
+    if(url==nil||url.length==0){
+        return NO;
     }
-    return simplifyFilePath;
-}
-#pragma mark bundle
-/**
- 获取主资源文件路径
-
- @return 主资源文件路径
- */
--(NSString *)getMainBundlePath{
-    return [[NSBundle mainBundle]resourcePath];
-}
-#pragma mark 沙盒途径
-/**
- 获取沙盒根路径
-
- @return 沙盒根路径
- */
--(NSString *)getHomeFilePath{
-    return NSHomeDirectory();
-}
-/**
- 获取沙盒Document路径
-
- @return Document路径
- */
--(NSString *)getDocumentFilePath{
-    NSString  *path_huang =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
-    return path_huang;
-}
-#pragma mark path to url
-/**
- 通过文件路径获取url
-
- @param filePath 文件路径
- @return url
- */
--(NSString *)getUrlFromFilePath:(NSString *)filePath{
-    if(filePath==nil||filePath.length==0){
+    if(![self isURL:url]){
         return nil;
     }
-    NSURL *url_huang=[NSURL fileURLWithPath:filePath];
-    return [url_huang absoluteString];
-}
-#pragma mark 文档通用
-/**
- 文件拷贝
-
- @param srcPath 文件路径
- @param filePath 复制文件路径
- @return 结果
- */
--(BOOL)copyFilePath:(NSString *)srcPath ToPath:(NSString *)filePath{
-    if(![self isExitAtFilePath:srcPath]){
-        return NO;
+    if(![url containsString:@"://"]){
+        url=[[NSURL fileURLWithPath:url]absoluteString];
     }
-    NSString *directoryPath=[filePath stringByDeletingLastPathComponent];
-    if(![self isExitAtFilePath:directoryPath]){
-        [self createDirectoryPath:directoryPath];
-    }
-    NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
-    BOOL flag=[filemanage copyItemAtPath:srcPath toPath:filePath error:nil];
-    if(flag){
-        return YES;
+    if([url hasPrefix:@"file://"]){
+        NSString *filePath=[[NSURL URLWithString:url]path];
+        if(filePath==nil||filePath.length==0){
+            return NO;
+        }
+        NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
+        return [filemanage fileExistsAtPath:filePath];
     }else{
-        return NO;
+        NSURL *urlCheck=[NSURL URLWithString:url];
+
+        return [[UIApplication sharedApplication]canOpenURL:urlCheck];
+
     }
 }
-
-
 /**
- 文档是否存在
+ url解析
 
- @param filePath 归档的路径
- @return 结果
+ @return 解析后url
  */
--(BOOL)isExitAtFilePath:(NSString *)filePath{
-    if(filePath==nil||filePath.length==0){
-        return NO;
+-(NSString *)urlAnalysisToPath:(NSString *)url{
+    if(url==nil){
+        return nil;
     }
-    NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
-    BOOL isExit=[filemanage fileExistsAtPath:filePath];
-    return isExit;
+    if(![self isURL:url]){
+        return nil;
+    }
+    NSString *urlstr=[self urlAnalysis:url];
+    return [[NSURL URLWithString:urlstr]path];
 }
-
-#pragma mark 文件夹
 /**
- 创建文件夹
+ url解析
 
- @param directoryPath 路径
- @return 结果
+ @return 解析后url
  */
--(BOOL)createDirectoryPath:(NSString *)directoryPath{
-    if([self isExitAtFilePath:directoryPath]){
-        return YES;
+-(NSString *)urlAnalysis:(NSString *)url{
+    if(url==nil){
+        return nil;
     }
-    NSFileManager *filemanage=[NSFileManager defaultManager];
-    BOOL flag=[filemanage createDirectoryAtPath:directoryPath withIntermediateDirectories:NO attributes:nil error:nil];
-    if(flag){
-        return YES;
+    if(![self isURL:url]){
+        return nil;
+    }
+    if([url containsString:@"://"]){
+        //project://工程包内
+        //home://沙盒路径
+        //http:// https://网络路径
+        //document://沙盒Documents文件夹
+        //caches://沙盒Caches
+        //tmp://沙盒Tmp文件夹
+        if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]){
+            if([url hasPrefix:@"project://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"project://" withString:@""];
+                NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+                url=[projectPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"home://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"home://" withString:@""];
+                NSString *homePath=NSHomeDirectory();
+                url=[homePath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"document://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"document://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"defaults://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"defaults://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"caches://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"caches://" withString:@""];
+                NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+                url=[cachesPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"tmp://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"tmp://" withString:@""];
+                NSString *tmpPath =NSTemporaryDirectory();
+                url=[tmpPath stringByAppendingPathComponent:url];
+            }
+            url=[[NSURL fileURLWithPath:url]absoluteString];
+
+        }else{
+
+        }
+    }else {
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    return url;
+}
+/**
+ url封装
+
+ @return 封装后url
+ */
+-(NSString *)urlEncapsulation:(NSString *)url{
+    if(![self isURL:url]){
+        return nil;
+    }
+    NSString *homePath=NSHomeDirectory();
+    NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+    NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+    NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+    NSString *tmpPath =NSTemporaryDirectory();
+
+    if([url hasPrefix:@"file://"]){
+        url=[url stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+    }
+    if([url hasPrefix:projectPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",projectPath] withString:@"project://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",projectPath] withString:@"project://"];
+    }else if([url hasPrefix:documentPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",documentPath] withString:@"defaults://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",documentPath] withString:@"defaults://"];
+    }else if([url hasPrefix:cachesPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",cachesPath] withString:@"caches://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",cachesPath] withString:@"caches://"];
+    }else if([url hasPrefix:tmpPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",tmpPath] withString:@"tmp://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",tmpPath] withString:@"tmp://"];
+    }else if([url hasPrefix:homePath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",homePath] withString:@"home://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",homePath] withString:@"home://"];
+    }else if([url containsString:@"://"]){
+
     }else{
-        return NO;
+        url=[[NSURL fileURLWithPath:url]absoluteString];
     }
+    return url;
 }
+
 @end
 

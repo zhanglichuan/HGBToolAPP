@@ -86,7 +86,7 @@
 #pragma mark run
 - (void)startLoading
 {
-    NSLog(@"%@",self.slideViewsArray);
+
     for(UIView *v in self.viewArr){
         [v removeFromSuperview];
     }
@@ -110,7 +110,7 @@
         }
     }
     
-    NSLog(@"%@",NSStringFromCGRect(self.frame));
+
     if(!self.isVerticalScroll){
         for (NSInteger i = 0; i < self.slideViewsArray.count; i++) {
             UIView *view=self.slideViewsArray[i];
@@ -153,7 +153,7 @@
         for (NSInteger i = 0; i < self.slideViewsArray.count; i++) {
             UIView *view=self.slideViewsArray[i];
            view.frame=CGRectMake(0, self.scrollView.frame.size.height * (i +1) , self.scrollView.frame.size.width, self.scrollView.frame.size.height);
-            NSLog(@"%@",NSStringFromCGRect(view.frame));
+           
             if(self.slideViewsArray.count==1){
                 view.frame=CGRectMake(0 ,0, self.scrollView.frame.size.width, self.scrollView.frame.size.height);
             }

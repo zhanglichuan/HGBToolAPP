@@ -8,69 +8,10 @@
 
 #import "HGBAlertTool.h"
 
-#ifndef SYSTEM_VERSION
-#define SYSTEM_VERSION [[[UIDevice currentDevice] systemVersion] floatValue]//系统版本号
-#endif
-
-#ifndef KiOS6Later
-#define KiOS6Later (SYSTEM_VERSION >= 6)
-#endif
-
-#ifndef KiOS7Later
-#define KiOS7Later (SYSTEM_VERSION >= 7)
-#endif
-
-#ifndef KiOS8Later
-#define KiOS8Later (SYSTEM_VERSION >= 8)
-#endif
-
-#ifndef KiOS9Later
-#define KiOS9Later (SYSTEM_VERSION >= 9)
-#endif
-
-#ifndef KiOS10Later
-#define KiOS10Later (SYSTEM_VERSION >= 10)
-#endif
 
 @interface HGBAlertTool()<UIAlertViewDelegate,UIActionSheetDelegate>
 @property(strong,nonatomic)HGBAlertClickBlock clickBlock;
-/**
- 标题文字大小
- */
-@property(assign,nonatomic)CGFloat titleFontSize;
-/**
- 标题文字大小改变标志
- */
-@property(assign,nonatomic)BOOL titleFontFlag;
-/**
- 标题颜色
- */
-@property(strong,nonatomic)UIColor *titleColor;
 
-/**
- 副标题文字大小
- */
-@property(assign,nonatomic)CGFloat subTitleFontSize;
-/**
- 副标题文字大小改变标志
- */
-@property(assign,nonatomic)BOOL subTitleFontFlag;
-/**
- 按钮标题颜色
- */
-@property(strong,nonatomic)UIColor *subTitleColor;
-/**
- 按钮标题文字大小
- */
-@property(assign,nonatomic)CGFloat buttonTitleFontSize;
-/**
- 按钮标题文字大小改变标志
- */
-@property(assign,nonatomic)BOOL buttonTitleFontFlag;
-/**
- 按钮标题颜色
- */
-@property(strong,nonatomic)UIColor *buttonTitleColor;
 @end
 
 @implementation HGBAlertTool
@@ -89,23 +30,22 @@ static HGBAlertTool *instance=nil;
 
  @param titleColor 标题颜色
  */
-+(void)setTitleColor:(UIColor *)titleColor{
-    [HGBAlertTool shareInstance];
-    instance.titleColor=titleColor;
+-(void)setTitleColor:(UIColor *)titleColor{
+    _titleColor=titleColor;
 }
 /**
  配置标题字体大小
 
  @param titleFontSize 标题字体大小
  */
-+(void)setTitleFontSize:(CGFloat)titleFontSize{
-     [HGBAlertTool shareInstance];
-    instance.titleFontSize=titleFontSize;
+-(void)setTitleFontSize:(CGFloat)titleFontSize{
+
+    _titleFontSize=titleFontSize;
 
     if(titleFontSize!=0){
-        instance.titleFontFlag=YES;
+        _titleFontFlag=YES;
     }else{
-        instance.titleFontFlag=NO;
+        _titleFontFlag=NO;
     }
 }
 
@@ -114,9 +54,9 @@ static HGBAlertTool *instance=nil;
 
  @param subTitleColor 副标题颜色
  */
-+(void)setSubTitleColor:(UIColor *)subTitleColor{
-     [HGBAlertTool shareInstance];
-    instance.subTitleColor=subTitleColor;
+-(void)setSubTitleColor:(UIColor *)subTitleColor{
+
+    _subTitleColor=subTitleColor;
     
     
 
@@ -126,13 +66,13 @@ static HGBAlertTool *instance=nil;
 
  @param subTitleFontSize 副标题字体大小
  */
-+(void)setSubTitleFontSize:(CGFloat)subTitleFontSize{
-     [HGBAlertTool shareInstance];
-    instance.subTitleFontSize=subTitleFontSize;
+-(void)setSubTitleFontSize:(CGFloat)subTitleFontSize{
+
+    _subTitleFontSize=subTitleFontSize;
     if(subTitleFontSize!=0){
-        instance.subTitleFontFlag=YES;
+        _subTitleFontFlag=YES;
     }else{
-        instance.subTitleFontFlag=NO;
+        _subTitleFontFlag=NO;
     }
 }
 /**
@@ -140,22 +80,20 @@ static HGBAlertTool *instance=nil;
 
  @param buttonTitleColor 按钮标题颜色
  */
-+(void)setButtonTitleColor:(UIColor *)buttonTitleColor{
-     [HGBAlertTool shareInstance];
-    instance.buttonTitleColor=buttonTitleColor;
+-(void)setButtonTitleColor:(UIColor *)buttonTitleColor{
+    _buttonTitleColor=buttonTitleColor;
 }
 /**
  配置按钮标题字体大小
 
  @param buttonTitleFontSize 按钮标题字体大小
  */
-+(void)setButtonTitleFontSize:(CGFloat)buttonTitleFontSize{
-     [HGBAlertTool shareInstance];
-    instance.buttonTitleFontSize=buttonTitleFontSize;
+-(void)setButtonTitleFontSize:(CGFloat)buttonTitleFontSize{
+    _buttonTitleFontSize=buttonTitleFontSize;
     if(buttonTitleFontSize!=0){
-        instance.buttonTitleFontFlag=YES;
+        _buttonTitleFontFlag=YES;
     }else{
-        instance.buttonTitleFontFlag=NO;
+        _buttonTitleFontFlag=NO;
     }
 }
 #pragma mark 统一配置
@@ -165,38 +103,37 @@ static HGBAlertTool *instance=nil;
 
  @param alertController alertController
  */
-+(void)setAlertControllerSettings:(UIAlertController *)alertController{
-    [HGBAlertTool shareInstance];
+-(void)setAlertControllerSettings:(UIAlertController *)alertController{
     if(!alertController){
         return;
     }
-    if(instance.titleColor||instance.titleFontFlag){
+    if(self.titleColor||self.titleFontFlag){
         //改变title的大小和颜色
         NSMutableAttributedString *titleAtt = [[NSMutableAttributedString alloc] initWithString:alertController.title];
 
-        if(instance.titleFontFlag){
-            [titleAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:instance.titleFontSize] range:NSMakeRange(0,alertController.title.length)];
+        if(self.titleFontFlag){
+            [titleAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:self.titleFontSize] range:NSMakeRange(0,alertController.title.length)];
         }
-        if(instance.titleColor){
-            [titleAtt addAttribute:NSForegroundColorAttributeName value:instance.titleColor range:NSMakeRange(0, alertController.title.length)];
+        if(self.titleColor){
+            [titleAtt addAttribute:NSForegroundColorAttributeName value:self.titleColor range:NSMakeRange(0, alertController.title.length)];
 
         }
         [alertController setValue:titleAtt forKey:@"attributedTitle"];
     }
-    if(instance.subTitleFontFlag||instance.subTitleColor){
+    if(self.subTitleFontFlag||self.subTitleColor){
         NSMutableAttributedString *messageAtt = [[NSMutableAttributedString alloc] initWithString:alertController.message];
         //改变message的大小和颜色
-        if(instance.subTitleFontFlag){
-            [messageAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:instance.subTitleFontSize] range:NSMakeRange(0,alertController.message.length)];
+        if(self.subTitleFontFlag){
+            [messageAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:self.subTitleFontSize] range:NSMakeRange(0,alertController.message.length)];
         }
-        if(instance.subTitleColor){
-            [messageAtt addAttribute:NSForegroundColorAttributeName value:instance.subTitleColor range:NSMakeRange(0, alertController.message.length)];
+        if(self.subTitleColor){
+            [messageAtt addAttribute:NSForegroundColorAttributeName value:self.subTitleColor range:NSMakeRange(0, alertController.message.length)];
         }
         [alertController setValue:messageAtt forKey:@"attributedMessage"];
 
     }
-    if(instance.buttonTitleColor){
-        alertController.view.tintColor=instance.buttonTitleColor;
+    if(self.buttonTitleColor){
+        alertController.view.tintColor=self.buttonTitleColor;
     }
 
 }
@@ -205,25 +142,24 @@ static HGBAlertTool *instance=nil;
 
  @param alertView alertView
  */
-+(void)setAlertViewSettings:(UIAlertView *)alertView{
+-(void)setAlertViewSettings:(UIAlertView *)alertView{
 
-    [HGBAlertTool shareInstance];
     if(!alertView){
         return;
     }
-    if(instance.titleColor||instance.titleFontFlag){
+    if(self.titleColor||self.titleFontFlag){
         //改变title的大小和颜色
         NSMutableAttributedString *titleAtt = [[NSMutableAttributedString alloc] initWithString:alertView.title];
         UILabel *titleLabel = [alertView valueForKey:@"_titleLabel"];
 
 
-        if(instance.titleFontFlag){
-            titleLabel.font = [UIFont fontWithName:@"Arial" size:instance.titleFontSize];
-            [titleAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:instance.titleFontSize] range:NSMakeRange(0,alertView.title.length)];
+        if(self.titleFontFlag){
+            titleLabel.font = [UIFont fontWithName:@"Arial" size:self.titleFontSize];
+            [titleAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:self.titleFontSize] range:NSMakeRange(0,alertView.title.length)];
         }
-        if(instance.titleColor){
-            [titleAtt addAttribute:NSForegroundColorAttributeName value:instance.titleColor range:NSMakeRange(0, alertView.title.length)];
-            [titleLabel setTextColor:instance.titleColor];
+        if(self.titleColor){
+            [titleAtt addAttribute:NSForegroundColorAttributeName value:self.titleColor range:NSMakeRange(0, alertView.title.length)];
+            [titleLabel setTextColor:self.titleColor];
 
         }
         @try {
@@ -236,19 +172,19 @@ static HGBAlertTool *instance=nil;
 
 
     }
-    if(instance.subTitleFontFlag||instance.subTitleColor){
+    if(self.subTitleFontFlag||self.subTitleColor){
         NSMutableAttributedString *messageAtt = [[NSMutableAttributedString alloc] initWithString:alertView.message];
         UILabel *body = [alertView valueForKey:@"_bodyTextLabel"];
 
         //改变message的大小和颜色
-        if(instance.subTitleFontFlag){
-            body.font = [UIFont fontWithName:@"Arial" size:instance.subTitleFontSize];
+        if(self.subTitleFontFlag){
+            body.font = [UIFont fontWithName:@"Arial" size:self.subTitleFontSize];
 
-            [messageAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:instance.subTitleFontSize] range:NSMakeRange(0,alertView.message.length)];
+            [messageAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:self.subTitleFontSize] range:NSMakeRange(0,alertView.message.length)];
         }
-        if(instance.subTitleColor){
-            [messageAtt addAttribute:NSForegroundColorAttributeName value:instance.subTitleColor range:NSMakeRange(0, alertView.message.length)];
-            [body setTextColor:instance.subTitleColor];
+        if(self.subTitleColor){
+            [messageAtt addAttribute:NSForegroundColorAttributeName value:self.subTitleColor range:NSMakeRange(0, alertView.message.length)];
+            [body setTextColor:self.subTitleColor];
         }
         @try {
            [alertView setValue:messageAtt forKey:@"attributedMessage"];
@@ -263,7 +199,7 @@ static HGBAlertTool *instance=nil;
 
 
 
-    if(instance.buttonTitleColor){
+    if(self.buttonTitleColor){
         [[UIView appearanceWhenContainedIn:[UIAlertView class], nil] setTintColor:[UIColor redColor]];
     }
 
@@ -273,24 +209,23 @@ static HGBAlertTool *instance=nil;
 
  @param actionSheet actionSheet
  */
-+(void)setActionSheetSettings:(UIActionSheet *)actionSheet{
-    [HGBAlertTool shareInstance];
+-(void)setActionSheetSettings:(UIActionSheet *)actionSheet{
     if(!actionSheet){
         return;
     }
-    if(instance.titleColor||instance.titleFontFlag){
+    if(self.titleColor||self.titleFontFlag){
         //改变title的大小和颜色
         NSMutableAttributedString *titleAtt = [[NSMutableAttributedString alloc] initWithString:actionSheet.title];
         UILabel *titleLabel = [actionSheet valueForKey:@"_titleLabel"];
        
-        if(instance.titleFontFlag){
-            [titleAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:instance.titleFontSize] range:NSMakeRange(0,actionSheet.title.length)];
-            titleLabel.font = [UIFont fontWithName:@"Arial" size:instance.titleFontSize];
+        if(self.titleFontFlag){
+            [titleAtt addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:self.titleFontSize] range:NSMakeRange(0,actionSheet.title.length)];
+            titleLabel.font = [UIFont fontWithName:@"Arial" size:self.titleFontSize];
 
         }
-        if(instance.titleColor){
-            [titleAtt addAttribute:NSForegroundColorAttributeName value:instance.titleColor range:NSMakeRange(0, actionSheet.title.length)];
-            [titleLabel setTextColor:instance.titleColor];
+        if(self.titleColor){
+            [titleAtt addAttribute:NSForegroundColorAttributeName value:self.titleColor range:NSMakeRange(0, actionSheet.title.length)];
+            [titleLabel setTextColor:self.titleColor];
 
         }
         @try {
@@ -300,8 +235,8 @@ static HGBAlertTool *instance=nil;
         } @finally {
         }
     }
-    if(instance.buttonTitleColor){
-        actionSheet.tintColor=instance.buttonTitleColor;
+    if(self.buttonTitleColor){
+        actionSheet.tintColor=self.buttonTitleColor;
     }
 
 }
@@ -314,17 +249,17 @@ static HGBAlertTool *instance=nil;
  *  @param parent 父控件
  */
 
-+(void)alertWithPrompt:(NSString *)prompt InParent:(UIViewController *)parent{
-#ifdef KiOS8Later
+-(void)alertWithPrompt:(NSString *)prompt InParent:(UIViewController *)parent{
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:@"温馨提示" message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action=[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
     }];
     [alert addAction:action];
-    [HGBAlertTool setAlertControllerSettings:alert];
+    [self setAlertControllerSettings:alert];
     [parent presentViewController:alert animated:YES completion:nil];
 #else
     UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:prompt delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-    [HGBAlertTool setAlertViewSettings:alertview];
+    [self setAlertViewSettings:alertview];
     [alertview show];
 
 #endif
@@ -339,21 +274,21 @@ static HGBAlertTool *instance=nil;
  *
  *  @param parent 父控件
  */
-+(void)alertPromptWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt  InParent:(UIViewController *)parent
+-(void)alertPromptWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt  InParent:(UIViewController *)parent
 {
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:title message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action1=[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
 
         [alert dismissViewControllerAnimated:YES completion:nil];
     }];
     [alert addAction:action1];
-    [HGBAlertTool setAlertControllerSettings:alert];
+    [self setAlertControllerSettings:alert];
     [parent presentViewController:alert animated:YES completion:nil];
 
 #else
     UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:title message:prompt delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-    [HGBAlertTool setAlertViewSettings:alertview];
+    [self setAlertViewSettings:alertview];
     [alertview show];
 #endif
 }
@@ -366,22 +301,21 @@ static HGBAlertTool *instance=nil;
  *  @param clickBlock 点击事件
  *  @param parent 父控件
  */
-+(void)alertWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent
+-(void)alertWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent
 {
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:title message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action1=[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
         clickBlock(0);
     }];
     [alert addAction:action1];
-    [HGBAlertTool setAlertControllerSettings:alert];
+    [self setAlertControllerSettings:alert];
     [parent presentViewController:alert animated:YES completion:nil];
 
 #else
-    instance.clickBlock=clickBlock;
-    [HGBAlertTool shareInstance];
-    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:title message:prompt delegate:instance cancelButtonTitle:@"确定" otherButtonTitles:nil];
-    [HGBAlertTool setAlertViewSettings:alertview];
+    self.clickBlock=clickBlock;
+    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:title message:prompt delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [self setAlertViewSettings:alertview];
     [alertview show];
 
 #endif
@@ -399,23 +333,22 @@ static HGBAlertTool *instance=nil;
  *  @param clickBlock 点击事件
  *  @param parent 父控件
  */
-+(void)alertWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt  andWithConfirmButtonTitle:(NSString *)confirmButtonTitle andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent{
+-(void)alertWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt  andWithConfirmButtonTitle:(NSString *)confirmButtonTitle andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent{
     if(confirmButtonTitle==nil&&confirmButtonTitle.length==0){
         confirmButtonTitle=@"确定";
     }
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:title message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action1=[UIAlertAction actionWithTitle:confirmButtonTitle style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
         clickBlock(0);
     }];
     [alert addAction:action1];
-    [HGBAlertTool setAlertControllerSettings:alert];
+    [self setAlertControllerSettings:alert];
     [parent presentViewController:alert animated:YES completion:nil];
 #else
-    instance.clickBlock=clickBlock;
-    [HGBAlertTool shareInstance];
-    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:title message:prompt delegate:instance cancelButtonTitle:confirmButtonTitle otherButtonTitles:nil];
-    [HGBAlertTool setAlertViewSettings:alertview];
+    self.clickBlock=clickBlock;
+    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:title message:prompt delegate:self cancelButtonTitle:confirmButtonTitle otherButtonTitles:nil];
+    [self setAlertViewSettings:alertview];
     [alertview show];
 
 #endif
@@ -432,7 +365,7 @@ static HGBAlertTool *instance=nil;
  *  @param clickBlock 点击事件
  *  @param parent 父控件
  */
-+(void)alertWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt andWithConfirmButtonTitle:(NSString *)confirmButtonTitle andWithCancelButtonTitle:(NSString *)cancelButtonTitle  andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent
+-(void)alertWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt andWithConfirmButtonTitle:(NSString *)confirmButtonTitle andWithCancelButtonTitle:(NSString *)cancelButtonTitle  andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent
 {
     if(confirmButtonTitle==nil&&confirmButtonTitle.length==0){
         confirmButtonTitle=@"确定";
@@ -440,7 +373,7 @@ static HGBAlertTool *instance=nil;
     if(cancelButtonTitle==nil&&cancelButtonTitle.length==0){
          cancelButtonTitle=@"取消";
     }
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:title message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action1=[UIAlertAction actionWithTitle:confirmButtonTitle style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
         clickBlock(0);
@@ -450,13 +383,13 @@ static HGBAlertTool *instance=nil;
         clickBlock(1);
     }];
     [alert addAction:action2];
-    [HGBAlertTool setAlertControllerSettings:alert];
+    [self setAlertControllerSettings:alert];
     [parent presentViewController:alert animated:YES completion:nil];
 #else
-    [HGBAlertTool shareInstance];
-    instance.clickBlock =clickBlock;
-    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:title message:prompt delegate:instance cancelButtonTitle:confirmButtonTitle otherButtonTitles:cancelButtonTitle,nil];
-    [HGBAlertTool setAlertViewSettings:alertview];
+
+    self.clickBlock =clickBlock;
+    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:title message:prompt delegate:self cancelButtonTitle:confirmButtonTitle otherButtonTitles:cancelButtonTitle,nil];
+    [self setAlertViewSettings:alertview];
     [alertview show];
 
 #endif
@@ -473,13 +406,13 @@ static HGBAlertTool *instance=nil;
  *  @param clickBlock 点击事件
  *  @param parent 父控件
  */
-+(void)alertWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt andWithButtonTitles:(NSArray<NSString *>*)buttonTitles andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent{
+-(void)alertWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt andWithButtonTitles:(NSArray<NSString *>*)buttonTitles andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent{
     if(buttonTitles==nil&&buttonTitles.count==0){
         buttonTitles=@[@"确定"];
     }
 
 
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:title message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
 
     for(int i=0;i<buttonTitles.count;i++){
@@ -489,21 +422,21 @@ static HGBAlertTool *instance=nil;
         }];
         [alert addAction:action];
     }
-    [HGBAlertTool setAlertControllerSettings:alert];
+    [self setAlertControllerSettings:alert];
     [parent presentViewController:alert animated:YES completion:nil];
 #else
-    [HGBAlertTool shareInstance];
-    instance.clickBlock =clickBlock;
+
+    self.clickBlock =clickBlock;
     NSMutableArray *btnTitles=[NSMutableArray array];
     if(buttonTitles.count>1){
         btnTitles=[NSMutableArray arrayWithArray:buttonTitles];
         [btnTitles removeObjectAtIndex:0];
     }
-    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:title message:prompt delegate:instance cancelButtonTitle:buttonTitles[0] otherButtonTitles:nil];
+    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:title message:prompt delegate:self cancelButtonTitle:buttonTitles[0] otherButtonTitles:nil];
     [btnTitles enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [alertview addButtonWithTitle:obj];
     }];
-    [HGBAlertTool setAlertViewSettings:alertview];
+    [self setAlertViewSettings:alertview];
     [alertview show];
 
 #endif
@@ -517,13 +450,13 @@ static HGBAlertTool *instance=nil;
  *  @param clickBlock 点击事件
  *  @param parent 父控件
  */
-+(void)sheetWithButtonTitles:(NSArray<NSString *>*)buttonTitles andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent{
+-(void)sheetWithButtonTitles:(NSArray<NSString *>*)buttonTitles andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent{
     if(buttonTitles==nil&&buttonTitles.count==0){
         buttonTitles=@[@"取消"];
     }
 
 
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:(UIAlertControllerStyleActionSheet)];
 
     for(int i=0;i<buttonTitles.count;i++){
@@ -533,22 +466,21 @@ static HGBAlertTool *instance=nil;
         }];
         [alert addAction:action];
     }
-    [HGBAlertTool setAlertControllerSettings:alert];
+    [self setAlertControllerSettings:alert];
     [parent presentViewController:alert animated:YES completion:nil];
 #else
-    [HGBAlertTool shareInstance];
-    instance.clickBlock =clickBlock;
+    self.clickBlock =clickBlock;
     NSMutableArray *btnTitles=[NSMutableArray array];
     if(buttonTitles.count>1){
         btnTitles=[NSMutableArray arrayWithArray:buttonTitles];
         [btnTitles removeObjectAtIndex:0];
     }
 
-    UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:nil delegate:instance cancelButtonTitle:buttonTitles[0] destructiveButtonTitle:nil otherButtonTitles:nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:buttonTitles[0] destructiveButtonTitle:nil otherButtonTitles:nil];
     [btnTitles enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [actionSheet addButtonWithTitle:obj];
     }];
-    [HGBAlertTool setActionSheetSettings:actionSheet];
+    [self setActionSheetSettings:actionSheet];
     [actionSheet showInView:parent.view];
 
 #endif
@@ -563,13 +495,13 @@ static HGBAlertTool *instance=nil;
  *  @param clickBlock 点击事件
  *  @param parent 父控件
  */
-+(void)sheetWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt andWithButtonTitles:(NSArray<NSString *>*)buttonTitles andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent{
+-(void)sheetWithTitle:(NSString *)title andWithPrompt:(NSString *)prompt andWithButtonTitles:(NSArray<NSString *>*)buttonTitles andWithClickBlock:(HGBAlertClickBlock)clickBlock InParent:(UIViewController *)parent{
     if(buttonTitles==nil&&buttonTitles.count==0){
         buttonTitles=@[@"取消"];
     }
 
 
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:title message:prompt preferredStyle:(UIAlertControllerStyleActionSheet)];
 
     for(int i=0;i<buttonTitles.count;i++){
@@ -579,38 +511,38 @@ static HGBAlertTool *instance=nil;
         }];
         [alert addAction:action];
     }
-    [HGBAlertTool setAlertControllerSettings:alert];
+    [self setAlertControllerSettings:alert];
     [parent presentViewController:alert animated:YES completion:nil];
 #else
-    [HGBAlertTool shareInstance];
-    instance.clickBlock =clickBlock;
+
+    self.clickBlock =clickBlock;
     NSMutableArray *btnTitles=[NSMutableArray array];
     if(buttonTitles.count>1){
         btnTitles=[NSMutableArray arrayWithArray:buttonTitles];
         [btnTitles removeObjectAtIndex:0];
     }
-    UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:title delegate:instance cancelButtonTitle:buttonTitles[0] destructiveButtonTitle:nil otherButtonTitles:nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:title delegate:self cancelButtonTitle:buttonTitles[0] destructiveButtonTitle:nil otherButtonTitles:nil];
     [btnTitles enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [actionSheet addButtonWithTitle:obj];
     }];
-    [HGBAlertTool setActionSheetSettings:actionSheet];
+    [self setActionSheetSettings:actionSheet];
     [actionSheet showInView:parent.view];
 
 #endif
 }
 #pragma mark delegate
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
 
 #else
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
 
-    if(instance.clickBlock){
-        instance.clickBlock(buttonIndex);
+    if(self.clickBlock){
+        self.clickBlock(buttonIndex);
     }
 }
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(instance.clickBlock){
-        instance.clickBlock(buttonIndex);
+    if(self.clickBlock){
+        self.clickBlock(buttonIndex);
     }
 }
 #endif

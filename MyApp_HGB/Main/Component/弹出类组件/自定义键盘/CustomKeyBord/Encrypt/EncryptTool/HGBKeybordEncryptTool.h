@@ -7,6 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 /**
  加密工具
  */
@@ -49,14 +55,6 @@
  */
 +(NSString *)decryptStringWithAES256:(NSString *)string
                           andWithKey:(NSString *)key;
-#pragma mark 哈希字符串拼接
-/**
- 哈希字符串拼接
-
- @param dic 字典
- @return hash字符串
- */
-+(NSString *)transDicToHashString:(NSDictionary *)dic andWithSalt:(NSString *)salt;
 
 #pragma mark SM4国密算法-ECB
 /**

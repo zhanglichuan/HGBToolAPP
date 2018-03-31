@@ -19,30 +19,6 @@
 
 
 
-#ifndef SYSTEM_VERSION
-#define SYSTEM_VERSION [[[UIDevice currentDevice] systemVersion] floatValue]//系统版本号
-
-#endif
-
-#ifndef KiOS6Later
-#define KiOS6Later (SYSTEM_VERSION >= 6)
-#endif
-
-#ifndef KiOS7Later
-#define KiOS7Later (SYSTEM_VERSION >= 7)
-#endif
-
-#ifndef KiOS8Later
-#define KiOS8Later (SYSTEM_VERSION >= 8)
-#endif
-
-#ifndef KiOS9Later
-#define KiOS9Later (SYSTEM_VERSION >= 9)
-#endif
-
-#ifndef KiOS10Later
-#define KiOS10Later (SYSTEM_VERSION >= 10)
-#endif
 
 
 
@@ -187,7 +163,7 @@
  @param prompt 提示
  */
 -(void)alertWithPrompt:(NSString *)prompt{
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:nil message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action=[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
     }];

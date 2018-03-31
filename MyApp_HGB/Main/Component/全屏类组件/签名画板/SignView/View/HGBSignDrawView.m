@@ -8,6 +8,23 @@
 
 #import "HGBSignDrawView.h"
 
+#import <AVFoundation/AVFoundation.h>
+#import <AssetsLibrary/AssetsLibrary.h>
+#import <Photos/Photos.h>
+#import <CoreLocation/CoreLocation.h>
+
+
+
+
+#define ReslutCode @"resultCode"
+#define ReslutMessage @"resultMessage"
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
 
 @interface HGBSignDrawView ()
 /**
@@ -136,7 +153,12 @@
 
  @param imageBlock 保存成功回调
  */
-- (void)savePhotoToAlbumWithImageBlock:(ImageBlock)imageBlock{
+- (void)savePhotoToAlbumWithImageBlock:(HGBSignDrawImageBlock)imageBlock{
+    if(![self isCanSavePhotos]){
+        HGBLog(@"相册权限不足");
+        imageBlock(NO,nil,@{ReslutCode:@(HGBSignDrawErrorTypeDevice).stringValue,ReslutMessage:@"相册权限不足"});
+        return ;
+    }
     if(self.paths.count!=0){
         // 截屏
         UIGraphicsBeginImageContext(self.bounds.size);
@@ -152,15 +174,56 @@
         // 截图保存相册
         UIImageWriteToSavedPhotosAlbum(newImage, nil, nil, nil);
 
+        if(![self isCanSavePhotos]){
+            HGBLog(@"相册权限不足");
+            imageBlock(NO,nil,@{ReslutCode:@(HGBSignDrawErrorTypeDevice).stringValue,ReslutMessage:@"相册权限不足"});
+            return ;
+        }
+
+
         if (imageBlock) {
-            imageBlock(newImage);
+            imageBlock(YES,newImage,nil);
         }
     }else{
         if (imageBlock) {
-            imageBlock(nil);
+            imageBlock(YES,nil,@{ReslutCode:@(HGBSignDrawErrorTypeParams).stringValue,ReslutMessage:@"签名为空"});
         }
     }
 }
+#pragma mark 权限判断
+/**
+ 相册权限判断
+
+ @return 是否有权限
+ */
+- (BOOL)isCanSavePhotos {
+
+    [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+         HGBLog(@"%ld",status);
+    }];
+
+
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum])
+    {
+        return NO;
+    }
+#ifdef __IPHONE_8_0
+    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+    if (status == PHAuthorizationStatusRestricted ||
+        status == PHAuthorizationStatusDenied) {
+        //无权限
+        return NO;
+    }
+#else
+    ALAuthorizationStatus author =[ALAssetsLibrary authorizationStatus];
+    if (author == kCLAuthorizationStatusRestricted || author == kCLAuthorizationStatusDenied) {
+        //无权限
+        return NO;
+    }
+#endif
+    return YES;
+}
+
 #pragma mark set
 -(void)setLineColor:(UIColor *)lineColor{
     _lineColor=lineColor;

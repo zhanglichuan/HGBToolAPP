@@ -11,6 +11,13 @@
 #import <CommonCrypto/CommonCryptor.h>
 #import <Security/Security.h>
 
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 
 static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 
@@ -21,10 +28,21 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
  *  keychain存
  *
  *  @param key   要存的对象的key值
- *  @param string 要保存的value值
+ *  @param value 要保存的value值
  *  @return 保存结果
  */
-+ (BOOL)saveKeyChainForKeyWithKey:(NSString *)key value:(NSString *)string{
++ (BOOL)saveKeyChainValue:(id)value withKey:(NSString *)key{
+    NSString *string;
+    if((!value)||(!key)||key.length==0){
+        HGBLog(@"参数不能为空");
+        return NO;
+    }
+    if(!([value isKindOfClass:[NSString class]]||[value isKindOfClass:[NSNumber class]]||[value isKindOfClass:[NSArray class]]||[value isKindOfClass:[NSDictionary class]])){
+        HGBLog(@"参数格式不对");
+        return NO;
+    }else{
+        string=[HGBKeychainTool objectEncapsulation:value];
+    }
     NSString *bundleid=[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
     BOOL flag =[HGBKeychainTool storeUsername:key andPassword:string forServiceName:[NSString stringWithFormat:@"%@-llf",bundleid] updateExisting:1 error:nil];
     return flag;
@@ -37,10 +55,18 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
  *  @return 获取的对象
  */
 
-+ (NSString *)getKeychainStringWithKey:(NSString *)key{
++ (id)getKeychainWithKey:(NSString *)key{
+    if(key==nil||key.length==0){
+        HGBLog(@"key不能为空");
+        return nil;
+    }
     NSString *bundleid=[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
 
-    return [HGBKeychainTool getPasswordForUsername:key andServiceName: [NSString stringWithFormat:@"%@-llf",bundleid] error:nil];
+    NSString *string=[HGBKeychainTool getPasswordForUsername:key andServiceName: [NSString stringWithFormat:@"%@-llf",bundleid] error:nil];
+
+    id value=[HGBKeychainTool stringAnalysis:string];
+    return value;
+    
 }
 /**
  *  keychain删除
@@ -48,9 +74,188 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
  *  @param key   要存的对象的key值
  *  @return 保存结果
  */
-+ (BOOL)deleteKeyChainForKeyWithKey:(NSString *)key{
++ (BOOL)deleteKeyChainWithKey:(NSString *)key{
+    if(key==nil||key.length==0){
+        HGBLog(@"key不能为空");
+        return NO;
+    }
     NSString *bundleid=[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
     return [HGBKeychainTool deleteItemForUsername:key andServiceName: [NSString stringWithFormat:@"%@-llf",bundleid] error:nil];
+}
+#pragma mark object-string
+/**
+ object编码
+
+ @param object 对象
+ @return 编码字符串
+ */
++(NSString *)objectEncapsulation:(id)object{
+    NSString *string;
+    if([object isKindOfClass:[NSString class]]){
+        string=object;
+    }else if([object isKindOfClass:[NSArray class]]){
+        object=[HGBKeychainTool ObjectToJSONString:object];
+        string=[@"array://" stringByAppendingString:object];
+    }else if([object isKindOfClass:[NSDictionary class]]){
+        object=[HGBKeychainTool ObjectToJSONString:object];
+        string=[@"dictionary://" stringByAppendingString:object];
+    }else if([object isKindOfClass:[NSNumber class]]){
+        string=[NSString stringWithFormat:@"number://%@",object];
+    }else{
+        string=object;
+    }
+    return string;
+}
+/**
+ 字符串解码
+
+ @param string 字符串
+ @return 对象
+ */
++(id)stringAnalysis:(NSString *)string{
+    id object;
+    if([string hasPrefix:@"array://"]){
+        string=[string stringByReplacingOccurrencesOfString:@"array://" withString:@""];
+        object=[HGBKeychainTool JSONStringToObject:string];
+    }else if ([string hasPrefix:@"dictionary://"]){
+        string=[string stringByReplacingOccurrencesOfString:@"dictionary://" withString:@""];
+        object=[HGBKeychainTool JSONStringToObject:string];
+    }else if ([string hasPrefix:@"number://"]){
+        string=[string stringByReplacingOccurrencesOfString:@"number://" withString:@""];
+        object=[[NSNumber alloc]initWithFloat:string.floatValue];
+    }else{
+        object=string;
+    }
+    return object;
+
+}
+#pragma mark json
+/**
+ 把Json对象转化成json字符串
+
+ @param object json对象
+ @return json字符串
+ */
++ (NSString *)ObjectToJSONString:(id)object
+{
+    if(!([object isKindOfClass:[NSDictionary class]]||[object isKindOfClass:[NSArray class]]||[object isKindOfClass:[NSString class]])){
+        return nil;
+    }
+    if([object isKindOfClass:[NSString class]]){
+        return object;
+    }
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:object options:0 error:nil];
+    NSString * myString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    return myString;
+}
+/**
+ 把Json字符串转化成json对象
+
+ @param jsonString json字符串
+ @return json字符串
+ */
++ (id)JSONStringToObject:(NSString *)jsonString{
+    if(![jsonString isKindOfClass:[NSString class]]){
+        return nil;
+    }
+    jsonString=[HGBKeychainTool jsonStringHandle:jsonString];
+    NSError *error = nil;
+    NSData  *data=[jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    if(jsonString.length>0&&[[jsonString substringToIndex:1] isEqualToString:@"{"]){
+        NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+        if(error){
+            HGBLog(@"%@",error);
+            return jsonString;
+        }else{
+            return dic;
+        }
+    }else if(jsonString.length>0&&[[jsonString substringToIndex:1] isEqualToString:@"["]){
+        NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+        if(error){
+            HGBLog(@"%@",error);
+            return jsonString;
+        }else{
+            return array;
+        }
+    }else{
+        return jsonString;
+    }
+
+
+}
+/**
+ json字符串处理
+
+ @param jsonString 字符串处理
+ @return 处理后字符串
+ */
++(NSString *)jsonStringHandle:(NSString *)jsonString{
+    NSString *string=jsonString;
+    //大括号
+
+    //中括号
+    while ([string containsString:@"【"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"【" withString:@"]"];
+    }
+    while ([string containsString:@"】"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"】" withString:@"]"];
+    }
+
+    //小括弧
+    while ([string containsString:@"（"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"（" withString:@"("];
+    }
+
+    while ([string containsString:@"）"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"）" withString:@")"];
+    }
+
+
+    while ([string containsString:@"("]) {
+        string=[string stringByReplacingOccurrencesOfString:@"(" withString:@"["];
+    }
+
+    while ([string containsString:@")"]) {
+        string=[string stringByReplacingOccurrencesOfString:@")" withString:@"]"];
+    }
+
+
+    //逗号
+    while ([string containsString:@"，"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"，" withString:@","];
+    }
+    while ([string containsString:@";"]) {
+        string=[string stringByReplacingOccurrencesOfString:@";" withString:@","];
+    }
+    while ([string containsString:@"；"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"；" withString:@","];
+    }
+    //引号
+    while ([string containsString:@"“"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"“" withString:@"\""];
+    }
+    while ([string containsString:@"”"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"”" withString:@"\""];
+    }
+    while ([string containsString:@"‘"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"‘" withString:@"\""];
+    }
+    while ([string containsString:@"'"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+    }
+    //冒号
+    while ([string containsString:@"："]) {
+        string=[string stringByReplacingOccurrencesOfString:@"：" withString:@":"];
+    }
+    //等号
+    while ([string containsString:@"="]) {
+        string=[string stringByReplacingOccurrencesOfString:@"=" withString:@":"];
+    }
+    while ([string containsString:@"="]) {
+        string=[string stringByReplacingOccurrencesOfString:@"=" withString:@":"];
+    }
+    return string;
+
 }
 #pragma mark 存储于钥匙串
 

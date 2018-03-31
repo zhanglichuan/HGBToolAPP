@@ -9,6 +9,14 @@
 
 #import "HGBFileManageTool.h"
 #import "HGBFileManageController.h"
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 @interface HGBFileManageTool()
 /**
  不可删除文件
@@ -60,22 +68,14 @@ static HGBFileManageTool *instance=nil;
  */
 +(NSArray<HGBFileModel *> *)getFileModelsFromDirectoryPath:(NSString *)directoryPath{
     [HGBFileManageTool shareInstance];
-    if(directoryPath==nil||directoryPath.length==0){
-        directoryPath=[HGBFileManageTool getHomeFilePath];
+    NSString *dirPath=directoryPath;
+    dirPath=[HGBFileManageTool urlAnalysisToPath:dirPath];
+    if(dirPath==nil||dirPath.length==0){
+        dirPath=[HGBFileManageTool getHomeFilePath];
     }
-    NSString *directoryPathCopy=[directoryPath copy];
+    NSString *directoryPathCopy=[dirPath copy];
     if(![HGBFileManageTool isExitAtFilePath:directoryPathCopy]){
-        directoryPathCopy=[[HGBFileManageTool getHomeFilePath] stringByAppendingPathComponent:directoryPath];
-        if(![HGBFileManageTool isExitAtFilePath:directoryPath]){
-            directoryPathCopy=[[HGBFileManageTool getDocumentFilePath] stringByAppendingPathComponent:directoryPath];
-            if(![HGBFileManageTool isExitAtFilePath:directoryPath]){
-                return nil;
-            }else{
-                directoryPath=directoryPathCopy;
-            }
-        }else{
-            directoryPath=directoryPathCopy;
-        }
+        return nil;
     }
     if(![HGBFileManageTool isDirectoryAtPath:directoryPath]){
         return nil;
@@ -103,7 +103,7 @@ static HGBFileManageTool *instance=nil;
         fileModel.fileName=[filePath lastPathComponent];
 
         if([path containsString:[HGBFileManageTool getHomeFilePath]]){
-             fileModel.filePath=[path stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",[HGBFileManageTool getHomeFilePath]] withString:@""];
+             fileModel.filePath=[HGBFileManageTool urlEncapsulation:path];
             fileModel.fileType=HGBFilePathTypeSandBox;
         }else if ([path containsString:[HGBFileManageTool getMainBundlePath]]){
             fileModel.filePath=[path stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",[HGBFileManageTool getMainBundlePath]] withString:@""];
@@ -111,11 +111,12 @@ static HGBFileManageTool *instance=nil;
         }else{
             fileModel.fileType=HGBFilePathTypeOther;
         }
-       fileModel.fileIcon=[HGBFileManageTool getFileIconWithFilPath:path];
+        fileModel.fileIcon=[HGBFileManageTool getFileIconWithFilPath:path];
         fileModel.fileSize=[HGBFileManageTool getFileSizeWithFilPath:path];
         fileModel.fileAbout=[HGBFileManageTool getFileInfoWithFilePath:path];
         fileModel.fileType=[HGBFileManageTool getFileTypeWithFilePath:path];
-       if([path containsString:[HGBFileManageTool getPreferenceFilePath]]){
+        fileModel.isSelect=NO;
+       if([path containsString:[HGBFileManageTool getPreferenceFilePath]]||[path containsString:[HGBFileManageTool getMainBundlePath]]){
             fileModel.isEdit=NO;
        }else{
            fileModel.isEdit=YES;
@@ -137,6 +138,161 @@ static HGBFileManageTool *instance=nil;
         [instance.unDeleteableFiles addObjectsFromArray:filePaths];
     }
 
+}
+
+#pragma mark url
+/**
+ 判断路径是否是URL
+
+ @param url url路径
+ @return 结果
+ */
++(BOOL)isURL:(NSString*)url{
+    if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"/User"]||[url hasPrefix:@"/var"]||[url hasPrefix:@"http://"]||[url hasPrefix:@"https://"]||[url hasPrefix:@"file://"]){
+        return YES;
+    }else{
+        return NO;
+    }
+}
+/**
+ url校验存在
+
+ @param url url
+ @return 是否存在
+ */
++(BOOL)urlExistCheck:(NSString *)url{
+    if(url==nil||url.length==0){
+        return NO;
+    }
+    if(![HGBFileManageTool isURL:url]){
+        return nil;
+    }
+    if(![url containsString:@"://"]){
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    if([url hasPrefix:@"file://"]){
+        NSString *filePath=[[NSURL URLWithString:url]path];
+        if(filePath==nil||filePath.length==0){
+            return NO;
+        }
+        NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
+        return [filemanage fileExistsAtPath:filePath];
+    }else{
+        NSURL *urlCheck=[NSURL URLWithString:url];
+
+        return [[UIApplication sharedApplication]canOpenURL:urlCheck];
+
+    }
+}
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysisToPath:(NSString *)url{
+    if(url==nil){
+        return nil;
+    }
+    if(![HGBFileManageTool isURL:url]){
+        return nil;
+    }
+    NSString *urlstr=[HGBFileManageTool urlAnalysis:url];
+    return [[NSURL URLWithString:urlstr]path];
+}
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysis:(NSString *)url{
+    if(url==nil){
+        return nil;
+    }
+    if(![HGBFileManageTool isURL:url]){
+        return nil;
+    }
+    if([url containsString:@"://"]){
+        //project://工程包内
+        //home://沙盒路径
+        //http:// https://网络路径
+        //document://沙盒Documents文件夹
+        //caches://沙盒Caches
+        //tmp://沙盒Tmp文件夹
+        if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]){
+            if([url hasPrefix:@"project://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"project://" withString:@""];
+                NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+                url=[projectPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"home://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"home://" withString:@""];
+                NSString *homePath=NSHomeDirectory();
+                url=[homePath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"document://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"document://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"defaults://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"defaults://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"caches://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"caches://" withString:@""];
+                NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+                url=[cachesPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"tmp://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"tmp://" withString:@""];
+                NSString *tmpPath =NSTemporaryDirectory();
+                url=[tmpPath stringByAppendingPathComponent:url];
+            }
+            url=[[NSURL fileURLWithPath:url]absoluteString];
+
+        }else{
+
+        }
+    }else {
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    return url;
+}
+/**
+ url封装
+
+ @return 封装后url
+ */
++(NSString *)urlEncapsulation:(NSString *)url{
+    if(![HGBFileManageTool isURL:url]){
+        return nil;
+    }
+    NSString *homePath=NSHomeDirectory();
+    NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+    NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+    NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+    NSString *tmpPath =NSTemporaryDirectory();
+
+    if([url hasPrefix:@"file://"]){
+        url=[url stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+    }
+    if([url hasPrefix:projectPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",projectPath] withString:@"project://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",projectPath] withString:@"project://"];
+    }else if([url hasPrefix:documentPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",documentPath] withString:@"defaults://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",documentPath] withString:@"defaults://"];
+    }else if([url hasPrefix:cachesPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",cachesPath] withString:@"caches://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",cachesPath] withString:@"caches://"];
+    }else if([url hasPrefix:tmpPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",tmpPath] withString:@"tmp://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",tmpPath] withString:@"tmp://"];
+    }else if([url hasPrefix:homePath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",homePath] withString:@"home://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",homePath] withString:@"home://"];
+    }else if([url containsString:@"://"]){
+
+    }else{
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    return url;
 }
 #pragma mark 获取文件信息
 /**

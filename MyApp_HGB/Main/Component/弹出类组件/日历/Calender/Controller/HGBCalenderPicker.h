@@ -32,6 +32,12 @@
  */
 -(void)calender:(HGBCalenderPicker *)calender didFinishWithYear:(NSInteger )year andWithMonth:(NSInteger )month andWithDay:(NSInteger )day andWithWeek:(NSInteger )week;
 /**
+ 返回结果
+
+ @param dateString 日期字符串
+ */
+-(void)calender:(HGBCalenderPicker *)calender  didFinishWithFormatDateString:(NSString *)dateString;
+/**
  取消扫描
  */
 -(void)calenderDidCanceled:(HGBCalenderPicker *)calender;
@@ -76,7 +82,10 @@
  */
 @property(strong,nonatomic)NSString *selectedDateString;
 
-
+/**
+ 返回日期格式
+ */
+@property(strong,nonatomic)NSString *backDateFormat;
 #pragma mark 方法
 /**
  创建

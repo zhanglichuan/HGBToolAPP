@@ -9,7 +9,15 @@
 #import "HGBFileManageController.h"
 
 #import "HGBFileManageHeader.h"
+
+
+
 #import "HGBFileTableCell.h"
+#import "HGBFileFullCollectionCell.h"
+#import "HGBFileSpaceCollectionCell.h"
+
+
+
 
 
 #import "HGBFileManageTool.h"
@@ -20,57 +28,54 @@
 
 
 
-#ifndef SYSTEM_VERSION
-#define SYSTEM_VERSION [[[UIDevice currentDevice] systemVersion] floatValue]//系统版本号
 
-#endif
 
-#ifndef KiOS6Later
-#define KiOS6Later (SYSTEM_VERSION >= 6)
-#endif
 
-#ifndef KiOS7Later
-#define KiOS7Later (SYSTEM_VERSION >= 7)
-#endif
-
-#ifndef KiOS8Later
-#define KiOS8Later (SYSTEM_VERSION >= 8)
-#endif
-
-#ifndef KiOS9Later
-#define KiOS9Later (SYSTEM_VERSION >= 9)
-#endif
-
-#ifndef KiOS10Later
-#define KiOS10Later (SYSTEM_VERSION >= 10)
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
 #endif
 
 
 
 
 
-/**
- 文件类型
- */
-typedef enum HGBFileToolType
-{
-    HGBFileToolTypeFile,//文件
-    HGBFileToolTypeNothing//空白
 
-}HGBFileToolType;
+
+
+
+
+
 
 #define identify_FileTableCell @"FileTableCellIdentify"
 
-@interface HGBFileManageController ()<UITableViewDelegate,UITableViewDataSource,HGBFileBaseTableCellDelegate>
+
+#define identify_FullCollectionCell @"FullCollectionCell"
+#define identify_SpaceCollectionCell @"SpaceCollectionCell"
+
+
+
+#define identify_footer @"CollectionReusableViewFooter"
+#define identify_header @"CollectionReusableViewHeader"
+
+
+
+@interface HGBFileManageController ()<UITableViewDelegate,UITableViewDataSource,HGBFileTableCellDelegate,UICollectionViewDelegate,UICollectionViewDataSource,HGBFileFullCollectionCellDelegate,HGBFileSpaceCollectionCellDelegate,UICollectionViewDelegateFlowLayout>//
+
 /**
  顶部view
  */
 @property(strong,nonatomic)UIView *headView;
+/**
+ 顶部view
+ */
+@property(strong,nonatomic)UIView *footerView;
 
 /**
  下一级
  */
-@property(strong,nonatomic)UIButton *nextButton;
+@property(strong,nonatomic)UIButton *swithButton;
 
 /**
  刷新
@@ -83,10 +88,27 @@ typedef enum HGBFileToolType
 @property(strong,nonatomic)UIButton *beforeButton;
 
 
+
+
+
+
 /**
  列表
  */
 @property(strong,nonatomic)UITableView *tableView;
+/**
+ 表格
+ */
+@property(strong,nonatomic)UICollectionView *collectionView;
+/**
+ 选择切换界面样式
+ */
+@property(assign,nonatomic)HGBFileManageStyle switchStyle;
+
+
+
+
+
 
 /**
  数据源
@@ -97,16 +119,9 @@ typedef enum HGBFileToolType
  工具集合
  */
 @property(strong,nonatomic)NSMutableArray *toolsArr;
-/**
- 工具类型
- */
-@property(assign,nonatomic)HGBFileToolType toolType;
 
 
-/**
- 选中文件路径
- */
-@property(strong,nonatomic)NSIndexPath *selectIndexPath;
+
 /**
  文件路径
  */
@@ -119,10 +134,6 @@ typedef enum HGBFileToolType
  源文件路径
  */
 @property(strong,nonatomic)NSString *sourceDataPath;
-/**
- 下一步历史记录
- */
-@property(strong,nonatomic)NSMutableArray *nextHistoryPaths;
 /**
  基础
  */
@@ -159,15 +170,24 @@ typedef enum HGBFileToolType
     titleLab.textAlignment=NSTextAlignmentCenter;
     titleLab.textColor=[UIColor whiteColor];
     self.navigationItem.titleView=titleLab;
-
     //左键
     self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc]initWithTitle:@"返回" style:UIBarButtonItemStylePlain target:self action:@selector(returnhandler)];
     [self.navigationItem.leftBarButtonItem setImageInsets:UIEdgeInsetsMake(0, -10, 0, 10)];
     [self.navigationItem.leftBarButtonItem setTintColor:[UIColor whiteColor]];
-    //右键
-    self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"HGBFileManageToolBundle.bundle/add.png"] imageWithRenderingMode:(UIImageRenderingModeAlwaysOriginal)]  style:UIBarButtonItemStylePlain target:self action:@selector(setButtonHandle:)];
-    [self.navigationItem.rightBarButtonItem setImageInsets:UIEdgeInsetsMake(0, -15, 0, 5)];
-    [self.navigationItem.rightBarButtonItem setTintColor:[UIColor whiteColor]];
+
+//    if(self.isShowSelect){
+//        //左键
+//        self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc]initWithTitle:@"取消选择" style:UIBarButtonItemStylePlain target:self action:@selector(setButtonHandle:)];
+//        [self.navigationItem.rightBarButtonItem setImageInsets:UIEdgeInsetsMake(0, -10, 0, 10)];
+//        [self.navigationItem.rightBarButtonItem setTintColor:[UIColor whiteColor]];
+//    }else{
+//        self.navigationItem.rightBarButtonItem=nil;
+//
+//    }
+
+
+
+
 
 }
 //返回
@@ -188,8 +208,19 @@ typedef enum HGBFileToolType
     }
 }
 -(void)setButtonHandle:(UIBarButtonItem *)_b{
-    [self alertToolSelectViewWithFlag:NO];
+    for (HGBFileModel *model in  self.dataSource) {
+        model.isSelect=NO;
+    }
+    [self createNavigationItem];
+    if([self.collectionView superview]){
+        [self.collectionView reloadData];
+    }
+    if([self.tableView superview]){
+        [self.tableView reloadData];
+    }
+
 }
+
 #pragma mark data
 /**
  设置基础数据源
@@ -197,7 +228,6 @@ typedef enum HGBFileToolType
 -(void)setBasedDirectorySource{
     self.baseCopyPath=[self.basePath copy];
     [self updateDataSourceWithDirectoryPath:self.basePath];
-    [self addObserver:self forKeyPath:self.currentDirectoryPath options:(NSKeyValueObservingOptionNew) context:nil];
 
 }
 /**
@@ -207,46 +237,23 @@ typedef enum HGBFileToolType
  */
 -(void)updateDataSourceWithDirectoryPath:(NSString *)directoryPath{
 
-
-    NSString *directoryChangePath=[directoryPath copy];
-    if(directoryChangePath==nil||directoryChangePath.length==0){
-        directoryChangePath=[HGBFileManageTool getDocumentFilePath];
-    }else{
-        if((![directoryPath containsString:[HGBFileManageTool getHomeFilePath]])&&(![directoryPath containsString:[HGBFileManageTool getMainBundlePath]])){
-            directoryChangePath=[[HGBFileManageTool getHomeFilePath] stringByAppendingPathComponent:directoryPath];
-        }else{
-            directoryChangePath=directoryPath;
-        }
-
-
-    }
-    directoryPath=directoryChangePath;
-
-
-    self.dataSource=[NSMutableArray arrayWithArray:[HGBFileManageTool getFileModelsFromDirectoryPath:directoryPath]];
-    self.currentDirectoryPath=directoryPath;
-
-
-    if([self.currentDirectoryPath isEqualToString:self.basePath]){
+    NSString *path=[HGBFileManageTool urlAnalysisToPath:directoryPath];
+    self.dataSource=[NSMutableArray arrayWithArray:[HGBFileManageTool getFileModelsFromDirectoryPath:path]];
+    self.currentDirectoryPath=path;
+    if([self.currentDirectoryPath isEqualToString:[HGBFileManageTool urlAnalysisToPath:self.basePath]]){
         [self.beforeButton setTitleColor:[UIColor grayColor] forState:(UIControlStateNormal)];
         self.beforeButton.enabled=NO;
     }else{
         [self.beforeButton setTitleColor:[UIColor redColor] forState:(UIControlStateNormal)];
         self.beforeButton.enabled=YES;
     }
-    [self.tableView reloadData];
-
-}
--(void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context{
-    static NSString *pastPath=@"";
-    if(self.currentDirectoryPath.length>pastPath.length){
-        self.nextHistoryPaths=[NSMutableArray array];
-    }else if(self.currentDirectoryPath.length<pastPath.length){
-        if(pastPath&&pastPath.length!=0){
-            [self.nextHistoryPaths insertObject:pastPath atIndex:0];
-        }
+    if([self.tableView superview]){
+         [self.tableView reloadData];
     }
-    pastPath=self.currentDirectoryPath;
+    if([self.collectionView superview]){
+        [self.collectionView reloadData];
+    }
+
 }
 #pragma mark 初始化
 -(void)initSet{
@@ -258,7 +265,7 @@ typedef enum HGBFileToolType
 }
 #pragma mark view
 -(void)viewSetUp{
-
+    self.view.backgroundColor=[UIColor whiteColor];
     //headerview
     self.headView=[[UIView alloc]initWithFrame:CGRectMake(0, 64, kWidth, 42)];
     self.headView.backgroundColor=[UIColor colorWithRed:246.0/256 green:246.0/256 blue:246.0/256 alpha:1];
@@ -273,6 +280,13 @@ typedef enum HGBFileToolType
     [self.beforeButton setTitleColor:[UIColor redColor] forState:(UIControlStateNormal)];
     self.beforeButton.backgroundColor=[UIColor whiteColor];
     [self.beforeButton addTarget:self action:@selector(beforeButtonHandle:) forControlEvents:(UIControlEventTouchUpInside)];
+    if([self.currentDirectoryPath isEqualToString:[HGBFileManageTool urlAnalysisToPath:self.basePath]]){
+        [self.beforeButton setTitleColor:[UIColor grayColor] forState:(UIControlStateNormal)];
+        self.beforeButton.enabled=NO;
+    }else{
+        [self.beforeButton setTitleColor:[UIColor redColor] forState:(UIControlStateNormal)];
+        self.beforeButton.enabled=YES;
+    }
     [self.headView addSubview:self.beforeButton];
 
 
@@ -288,38 +302,93 @@ typedef enum HGBFileToolType
 
 
 
-    self.nextButton=[UIButton buttonWithType:(UIButtonTypeSystem)];
-    self.nextButton.frame=CGRectMake(30+(kWidth-30)*2/3,6,(kWidth-30)/3, 30);
-    self.nextButton.layer.masksToBounds=YES;
-    self.nextButton.layer.cornerRadius=10;
-    [self.nextButton setTitle:@"bundle" forState:(UIControlStateNormal)];
-    [self.nextButton setTitleColor:[UIColor redColor] forState:(UIControlStateNormal)];
-    self.nextButton.backgroundColor=[UIColor whiteColor];
-    [self.nextButton addTarget:self action:@selector(nextButtonHandle:) forControlEvents:(UIControlEventTouchUpInside)];
-    if(self.withoutFileSwitch==NO){
-         [self.headView addSubview:self.nextButton];
+    self.swithButton=[UIButton buttonWithType:(UIButtonTypeSystem)];
+    self.swithButton.frame=CGRectMake(30+(kWidth-30)*2/3,6,(kWidth-30)/3, 30);
+    self.swithButton.layer.masksToBounds=YES;
+    self.swithButton.layer.cornerRadius=10;
+    if(_style==HGBFileManageStyleSwitch){
+        [self.headView addSubview:self.swithButton];
     }
+     [self.swithButton setTitle:@"间隙表格" forState:(UIControlStateNormal)];
+    [self.swithButton setTitleColor:[UIColor redColor] forState:(UIControlStateNormal)];
+    self.swithButton.backgroundColor=[UIColor whiteColor];
+    [self.swithButton addTarget:self action:@selector(swithButtonHandle:) forControlEvents:(UIControlEventTouchUpInside)];
+    [self createTable];
+
+}
+-(void)createTable{
+    if(self.switchStyle==HGBFileManageStyleTable){
+        if([self.collectionView superview]){
+            [self.collectionView removeFromSuperview];
+        }
+        if([self.tableView superview]){
+            return;
+        }
+        //tableview
+        self.tableView=[[UITableView alloc]initWithFrame:CGRectMake(0,106, kWidth, kHeight-106) style:(UITableViewStylePlain)];
+
+        self.tableView.alpha=1;
+        self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
+        self.tableView.separatorColor=[UIColor clearColor];
+        self.tableView.backgroundColor=[UIColor whiteColor];
+        self.tableView.delegate=self;
+        self.tableView.dataSource=self;
+        [self.view addSubview:self.tableView];
+
+        [self.tableView registerClass:[HGBFileTableCell class] forCellReuseIdentifier:identify_FileTableCell];
+
+        UILongPressGestureRecognizer *longPress=[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressHandler:)];
+        //要求点击保持最短时间
+        longPress.minimumPressDuration=1;
+        [self.tableView addGestureRecognizer:longPress];
+
+    }else if (self.switchStyle==HGBFileManageStyleSpaceCollection||self.switchStyle==HGBFileManageStyleFullCollection){
+
+        if([self.tableView superview]){
+            [self.tableView removeFromSuperview];
+        }
+
+        CGFloat itemHeight=self.view.frame.size.width*0.25;
+        CGFloat itemWidth=self.view.frame.size.width*0.25;
+        if(self.switchStyle==HGBFileManageStyleSpaceCollection){
+            itemHeight=self.view.frame.size.width*0.3;
+            itemWidth=self.view.frame.size.width*0.25;
+        }else if (self.switchStyle==HGBFileManageStyleFullCollection){
+            itemHeight=self.view.frame.size.width*0.25;
+            itemWidth=self.view.frame.size.width*0.25;
+        }
+
+        //创建流式布局
+        UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc]init];
+
+        //指定每一个cell的大小
+        flowLayout.itemSize=CGSizeMake(itemWidth, itemHeight);
+
+        flowLayout.minimumInteritemSpacing=0;
+        flowLayout.minimumLineSpacing=1;
+        //设置滑动方向
+        //         flowLayout.scrollDirection=UICollectionViewScrollDirectionHorizontal;
+        //指定边距
+        flowLayout.sectionInset=UIEdgeInsetsMake(0, 0,0, 0);
+        //创建集合视图
 
 
 
-    //tableview
-    self.tableView=[[UITableView alloc]initWithFrame:CGRectMake(0,106, kWidth, kHeight-106) style:(UITableViewStylePlain)];
+        self.collectionView=[[UICollectionView alloc]initWithFrame:CGRectMake(0,106, kWidth, kHeight-106) collectionViewLayout:flowLayout];
 
-    self.tableView.alpha=1;
-    self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
-    self.tableView.separatorColor=[UIColor clearColor];
-    self.tableView.backgroundColor=[UIColor whiteColor];
-    self.tableView.delegate=self;
-    self.tableView.dataSource=self;
-    [self.view addSubview:self.tableView];
+        self.collectionView.backgroundColor=[UIColor whiteColor];
 
-    [self.tableView registerClass:[HGBFileTableCell class] forCellReuseIdentifier:identify_FileTableCell];
+        self.collectionView.delegate=self;
+        self.collectionView.dataSource=self;
 
-    UILongPressGestureRecognizer *longPress=[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressHandler:)];
-    //要求点击保持最短时间
-    longPress.minimumPressDuration=1;
-    [self.tableView addGestureRecognizer:longPress];
-
+        //    self.collectionView.
+        [self.view addSubview:self.collectionView];
+        [self.collectionView registerClass:[HGBFileFullCollectionCell class] forCellWithReuseIdentifier:identify_FullCollectionCell];
+        [self.collectionView registerClass:[HGBFileSpaceCollectionCell class] forCellWithReuseIdentifier:identify_SpaceCollectionCell];
+        [self.collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:identify_header];
+        [self.collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:identify_footer];
+        //        self.collectionView.allowsMultipleSelection=YES;
+    }
 }
 #pragma mark action
 /**
@@ -328,7 +397,7 @@ typedef enum HGBFileToolType
  @param _p 长按
  */
 -(void)longPressHandler:(UILongPressGestureRecognizer *)_p{
-    [self alertToolSelectViewWithFlag:NO];
+    [self alertToolSelectViewWithIndexPath:nil];
 }
 /**
  上一级
@@ -337,10 +406,9 @@ typedef enum HGBFileToolType
  */
 -(void)beforeButtonHandle:(UIButton *)_b{
     NSString *path=[self.currentDirectoryPath stringByDeletingLastPathComponent];
-    if([self.currentDirectoryPath isEqualToString:self.basePath]){
+    if([self.currentDirectoryPath isEqualToString:[HGBFileManageTool urlAnalysisToPath:self.basePath]]){
         path=self.currentDirectoryPath;
     }
-    [self.nextHistoryPaths insertObject:self.currentDirectoryPath atIndex:0];
     [self updateDataSourceWithDirectoryPath:path];
 }
 /**
@@ -348,24 +416,19 @@ typedef enum HGBFileToolType
 
  @param _b 按钮
  */
--(void)nextButtonHandle:(UIButton *)_b{
+-(void)swithButtonHandle:(UIButton *)_b{
 
-    if([_b.titleLabel.text isEqualToString:@"bundle"]){
-         [self.nextButton setTitle:@"沙盒" forState:(UIControlStateNormal)];
-         NSString *path=[HGBFileManageTool getMainBundlePath];
-        self.basePath=path;
-
-        [self updateDataSourceWithDirectoryPath:path];
-    }else if([_b.titleLabel.text isEqualToString:@"沙盒"]){
-        [self.nextButton setTitle:@"base" forState:(UIControlStateNormal)];
-         NSString *path=[HGBFileManageTool getHomeFilePath];
-        self.basePath=path;
-        [self updateDataSourceWithDirectoryPath:path];
-    }else{
-        self.basePath=[self.baseCopyPath copy];
-        [self.nextButton setTitle:@"bundle" forState:(UIControlStateNormal)];
-        [self updateDataSourceWithDirectoryPath:self.basePath];
+    if([_b.titleLabel.text isEqualToString:@"列表"]){
+         [self.swithButton setTitle:@"间隙表格" forState:(UIControlStateNormal)];
+        self.switchStyle=_switchStyle=HGBFileManageStyleTable;;
+    }else if([_b.titleLabel.text isEqualToString:@"间隙表格"]){
+        [self.swithButton setTitle:@"饱满表格" forState:(UIControlStateNormal)];
+        self.switchStyle=HGBFileManageStyleSpaceCollection;
+    }else if([_b.titleLabel.text isEqualToString:@"饱满表格"]){
+       self.switchStyle=HGBFileManageStyleFullCollection;
+        [self.swithButton setTitle:@"列表" forState:(UIControlStateNormal)];
     }
+    [self createTable];
 }
 /**
  刷新
@@ -375,6 +438,7 @@ typedef enum HGBFileToolType
 -(void)refreshButtonHandle:(UIButton *)_b{
     [self updateDataSourceWithDirectoryPath:self.currentDirectoryPath];
 }
+
 #pragma mark tableview
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -389,7 +453,7 @@ typedef enum HGBFileToolType
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
      HGBFileTableCell *cell=[tableView dequeueReusableCellWithIdentifier:identify_FileTableCell forIndexPath:indexPath];
-    cell.backGroundDelegate=self;
+    cell.delegate=self;
     cell.indexPath=indexPath;
      HGBFileModel *fileModel=self.dataSource[indexPath.row];
     UIImage *iconImage=[UIImage imageNamed:fileModel.fileIcon];
@@ -400,6 +464,7 @@ typedef enum HGBFileToolType
     }
     
     cell.imageView.backgroundColor=[UIColor redColor];
+
     if(fileModel.fileType==HGBFileTypeDirectory){
         cell.tapImageView.hidden=NO;
     }else{
@@ -418,75 +483,154 @@ typedef enum HGBFileToolType
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self openFileAtIndex:indexPath.row];
+    [self clickFileAtIndexPath:indexPath];
+
 
 }
+-(void)fileTableCell:(HGBFileTableCell *)cell didClickImageWithIndexPath:(NSIndexPath *)indexPath{
+    [self clickFileAtIndexPath:indexPath];
+}
+-(void)fileTableCell:(HGBFileTableCell *)cell didLongPressImageWithIndexPath:(NSIndexPath *)indexPath{
+
+    [self alertToolSelectViewWithIndexPath:indexPath];
+}
+#pragma mark collectiondelegate
+-(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+    return 1;
+}
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+     return self.dataSource.count;
+}
+
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
+
+     HGBFileModel *fileModel=self.dataSource[indexPath.row];
+    if(self.switchStyle==HGBFileManageStyleSpaceCollection){
+        HGBFileSpaceCollectionCell *cell=[collectionView dequeueReusableCellWithReuseIdentifier:identify_SpaceCollectionCell forIndexPath:indexPath];
+        cell.delegate=self;
+
+        cell.indexPath=indexPath;
+
+        if(fileModel.fileType==HGBFileTypeImage){
+            cell.imageView.image=[UIImage imageWithContentsOfFile:[HGBFileManageTool urlAnalysisToPath:fileModel.filePath]];
+        }else{
+            UIImage *iconImage=[UIImage imageNamed:fileModel.fileIcon];
+            if(iconImage){
+                cell.imageView.image=iconImage;
+            }else{
+                cell.imageView.image=[UIImage imageNamed:@"HGBFileManageToolBundle.bundle/undefine.png"];
+            }
+
+        }
+
+        if(fileModel.fileName){
+            cell.titleLabel.text=fileModel.fileName;
+        }
+
+        return cell;
+    }else if (self.switchStyle==HGBFileManageStyleFullCollection){
+        HGBFileFullCollectionCell *cell=[collectionView dequeueReusableCellWithReuseIdentifier:identify_FullCollectionCell forIndexPath:indexPath];
+
+
+        cell.delegate=self;
+        cell.indexPath=indexPath;
+
+
+        if(fileModel.fileType==HGBFileTypeImage){
+            cell.imageView.image=[UIImage imageWithContentsOfFile:[HGBFileManageTool urlAnalysisToPath:fileModel.filePath]];
+        }else{
+            UIImage *iconImage=[UIImage imageNamed:fileModel.fileIcon];
+            if(iconImage){
+                cell.imageView.image=iconImage;
+            }else{
+                cell.imageView.image=[UIImage imageNamed:@"HGBFileManageToolBundle.bundle/undefine.png"];
+            }
+
+        }
+
+        if(fileModel.fileName){
+            cell.titleLabel.text=fileModel.fileName;
+        }
+        return cell;
+    }
+    return nil;
+}
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    [collectionView deselectItemAtIndexPath:indexPath animated:YES];
+    [self clickFileAtIndexPath:indexPath];
+}
+-(void)fileSpaceCollectionCell:(HGBFileSpaceCollectionCell *)cell didClickImageWithIndexPath:(NSIndexPath *)indexPath{
+     [self clickFileAtIndexPath:indexPath];
+
+}
+-(void)fileSpaceCollectionCell:(HGBFileSpaceCollectionCell *)cell didLongPressImageWithIndexPath:(NSIndexPath *)indexPath{
+     [self alertToolSelectViewWithIndexPath:indexPath];
+}
+-(void)fileFullCollectionCell:(HGBFileFullCollectionCell *)cell didClickImageWithIndexPath:(NSIndexPath *)indexPath{
+  [self clickFileAtIndexPath:indexPath];
+
+}
+-(void)fileFullCollectionCell:(HGBFileFullCollectionCell *)cell didLongPressImageWithIndexPath:(NSIndexPath *)indexPath{
+   [self alertToolSelectViewWithIndexPath:indexPath];
+
+}
+#pragma mark 功能
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
 
 }
--(void)fileBaseTableCellBackGroundButtonActionWithIndexPath:(NSIndexPath *)indexPath{
-    self.selectIndexPath=indexPath;
-    [self alertToolSelectViewWithFlag:YES];
+
+/**
+ 点击事件
+
+ @param indexPath 地址
+ */
+-(void)clickFileAtIndexPath:(NSIndexPath *)indexPath{
+     HGBFileModel *fileModel=self.dataSource[indexPath.row];
+    if(self.clickStyle==HGBFileManageClickStyleOpen||fileModel.fileType==HGBFileTypeDirectory||fileModel.fileType==HGBFileTypeBundle){
+        [self openFileAtIndexPath:indexPath];
+    }else if (self.clickStyle==HGBFileManageClickStyleSelect){
+
+        NSString *path=[HGBFileManageTool urlAnalysisToPath:fileModel.filePath];
+        if(self.delegate&&[self.delegate respondsToSelector:@selector(fileManageDidReturnFilePath:)]){
+            [self.delegate fileManageDidReturnFilePath:path];
+        }
+        if(self.delegate&&[self.delegate respondsToSelector:@selector(fileManageDidReturnFileUrl:)]){
+            [self.delegate fileManageDidReturnFileUrl:[HGBFileManageTool urlEncapsulation:path]];
+        }
+        [self returnhandler];
+    }
 }
 /**
  打开文件
 
- @param index 文件位置
+ @param indexPath 文件位置
  */
--(void)openFileAtIndex:(NSInteger)index{
-    if(index>=self.dataSource.count){
+-(void)openFileAtIndexPath:(NSIndexPath *)indexPath{
+    if(indexPath.row>=self.dataSource.count){
         return;
     }
-    HGBFileModel *fileModel=self.dataSource[index];
+    HGBFileModel *fileModel=self.dataSource[indexPath.row];
 
-    NSString *path;
-    if(fileModel.filePathType==HGBFilePathTypeSandBox){
-        path=[[HGBFileManageTool getHomeFilePath]stringByAppendingPathComponent:fileModel.filePath];
-    }else if (fileModel.filePathType==HGBFilePathTypeBundle){
-        path=[[HGBFileManageTool getMainBundlePath]stringByAppendingPathComponent:fileModel.filePath];
-    }else{
-        path=fileModel.filePath;
-    }
+    NSString *path=[HGBFileManageTool urlAnalysisToPath:fileModel.filePath];
     if(fileModel.fileType==HGBFileTypeDirectory||fileModel.fileType==HGBFileTypeBundle){
-        if([self.basePath containsString:[HGBFileManageTool getHomeFilePath]]){
-            [self updateDataSourceWithDirectoryPath:fileModel.filePath];
-        }else{
-            [self updateDataSourceWithDirectoryPath:[[HGBFileManageTool getMainBundlePath] stringByAppendingPathComponent:fileModel.filePath]];
-        }
+        [self updateDataSourceWithDirectoryPath:path];
 
     }else if(fileModel.fileType==HGBFileTypeImage){
-        if([self.basePath containsString:[HGBFileManageTool getHomeFilePath]]){
-             [HGBImageLookTool lookFileAtPath:path inParent:self];
-        }else{
-            [HGBImageLookTool lookFileAtPath:[[HGBFileManageTool getMainBundlePath] stringByAppendingPathComponent:fileModel.filePath] inParent:self];
-        }
+        [[HGBImageLookTool shareInstance] lookFileAtSource:path inParent:self];
 
     }else{
 
-        if([self.basePath containsString:[HGBFileManageTool getHomeFilePath]]){
-            [HGBFileQuickLookTool lookFileAtPath:path inParent:self];
-        }else{
-            [HGBFileQuickLookTool lookFileAtPath:[[HGBFileManageTool getMainBundlePath] stringByAppendingPathComponent:fileModel.filePath] inParent:self];
-        }
+       [[HGBFileQuickLookTool shareInstance] lookFileAtSource:path inParent:self];
     }
 }
 #pragma mark 工具栏
--(void)alertToolSelectViewWithFlag:(BOOL)flag{
+-(void)alertToolSelectViewWithIndexPath:(NSIndexPath *)indexPath{
     static BOOL isShow=NO;
     HGBFileModel *fileModel;
-    if(self.selectIndexPath.row<self.dataSource.count){
-        fileModel=self.dataSource[self.selectIndexPath.row];
-    }
     NSString *path;
-    if(fileModel.filePathType==HGBFilePathTypeSandBox){
-        path=[[HGBFileManageTool getHomeFilePath]stringByAppendingPathComponent:fileModel.filePath];
-    }else if (fileModel.filePathType==HGBFilePathTypeBundle){
-        path=[[HGBFileManageTool getMainBundlePath]stringByAppendingPathComponent:fileModel.filePath];
-    }else{
-        path=fileModel.filePath;
-    }
-    if(flag){
-        self.toolType=HGBFileToolTypeFile;
+    if(indexPath){
+         fileModel=self.dataSource[indexPath.row];
+          path=[HGBFileManageTool urlAnalysisToPath:fileModel.filePath];
         if(fileModel.fileType==HGBFileTypeDirectory||fileModel.fileType==HGBFileTypeBundle){
              self.toolsArr=[NSMutableArray arrayWithArray:@[@{@"id":@"0",@"title":@"打开"},@{@"id":@"98",@"title":@"选择"}]];
 
@@ -507,7 +651,6 @@ typedef enum HGBFileToolType
          [self.toolsArr addObject:@{@"id":@"99",@"title":@"取消"}];
 
     }else{
-        self.toolType=HGBFileToolTypeNothing;
         self.toolsArr=[NSMutableArray array];
          self.toolsArr=[NSMutableArray arrayWithArray:@[@{@"id":@"1",@"title":@"新建文件夹"},@{@"id":@"2",@"title":@"新建文件"}]];
         if(self.dataPastBordPath){
@@ -521,7 +664,7 @@ typedef enum HGBFileToolType
         UIAlertAction *action=[UIAlertAction actionWithTitle:dic[@"title"] style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
             NSString *idString=dic[@"id"];
             if (idString.integerValue==0) {
-                [self openFileAtIndex:self.selectIndexPath.row];
+                [self openFileAtIndexPath:indexPath];
             }else if(idString.integerValue==1){
                 __block UITextField *inputText;
                 UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"创建文件夹" message:@"请输入文件夹名称" preferredStyle:UIAlertControllerStyleAlert];
@@ -579,12 +722,10 @@ typedef enum HGBFileToolType
                 [self presentViewController:alertController animated:YES completion:nil];
 
             }else if(idString.integerValue==3){
-                [HGBFileWebLook lookFileAtPath:path inParent:self];
+                [[HGBFileWebLook shareInstance] lookFileAtSource:path inParent:self];
 
             }else if(idString.integerValue==4){
-                 [HGBFileOutAppOpenFileTool openFileWithExetenAppWithPath:path inParent:self andWithCompleteBlock:^(NSInteger status) {
-
-                 }];
+                 [[HGBFileOutAppOpenFileTool shareInstance] lookFileAtSource:path inParent:self];
             }else if(idString.integerValue==5){
                 __block UITextField *inputText;
                 UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"文件重命名" message:@"请输入文件新名称" preferredStyle:UIAlertControllerStyleAlert];
@@ -648,8 +789,11 @@ typedef enum HGBFileToolType
                 [self updateDataSourceWithDirectoryPath:self.currentDirectoryPath];
 
             }else if(idString.integerValue==98){
-                if(self.delegate&&[self.delegate respondsToSelector:@selector(fileManageDidReturnFilePath:andWithFileType:)]){
-                    [self.delegate fileManageDidReturnFilePath:fileModel.filePath andWithFileType:fileModel.filePathType];
+                if(self.delegate&&[self.delegate respondsToSelector:@selector(fileManageDidReturnFilePath:)]){
+                    [self.delegate fileManageDidReturnFilePath:path];
+                }
+                if(self.delegate&&[self.delegate respondsToSelector:@selector(fileManageDidReturnFileUrl:)]){
+                    [self.delegate fileManageDidReturnFileUrl:[HGBFileManageTool urlEncapsulation:path]];
                 }
                 [self dismissViewControllerAnimated:YES completion:nil];
             }
@@ -671,7 +815,7 @@ typedef enum HGBFileToolType
  @param prompt 提示
  */
 -(void)alertWithPrompt:(NSString *)prompt{
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:nil message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action=[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
     }];
@@ -734,6 +878,21 @@ typedef enum HGBFileToolType
         return vc;
     }
 }
+#pragma mark set
+-(void)setStyle:(HGBFileManageStyle)style{
+    _style=style;
+    if(_style==HGBFileManageStyleSwitch){
+        _switchStyle=HGBFileManageStyleTable;
+        if(![self.swithButton superview]){
+            [self.headView addSubview:self.swithButton];
+        }
+    }else{
+        _switchStyle=_style;
+        if([self.swithButton superview]){
+            [self.swithButton removeFromSuperview];
+        }
+    }
+}
 #pragma mark get
 -(NSString *)basePath{
     if(_basePath==nil){
@@ -746,11 +905,5 @@ typedef enum HGBFileToolType
         _toolsArr=[NSMutableArray array];
     }
     return _toolsArr;
-}
--(NSMutableArray *)nextHistoryPaths{
-    if(_nextHistoryPaths==nil){
-        _nextHistoryPaths=[NSMutableArray array];
-    }
-    return _nextHistoryPaths;
 }
 @end

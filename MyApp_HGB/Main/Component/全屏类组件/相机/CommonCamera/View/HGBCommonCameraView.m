@@ -64,7 +64,7 @@
 }
 #pragma mark view
 -(void)viewSetUp{
-    self.backgroundColor=[UIColor whiteColor];
+    self.backgroundColor=[UIColor clearColor];
     [self setBeforeView];
 }
 -(void)cleanView{
@@ -267,7 +267,7 @@
    __block  CGFloat width=self.editImageView.frame.size.width*scale0;
    __block CGFloat height=self.editImageView.frame.size.height*scale0;
     
-    NSLog(@"%f",scale0);
+
     self.preX=self.preX-self.editImageView.frame.size.width*(scale0-1)*0.5;
     self.preY=self.preY-self.editImageView.frame.size.height*(scale0-1)*0.5;
     
@@ -331,7 +331,7 @@
 }
 #pragma mark buttonhandle
 -(void)camerabuttonHandle:(UIButton*)_b{
-    NSLog(@"clicked");
+  
     if(self.delegate&&[self.delegate respondsToSelector:@selector(commonCameraViewButtonDidClickWithIndex:)]){
         [self.delegate commonCameraViewButtonDidClickWithIndex:_b.tag];
     }

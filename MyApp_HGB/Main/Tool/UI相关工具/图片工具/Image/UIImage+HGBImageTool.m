@@ -9,6 +9,7 @@
 #import "UIImage+HGBImageTool.h"
 
 @implementation UIImage (HGBImageTool)
+
 #pragma mark  剪切图片
 /**
  *   剪切图片
@@ -160,6 +161,101 @@
     UIGraphicsEndImageContext();
     return roundImage;
 }
+#pragma mark  获取色彩处理图片
+/**
+ *   获取色彩处理图片
+ *
+ *  @param type    0 黑白图片
+ *
+ *  return             色彩处理后图片
+ */
++ (UIImage *)getColorProcessingImageWithType:(HGBImageColorProcessingImageType )type{
+    UIImage *image=[self copy];
+    CGImageRef imageRef = image.CGImage;
+    size_t width  = CGImageGetWidth(imageRef);
+    size_t height = CGImageGetHeight(imageRef);
+
+    size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+    size_t bitsPerPixel = CGImageGetBitsPerPixel(imageRef);
+
+    size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
+
+    CGColorSpaceRef colorSpace = CGImageGetColorSpace(imageRef);
+
+    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+
+
+    bool shouldInterpolate = CGImageGetShouldInterpolate(imageRef);
+
+    CGColorRenderingIntent intent = CGImageGetRenderingIntent(imageRef);
+
+    CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
+
+    CFDataRef data = CGDataProviderCopyData(dataProvider);
+
+    UInt8 *buffer = (UInt8*)CFDataGetBytePtr(data);
+
+    NSUInteger  x, y;
+    for (y = 0; y < height; y++) {
+        for (x = 0; x < width; x++) {
+            UInt8 *tmp;
+            tmp = buffer + y * bytesPerRow + x * 4;
+
+            UInt8 red,green,blue;
+            red = *(tmp + 0);
+            green = *(tmp + 1);
+            blue = *(tmp + 2);
+
+            UInt8 brightness;
+            switch (type) {
+                case HGBImageColorProcessingImageTypeWhiteAndBlack:
+                    brightness = (77 * red + 28 * green + 151 * blue) / 256;
+                    *(tmp + 0) = brightness;
+                    *(tmp + 1) = brightness;
+                    *(tmp + 2) = brightness;
+                    break;
+                case HGBImageColorProcessingImageTypeDusk:
+                    *(tmp + 0) = red;
+                    *(tmp + 1) = green * 0.7;
+                    *(tmp + 2) = blue * 0.4;
+                    break;
+                case HGBImageColorProcessingImageTypeSnow:
+                    *(tmp + 0) = 255 - red;
+                    *(tmp + 1) = 255 - green;
+                    *(tmp + 2) = 255 - blue;
+                    break;
+                default:
+                    *(tmp + 0) = red;
+                    *(tmp + 1) = green;
+                    *(tmp + 2) = blue;
+                    break;
+            }
+        }
+    }
+
+
+    CFDataRef effectedData = CFDataCreate(NULL, buffer, CFDataGetLength(data));
+
+    CGDataProviderRef effectedDataProvider = CGDataProviderCreateWithCFData(effectedData);
+
+    CGImageRef effectedCgImage = CGImageCreate(
+                                               width, height,
+                                               bitsPerComponent, bitsPerPixel, bytesPerRow,
+                                               colorSpace, bitmapInfo, effectedDataProvider,
+                                               NULL, shouldInterpolate, intent);
+
+    UIImage *effectedImage = [[UIImage alloc] initWithCGImage:effectedCgImage];
+
+    CGImageRelease(effectedCgImage);
+
+    CFRelease(effectedDataProvider);
+
+    CFRelease(effectedData);
+
+    CFRelease(data);
+
+    return effectedImage;
+}
 #pragma mark  图片方向大小-根据屏幕方向
 /**
  *   图片方向大小-根据屏幕方向
@@ -188,6 +284,39 @@
         image = [UIImage imageWithCGImage:imRef scale:imageScale orientation: UIImageOrientationUp];
     }
     return image;
+}
+#pragma mark 图片组合
+/**
+ 图片组合
+ @param images 图片集合
+ @param imageRects 图片对应位置
+ @return 组合后图片
+ */
+-(UIImage *)imageDrawdWithImages:(NSArray<UIImage *>*)images andWithImageRects:(NSArray<NSString *>*)imageRects{
+    UIImage *baseImage=[self copy];
+    // 开启绘图, 获取图片 上下文<图片大小>
+    UIGraphicsBeginImageContext(baseImage.size);
+    //将基础图片画上去
+    [baseImage drawInRect:CGRectMake(0, 0, baseImage.size.width, baseImage.size.height)];
+
+    // 将小图片画上去
+
+    for(int i=0;i<images.count;i++){
+        UIImage *image=images[i];
+        if(i>=imageRects.count){
+            break;
+        }else{
+            NSString *rectString=imageRects[i];
+            CGRect rect=CGRectFromString(rectString);
+            [image drawInRect:rect];
+        }
+    }
+
+    // 获取最终的图片
+    UIImage *finalImage = UIGraphicsGetImageFromCurrentImageContext();
+    // 关闭上下文
+    UIGraphicsEndImageContext();
+    return finalImage;
 }
 #pragma mark 图片方向处理
 /**

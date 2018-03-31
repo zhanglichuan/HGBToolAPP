@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
 @interface HGBBottomPopTool : NSObject
 #pragma mark 获取字符串宽高
 /**

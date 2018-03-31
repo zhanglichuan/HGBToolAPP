@@ -8,6 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+//快捷url提示
+/**
+ project://工程包内
+ home://沙盒路径
+ http:// https://网络路径
+ document://  或defaults://沙盒Documents文件夹
+ caches://沙盒Caches
+ tmp://沙盒Tmp文件夹
+
+ */
+
 @interface HGBFileTool : NSObject
 
 #pragma mark 文件归档和反归档-普通
@@ -16,125 +32,153 @@
  归档-普通
  
  @param object 要归档的数据
- @param filePath 归档的路径
+ @param destination 归档的路径或url
  @return 保存结果
  */
-+ (BOOL)archiverWithObject:(id)object filePath:(NSString *)filePath;
++ (BOOL)archiverWithObject:(id)object toDestination:(NSString *)destination;
 /**
  反归档-普通
  
- @param filePath 要解归档的路径
+ @param source 要解归档的路径或url
  @return 保存结果
  */
-+ (id)unarcheiverWithfilePath:(NSString *)filePath;
++ (id)unarcheiverWithFileSource:(NSString *)source;
 #pragma mark 文件归档和反归档-加密
 /**
  归档-加密
  
  @param object 要归档的数据
- @param filePath 归档路径
+ @param destination 归档路径或url
+ @param key 密钥
  @return 保存结果
  */
-+ (BOOL)archiverEncryptWithObject:(id)object filePath:(NSString *)filePath;
++ (BOOL)archiverEncryptWithObject:(id)object toDestination:(NSString *)destination andWithKey:(NSString *)key;
 /**
  反归档-加密
  
- @param filePath 要解归档路径
+ @param source 要解归档路径或url
+ @param key 密钥
  @return 解归档后对象
  */
-+ (id)unarcheiverWithEncryptFilePath:(NSString *)filePath;
++ (id)unarcheiverWithEncryptFileSource:(NSString *)source andWithKey:(NSString *)key;
 
 #pragma mark 文档通用
 /**
  文件拷贝
  
- @param srcPath 文件路径
- @param filePath 复制文件路径
+ @param source 文件路径或url
+ @param destination 复制文件路径或url
  @return 结果
  */
-+(BOOL)copyFilePath:(NSString *)srcPath ToPath:(NSString *)filePath;
++(BOOL)copyFileSource:(NSString *)source toDestination:(NSString *)destination;
 
 /**
  文件剪切
  
- @param srcPath 文件路径
- @param filePath 复制文件路径
+ @param source 文件路径或url
+ @param destination 复制文件路径或url
  @return 结果
  */
-+(BOOL)moveFilePath:(NSString *)srcPath ToPath:(NSString *)filePath;
++(BOOL)moveFileSource:(NSString *)source toDestination:(NSString *)destination;
 
 /**
  删除文档
  
- @param filePath 归档的路径
+ @param source 归档的路径或url
  @return 结果
  */
-+ (BOOL)removeFilePath:(NSString *)filePath;
++ (BOOL)removeFileSource:(NSString *)source;
 /**
  文档是否存在
  
- @param filePath 归档的路径
+ @param source 归档的路径或url
  @return 结果
  */
-+(BOOL)isExitAtFilePath:(NSString *)filePath;
++(BOOL)isExitAtFileSource:(NSString *)source;
 
 #pragma mark 文件夹
 /**
  路径是不是文件夹
 
- @param path 路径
+ @param source 路径或url
  @return 结果
 */
-+(BOOL)isDirectoryAtPath:(NSString *)path;
++(BOOL)isDirectoryAtSource:(NSString *)source;
 /**
  创建文件夹
  
- @param directoryPath 路径
+ @param source 路径或url
  @return 结果
  */
-+(BOOL)createDirectoryPath:(NSString *)directoryPath;
++(BOOL)createDirectorySource:(NSString *)source;
 
 /**
  获取文件夹直接子路径
  
- @param directoryPath 文件夹路径
+ @param source 文件夹路径或url
  @return 结果
  */
-+(NSArray *)getDirectSubPathsInDirectoryPath:(NSString *)directoryPath;
++(NSArray *)getDirectSubPathsInDirectorySource:(NSString *)source;
 /**
- 获取文件夹所有子路径
+ 获取文件夹所有子路径或url
  
- @param directoryPath 文件夹路径
+ @param source 文件夹路径
  @return 结果
  */
-+(NSArray *)getAllSubPathsInDirectoryPath:(NSString *)directoryPath;
++(NSArray *)getAllSubPathsInDirectorySource:(NSString *)source;
 #pragma mark 文件信息
 /**
  获取文件信息
 
- @param filePath 文件路径
+ @param source 文件路径或url
  @return 文件信息
  */
-+(NSDictionary *)getFileInfoFromFilePath:(NSString *)filePath;
++(NSDictionary *)getFileInfoFromFileSource:(NSString *)source;
 /**
  文档是否可读
 
- @param filePath 文件路径
+ @param source 文件路径或url
  @return 结果
  */
-+(BOOL)isReadableFileAtFilePath:(NSString *)filePath;
++(BOOL)isReadableFileAtFileSource:(NSString *)source;
 /**
  文档是否可写
 
- @param filePath 文件路径
+ @param source 文件路径或url
  @return 结果
  */
-+(BOOL)isWriteableFileAtFilePath:(NSString *)filePath;
++(BOOL)isWriteableFileAtFileSource:(NSString *)source;
 /**
  文档是否可删
 
- @param filePath 文件路径
+ @param source 文件路径或url
  @return 结果
  */
-+(BOOL)isDeleteableFileAtFilePath:(NSString *)filePath;
++(BOOL)isDeleteableFileAtFileSource:(NSString *)source;
+#pragma mark url
+/**
+ url校验存在
+
+ @param url url
+ @return 是否存在
+ */
++(BOOL)urlExistCheck:(NSString *)url;
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysisToPath:(NSString *)url;
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysis:(NSString *)url;
+/**
+ url封装
+
+ @return 封装后url
+ */
++(NSString *)urlEncapsulation:(NSString *)url;
 @end

@@ -9,6 +9,14 @@
 #import "AppDelegate+HGBSEDataBase.h"
 #import <objc/runtime.h>
 #import "HGBSEDataBaseTool.h"
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 @implementation AppDelegate (HGBSEDataBase)
 #pragma mark init
 /**
@@ -26,7 +34,7 @@
     [HGBSEDataBaseTool shareInstance];
 }
 -(void)application_SEDataBase_willTerminateHandle:(NSNotification *)notification{
-    [HGBSEDataBaseTool closeDataBase];
+    [[HGBSEDataBaseTool shareInstance] closeDataBase];
 }
 
 @end

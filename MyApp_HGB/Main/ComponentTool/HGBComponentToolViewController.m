@@ -12,8 +12,15 @@
 #define Identify_Cell @"cell"
 
 
-#import "HGBComponentToolController.h"
-#import "HGBControllerViewController.h"
+#import "HGBCopyViewViewController.h"
+#import "HGBApplicationBageViewController.h"
+#import "HGBStatusBarViewController.h"
+#import "HGBJumpViewController.h"
+#import "HGBCurrentViewController.h"
+#import "HGBBageTabBarController.h"
+#import "HGBNavTestViewController.h"
+#import "HGBTurnScreenViewController.h"
+
 
 #import "HCollectionViewController.h"
 #import "HTableViewController.h"
@@ -21,6 +28,9 @@
 #import "HTabBarViewController.h"
 #import "HGBNavigationController.h"
 #import "HLayoutCollectionViewController.h"
+
+
+
 
 @interface HGBComponentToolViewController ()
 /**
@@ -72,7 +82,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDic=@{@"组件工具:":@[@"控制器工具",@"组件工具"],@"基类:":@[@"Nav-C-V",@"tabBar",@"table",@"collection",@"瀑布流"]};
+    self.dataDic=@{@"组件工具:":@[@"组件复制",@"应用角标工具",@"TabBar角标工具",@"状态栏工具",@"导航栏工具",@"控制器跳转工具",@"当前控制器工具",@"转屏工具"],@"基类:":@[@"Nav-C-V",@"tabBar",@"table",@"collection",@"瀑布流"]};
     self.keys=@[@"组件工具:",@"基类:"];
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
     [self.tableView reloadData];
@@ -125,18 +135,23 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     if(indexPath.section==0){
         if(indexPath.row==0){
-            [self presentController:[[HGBControllerViewController alloc]init]];
+            [self presentController:[[HGBCopyViewViewController alloc]init]];
         }else if (indexPath.row==1){
-            [self presentController:[[HGBComponentToolController alloc]init]];
+            [self presentController:[[HGBApplicationBageViewController alloc]init]];
         }else if (indexPath.row==2){
-
+             [self presentController:[[HGBBageTabBarController alloc]init]];
         }else if (indexPath.row==3){
-
+             [self presentController:[[HGBStatusBarViewController alloc]init]];
         }else if (indexPath.row==4){
-
+             [self presentController:[[HGBNavTestViewController alloc]init]];
         }else if (indexPath.row==5){
-
+             [self presentController:[[HGBJumpViewController alloc]init]];
+        }else if (indexPath.row==6){
+            [self presentController:[[HGBCurrentViewController alloc]init]];
+        }else if (indexPath.row==7){
+            [self presentController:[[HGBTurnScreenViewController alloc]init]];
         }
+       
     }else if(indexPath.section==1){
         if(indexPath.row==0){
             HViewController  *controller=[[HViewController alloc]init];

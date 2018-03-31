@@ -13,6 +13,7 @@
 @property(nonatomic,assign)NSInteger index;
 @property(nonatomic,assign)NSInteger count;
 @property(nonatomic,strong)NSMutableArray *texts;
+@property(nonatomic,strong)NSMutableArray *inputs;
 @end
 @implementation HGBCustomKeyBordSquareTextView
 
@@ -24,6 +25,7 @@
         _length=length;
         _count=0;
         self.texts=[NSMutableArray array];
+        self.inputs=[NSMutableArray array];
         for (int i=0; i<length; i++) {
             HGBCustomKeyBordSquareTextField *text=[[HGBCustomKeyBordSquareTextField alloc] initWithFrame:CGRectMake(i*width-2*i, 0, width, width)];
             if (i==0) {
@@ -38,7 +40,7 @@
             text.layer.borderWidth=2;
             text.layer.borderColor=[[UIColor lightGrayColor] CGColor];
             text.borderStyle=UITextBorderStyleRoundedRect;
-            text.secureTextEntry=YES;
+//            text.secureTextEntry=YES;
             text.keyboardType=UIKeyboardTypeNumberPad;
             text.font=[UIFont systemFontOfSize:30];
             [text addTarget:self action:@selector(textValueChanged:) forControlEvents:UIControlEventEditingChanged];
@@ -72,6 +74,9 @@
     if (textField.text.length > 1) {
         textField.text = [NSString stringWithFormat:@"%@",[textField.text substringToIndex:1]];
 
+    }else{
+        [self.inputs addObject:[textField.text substringToIndex:1]];
+        textField.text =@"•";
     }
     
     if (textField.tag<_length) {
@@ -109,6 +114,7 @@
             HGBCustomKeyBordSquareTextField *text= [self.texts objectAtIndex:_index];
             [text becomeFirstResponder];
             _count=[self getTextLength];
+
         }else
         {
             _index--;
@@ -116,6 +122,9 @@
             HGBCustomKeyBordSquareTextField *text= [self.texts objectAtIndex:_index];
             text.text=@"";
             [text becomeFirstResponder];
+        }
+        if(self.inputs.count>0){
+            [self.inputs removeLastObject];
         }
     }
 }
@@ -137,8 +146,8 @@
 -(NSString *)getTextString
 {
     NSString *textResult=@"";
-    for (UITextField *text in self.texts) {
-        textResult = [NSString stringWithFormat:@"%@%@",textResult,text.text];
+    for (NSString *text in self.inputs) {
+        textResult = [NSString stringWithFormat:@"%@%@",textResult,text];
     }
     return textResult;
 }

@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 @interface HGBWeexPluginLoader : NSObject
 + (NSArray *)getPlugins;
 @end

@@ -38,8 +38,13 @@ WX_EXPORT_METHOD(@selector(getCallPhone:::))
     phoneNumber = arguments[@"phone"];
     if(phoneNumber!=nil&&phoneNumber.length!=0){
         NSURL *url=[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@",phoneNumber]];
-        [[UIApplication sharedApplication] openURL:url];
-        sucessCallback(@"sucess");
+        if([[UIApplication sharedApplication] canOpenURL:url]){
+            [[UIApplication sharedApplication] openURL:url];
+            sucessCallback(@"sucess");
+        }else{
+             failCallback(@"error");
+        }
+
     }else{
         failCallback(@"error");
     }

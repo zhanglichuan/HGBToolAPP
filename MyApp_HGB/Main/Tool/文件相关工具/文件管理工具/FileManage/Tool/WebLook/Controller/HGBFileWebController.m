@@ -11,6 +11,15 @@
 #import "HGBFileWebViewProgress.h"
 #import "HGBFileOutAppOpenFileTool.h"
 
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
+
 @interface HGBFileWebController ()<UIWebViewDelegate>
 
 /**
@@ -222,9 +231,8 @@
 }
 #pragma mark 其他方式打开
 -(void)openWithOtherType{
-    NSLog(@"11");
-    [HGBFileOutAppOpenFileTool openFileWithExetenAppWithUrl:self.urlString inParent:self andWithCompleteBlock:^(NSInteger status) {
-    }];
+
+    [[HGBFileOutAppOpenFileTool shareInstance] lookFileAtSource:self.urlString inParent:self];
 }
 #pragma mark 按钮颜色变化
 -(void)buttonBlurredHandle:(UIButton *)_b{
@@ -236,50 +244,31 @@
 #pragma mark url
 
 /**
- 加载url
+ 加载html
 
- @param url url-完整url链接
+ @param source 路径或url
  */
--(void)loadURL:(NSString *)url{
-    [self loadWebViewWithString:url andWithType:0];
-}
-/**
- 加载工程内url-简化url
+-(void)loadHtmlSource:(NSString *)source{
+    if(source==nil||source.length==0){
+        source=@"";
+    }
+    if([self isURL:source]){
+        source=[self urlAnalysis:source];
+        source=[self urlFormatString:source];
+        [self loadWebViewWithString:source andWithType:0];
+    }else{
+        [self loadWebViewWithString:source andWithType:1];
 
- @param url url bundle往下路径
- */
--(void)loadBundleURL:(NSString *)url{
-    [self loadWebViewWithString:url andWithType:1];
-}
-/**
- 加载沙盒document文件夹下简化url
+    }
 
- @param url url document下路径
- */
--(void)loadDocumentURL:(NSString *)url{
-    [self loadWebViewWithString:url andWithType:2];
 }
-/**
- 加载沙盒文件夹下简化url
 
- @param url url 沙盒下路径
- */
--(void)loadMainURL:(NSString *)url{
-    [self loadWebViewWithString:url andWithType:3];
-}
-/**
- 加载html表单
 
- @param htmlString html内容
- */
--(void)loadHtmlString:(NSString *)htmlString{
-    [self loadWebViewWithString:htmlString andWithType:4];
-}
 /**
  加载网页
 
  @param string url或内容
- @param type  0:网页 1.本地 2 document 3 html字符串
+ @param type  0:网页 1 html字符串
  */
 -(void)loadWebViewWithString:(NSString *)string andWithType:(NSInteger)type
 {
@@ -306,31 +295,14 @@
 
     NSURL *loadurl;
 
-    NSString *path;
+    NSString *url=string;
     if(type==1){
-        path=[[NSBundle mainBundle] bundlePath];
-        path=[path stringByAppendingPathComponent:string];
-        path=[[NSURL fileURLWithPath:path] absoluteString];
-
-    }else if (type==2){
-        path=[self getDocumentFilePath];
-        path=[path stringByAppendingPathComponent:string];
-        path=[[NSURL fileURLWithPath:path] absoluteString];
-    }else if(type==3){
-        path=[self getHomeFilePath];
-        path=[path stringByAppendingPathComponent:string];
-        path=[[NSURL fileURLWithPath:path] absoluteString];
-
-    }else if(type==4){
         self.htmlString=string;
         [self.webView loadHTMLString:string baseURL:nil];
         return;
-    }else{
-        path=string;
     }
-    NSLog(@"%@",path);
-    self.urlString=path;
-    loadurl=[NSURL URLWithString:path];
+    self.urlString=url;
+    loadurl=[NSURL URLWithString:url];
     self.currentUrlString=self.urlString;
     NSURLRequest *request = [NSURLRequest requestWithURL:loadurl];
     [self.webView loadRequest:request];
@@ -340,7 +312,7 @@
 
 #pragma mark UIWebDelegate implementation
 -(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
-    NSLog(@"%@-%@",request.URL,self.urlString);
+
     self.currentUrlString=request.URL.absoluteString;
     if(_navFlag){
         //导航栏左侧按钮变更
@@ -351,7 +323,7 @@
         }
     }
     if ([self.currentUrlString hasPrefix:@"app:"]) {
-        NSLog(@"requestString:%@",self.currentUrlString);
+
 
     }
 
@@ -578,7 +550,7 @@
 }
 -(void)setWebY:(CGFloat)webY{
     _webY=webY;
-    NSLog(@"%f-%f-%f",_webY,_webHeight,kHeight);
+  
     self.webView.frame=CGRectMake(0,_webY, kWidth,_webHeight);
 
 }
@@ -615,36 +587,169 @@
     }
     return retval;
 }
-#pragma mark 沙盒途径
+#pragma mark url
 /**
- 获取沙盒根路径
-
- @return 沙盒根路径
+ *  url字符处理
+ *
+ *  @param urlString 原url
+ *
+ *  @return 新url
  */
--(NSString *)getHomeFilePath{
-    return NSHomeDirectory();
+-(NSString *)urlFormatString:(NSString *)urlString{
+    return [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 }
 /**
- 获取沙盒Document路径
+ 判断路径是否是URL
 
- @return Document路径
+ @param url url路径
+ @return 结果
  */
--(NSString *)getDocumentFilePath{
-    NSString  *path_huang =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
-    return path_huang;
+-(BOOL)isURL:(NSString*)url{
+    if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"/User"]||[url hasPrefix:@"/var"]||[url hasPrefix:@"http://"]||[url hasPrefix:@"https://"]||[url hasPrefix:@"file://"]){
+        return YES;
+    }else{
+        return NO;
+    }
 }
 /**
- 通过文件路径获取url
+ url校验存在
 
- @param filePath 文件路径
- @return url
+ @param url url
+ @return 是否存在
  */
--(NSString *)getUrlFromFilePath:(NSString *)filePath{
-    if(filePath==nil||filePath.length==0){
+-(BOOL)urlExistCheck:(NSString *)url{
+    if(url==nil||url.length==0){
+        return NO;
+    }
+    if(![self isURL:url]){
         return nil;
     }
-    NSURL *url_huang=[NSURL fileURLWithPath:filePath];
-    return [url_huang absoluteString];
+    if(![url containsString:@"://"]){
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    if([url hasPrefix:@"file://"]){
+        NSString *filePath=[[NSURL URLWithString:url]path];
+        if(filePath==nil||filePath.length==0){
+            return NO;
+        }
+        NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
+        return [filemanage fileExistsAtPath:filePath];
+    }else{
+        NSURL *urlCheck=[NSURL URLWithString:url];
+
+        return [[UIApplication sharedApplication]canOpenURL:urlCheck];
+
+    }
+}
+/**
+ url解析
+
+ @return 解析后url
+ */
+-(NSString *)urlAnalysisToPath:(NSString *)url{
+    if(url==nil){
+        return nil;
+    }
+    if(![self isURL:url]){
+        return nil;
+    }
+    NSString *urlstr=[self urlAnalysis:url];
+    return [[NSURL URLWithString:urlstr]path];
+}
+/**
+ url解析
+
+ @return 解析后url
+ */
+-(NSString *)urlAnalysis:(NSString *)url{
+    if(url==nil){
+        return nil;
+    }
+    if(![self isURL:url]){
+        return nil;
+    }
+    if([url containsString:@"://"]){
+        //project://工程包内
+        //home://沙盒路径
+        //http:// https://网络路径
+        //document://沙盒Documents文件夹
+        //caches://沙盒Caches
+        //tmp://沙盒Tmp文件夹
+        if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]){
+            if([url hasPrefix:@"project://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"project://" withString:@""];
+                NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+                url=[projectPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"home://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"home://" withString:@""];
+                NSString *homePath=NSHomeDirectory();
+                url=[homePath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"document://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"document://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"defaults://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"defaults://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"caches://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"caches://" withString:@""];
+                NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+                url=[cachesPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"tmp://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"tmp://" withString:@""];
+                NSString *tmpPath =NSTemporaryDirectory();
+                url=[tmpPath stringByAppendingPathComponent:url];
+            }
+            url=[[NSURL fileURLWithPath:url]absoluteString];
+
+        }else{
+
+        }
+    }else {
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    return url;
+}
+/**
+ url封装
+
+ @return 封装后url
+ */
+-(NSString *)urlEncapsulation:(NSString *)url{
+    if(![self isURL:url]){
+        return nil;
+    }
+    NSString *homePath=NSHomeDirectory();
+    NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+    NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+    NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+    NSString *tmpPath =NSTemporaryDirectory();
+
+    if([url hasPrefix:@"file://"]){
+        url=[url stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+    }
+    if([url hasPrefix:projectPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",projectPath] withString:@"project://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",projectPath] withString:@"project://"];
+    }else if([url hasPrefix:documentPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",documentPath] withString:@"defaults://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",documentPath] withString:@"defaults://"];
+    }else if([url hasPrefix:cachesPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",cachesPath] withString:@"caches://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",cachesPath] withString:@"caches://"];
+    }else if([url hasPrefix:tmpPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",tmpPath] withString:@"tmp://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",tmpPath] withString:@"tmp://"];
+    }else if([url hasPrefix:homePath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",homePath] withString:@"home://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",homePath] withString:@"home://"];
+    }else if([url containsString:@"://"]){
+
+    }else{
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    return url;
 }
 
 @end

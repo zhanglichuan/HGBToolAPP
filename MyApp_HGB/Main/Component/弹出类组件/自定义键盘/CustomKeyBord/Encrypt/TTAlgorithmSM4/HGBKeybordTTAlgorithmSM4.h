@@ -7,6 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
+
 typedef NS_ENUM(NSUInteger, TTSM4Type)
 {
     TTSM4TypeCBC = 0,

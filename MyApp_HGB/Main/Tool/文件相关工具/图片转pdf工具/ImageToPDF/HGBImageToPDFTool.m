@@ -7,8 +7,20 @@
 //
 
 #import "HGBImageToPDFTool.h"
+
+#define ReslutCode @"resultCode"
+#define ReslutMessage @"resultMessage"
+
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 @interface HGBImageToPDFTool ()
-@property(strong,nonatomic)id<HGBImageToPDFToolDelegate>delegate;
+@property(assign,nonatomic)HGBImagetoPDFToolCompletionBlock compeleteBlock;
 @end
 @implementation HGBImageToPDFTool
 #pragma mark init
@@ -62,39 +74,57 @@ void HGBCreatePDFFile (CFDataRef data,CGRect pageRect,const char *filepath, CFSt
     CGContextRelease (pdfContext);
     CFRelease(pageDictionary);
     CFRelease(boxData);
-    if(instance.delegate&&[instance.delegate respondsToSelector:@selector(ImageToPDFDidSucceed:)]){
-        [instance.delegate ImageToPDFDidSucceed:instance];
+    if(instance.compeleteBlock){
+        instance.compeleteBlock(YES,@{ReslutCode:@(HGBHGBImagetoPDFToolReslutSucess).stringValue,ReslutMessage:@"成功"});
     }
 }
 /**
  *  @brief  抛出pdf文件存放地址
  *
- *  @param  filename    NSString型 文件名
+ *  @param  fileUrl    NSString型 文件路径
  *
  *  @return NSString型 地址
  */
-+ (NSString *)pdfDestPath:(NSString *)filename{
-    return [HGBImageToPDFTool getDestinationCompletePathFromSimplifyFilePath:filename];;
++ (NSString *)pdfDestPath:(NSString *)fileUrl{
+    return [[NSURL URLWithString:[HGBImageToPDFTool urlAnalysis:fileUrl]] path];
 }
 /**
  *  @brief  创建PDF文件
  *
  *  @param  image        图片
- *  @param  destFilePath    PDF文件路径
+ *  @param  destination    PDF文件路径或url
  *  @param  password        要设定的密码
  */
-+ (void)createPDFFileWithImage:(UIImage *)image toDestFilePath:(NSString *)destFilePath withPassword:(NSString *)password delegate:(id<HGBImageToPDFToolDelegate>)delegate
-{
-    [HGBImageToPDFTool shareInstance].delegate=delegate;
+-(void)createPDFFileWithImage:(UIImage *)image toPDFFileDestination:(NSString*)destination withPassword:(NSString *)password compeleteBlock:(HGBImagetoPDFToolCompletionBlock)compeleteBlock{
+    self.compeleteBlock=compeleteBlock;
     if(image==nil){
-        NSLog(@"图片不能为空");
-        if(instance.delegate&&[instance.delegate respondsToSelector:@selector(ImageToPDFDidFail:)]){
-            [instance.delegate ImageToPDFDidFail:instance];
+        if(compeleteBlock){
+
+            HGBLog(@"图片不能为空");
+            compeleteBlock(NO,@{ReslutCode:@(HGBHGBImagetoPDFToolReslutErrorTypeImage).stringValue,ReslutMessage:@"图片不能为空"});
         }
         return;
     }
-    NSString *fileFullPath = [HGBImageToPDFTool getDestinationCompletePathFromSimplifyFilePath:destFilePath];
-    instance.PDFpath=fileFullPath;
+    if(destination==nil||destination.length==0){
+        if(compeleteBlock){
+           HGBLog(@"PDF路径不能为空");
+            compeleteBlock(NO,@{ReslutCode:@(HGBHGBImagetoPDFToolReslutErrorTypePDFPath).stringValue,ReslutMessage:@"PDF路径不能为空"});
+        }
+        return ;
+    }
+    
+    NSString *url=[HGBImageToPDFTool urlAnalysis:destination];
+    NSString *fileFullPath =[[NSURL URLWithString:url]path] ;
+
+    if([HGBImageToPDFTool urlExistCheck:url]){
+        HGBLog(@"pdf文件路已存在");
+        if(compeleteBlock){
+            compeleteBlock(NO,@{ReslutCode:@(HGBHGBImagetoPDFToolReslutErrorTypePDFPath).stringValue,ReslutMessage:@"pdf文件路已存在"});
+        }
+        return;
+    }
+
+    self.PDFpath=fileFullPath;
     const char *path = [fileFullPath UTF8String];
     NSData *imgData=UIImagePNGRepresentation(image);
     CFDataRef data = (__bridge CFDataRef)imgData;
@@ -102,92 +132,160 @@ void HGBCreatePDFFile (CFDataRef data,CGRect pageRect,const char *filepath, CFSt
     CFStringRef pw = (__bridge CFStringRef)password;
     HGBCreatePDFFile(data,rect, path,pw);
 }
-#pragma mark 获取文件完整路径
-
+#pragma mark url
 /**
- 将简化路径转化为完整路径
+ 判断路径是否是URL
 
- @param simplifyFilePath 简化路径
- @return 完整路径
- */
-+(NSString *)getCompletePathFromSimplifyFilePath:(NSString *)simplifyFilePath{
-    NSString *path=[simplifyFilePath copy];
-    if(![HGBImageToPDFTool isExitAtFilePath:path]){
-        if(![HGBImageToPDFTool isExitAtFilePath:path]){
-            path=[[HGBImageToPDFTool getHomeFilePath] stringByAppendingPathComponent:simplifyFilePath];
-            if(![HGBImageToPDFTool isExitAtFilePath:path]){
-                path=[[HGBImageToPDFTool getDocumentFilePath] stringByAppendingPathComponent:simplifyFilePath];
-                if(![HGBImageToPDFTool isExitAtFilePath:path]){
-                    path=[[HGBImageToPDFTool getMainBundlePath] stringByAppendingPathComponent:simplifyFilePath];
-                    if(![HGBImageToPDFTool isExitAtFilePath:path]){
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-    return path;
-}
-/**
- 将简化目标路径转化为完整路径
-
- @param simplifyFilePath 简化路径
- @return 完整路径
- */
-+(NSString *)getDestinationCompletePathFromSimplifyFilePath:(NSString *)simplifyFilePath{
-    if(!([simplifyFilePath containsString:[HGBImageToPDFTool getHomeFilePath]]||[simplifyFilePath containsString:[HGBImageToPDFTool getMainBundlePath]])){
-        simplifyFilePath=[[HGBImageToPDFTool getHomeFilePath] stringByAppendingPathComponent:simplifyFilePath];
-    }
-    return simplifyFilePath;
-}
-#pragma mark bundle
-/**
- 获取主资源文件路径
-
- @return 主资源文件路径
- */
-+(NSString *)getMainBundlePath{
-    return [[NSBundle mainBundle]resourcePath];
-}
-#pragma mark 获取沙盒文件路径
-/**
- 获取沙盒根路径
-
- @return 根路径
- */
-+(NSString *)getHomeFilePath{
-    NSString *path_huang=NSHomeDirectory();
-    return path_huang;
-}
-/**
- 获取沙盒Document路径
-
- @return Document路径
- */
-+(NSString *)getDocumentFilePath{
-    NSString  *path_huang =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
-    return path_huang;
-}
-#pragma mark 文件
-/**
- 文档是否存在
-
- @param filePath 归档的路径
+ @param url url路径
  @return 结果
  */
-+(BOOL)isExitAtFilePath:(NSString *)filePath{
-    if(filePath==nil||filePath.length==0){
++(BOOL)isURL:(NSString*)url{
+    if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"/User"]||[url hasPrefix:@"/var"]||[url hasPrefix:@"http://"]||[url hasPrefix:@"https://"]||[url hasPrefix:@"file://"]){
+        return YES;
+    }else{
         return NO;
     }
-    NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
-    BOOL isExit=[filemanage fileExistsAtPath:filePath];
-    return isExit;
 }
+/**
+ url校验存在
 
+ @param url url
+ @return 是否存在
+ */
++(BOOL)urlExistCheck:(NSString *)url{
+    if(url==nil||url.length==0){
+        return NO;
+    }
+    if(![HGBImageToPDFTool isURL:url]){
+        return nil;
+    }
+    if(![url containsString:@"://"]){
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    if([url hasPrefix:@"file://"]){
+        NSString *filePath=[[NSURL URLWithString:url]path];
+        if(filePath==nil||filePath.length==0){
+            return NO;
+        }
+        NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
+        return [filemanage fileExistsAtPath:filePath];
+    }else{
+        NSURL *urlCheck=[NSURL URLWithString:url];
+
+        return [[UIApplication sharedApplication]canOpenURL:urlCheck];
+
+    }
+}
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysisToPath:(NSString *)url{
+    if(url==nil){
+        return nil;
+    }
+    if(![HGBImageToPDFTool isURL:url]){
+        return nil;
+    }
+    NSString *urlstr=[HGBImageToPDFTool urlAnalysis:url];
+    return [[NSURL URLWithString:urlstr]path];
+}
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysis:(NSString *)url{
+    if(url==nil){
+        return nil;
+    }
+    if(![HGBImageToPDFTool isURL:url]){
+        return nil;
+    }
+    if([url containsString:@"://"]){
+        //project://工程包内
+        //home://沙盒路径
+        //http:// https://网络路径
+        //document://沙盒Documents文件夹
+        //caches://沙盒Caches
+        //tmp://沙盒Tmp文件夹
+        if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]){
+            if([url hasPrefix:@"project://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"project://" withString:@""];
+                NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+                url=[projectPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"home://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"home://" withString:@""];
+                NSString *homePath=NSHomeDirectory();
+                url=[homePath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"document://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"document://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"defaults://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"defaults://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"caches://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"caches://" withString:@""];
+                NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+                url=[cachesPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"tmp://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"tmp://" withString:@""];
+                NSString *tmpPath =NSTemporaryDirectory();
+                url=[tmpPath stringByAppendingPathComponent:url];
+            }
+            url=[[NSURL fileURLWithPath:url]absoluteString];
+
+        }else{
+
+        }
+    }else {
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    return url;
+}
+/**
+ url封装
+
+ @return 封装后url
+ */
++(NSString *)urlEncapsulation:(NSString *)url{
+    if(![HGBImageToPDFTool isURL:url]){
+        return nil;
+    }
+    NSString *homePath=NSHomeDirectory();
+    NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+    NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+    NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+    NSString *tmpPath =NSTemporaryDirectory();
+
+    if([url hasPrefix:@"file://"]){
+        url=[url stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+    }
+    if([url hasPrefix:projectPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",projectPath] withString:@"project://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",projectPath] withString:@"project://"];
+    }else if([url hasPrefix:documentPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",documentPath] withString:@"defaults://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",documentPath] withString:@"defaults://"];
+    }else if([url hasPrefix:cachesPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",cachesPath] withString:@"caches://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",cachesPath] withString:@"caches://"];
+    }else if([url hasPrefix:tmpPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",tmpPath] withString:@"tmp://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",tmpPath] withString:@"tmp://"];
+    }else if([url hasPrefix:homePath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",homePath] withString:@"home://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",homePath] withString:@"home://"];
+    }else if([url containsString:@"://"]){
+
+    }else{
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    return url;
+}
 #pragma mark 获取当前控制器
 
 /**

@@ -114,9 +114,9 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     if(indexPath.section==0){
         if (indexPath.row==0){
-            [HGBOutAppOpenFileTool lookFileAtPath:@"test.pdf" inParent:self];
+            [[HGBOutAppOpenFileTool shareInstance] lookFileAtSource:@"project://test.pdf" inParent:self];
         }else if (indexPath.row==1){
-            [HGBOutAppOpenFileTool lookFileAtPath:@"test.docx" inParent:self];
+            [[HGBOutAppOpenFileTool shareInstance] lookFileAtSource:@"project://test.docx" inParent:self];
         }
     }
 }

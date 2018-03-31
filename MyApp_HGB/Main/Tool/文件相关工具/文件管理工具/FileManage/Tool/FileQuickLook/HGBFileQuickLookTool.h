@@ -8,6 +8,33 @@
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
+
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+//快捷url提示
+/**
+ project://工程包内
+ home://沙盒路径
+ http:// https://网络路径
+ document://  或defaults://沙盒Documents文件夹
+ caches://沙盒Caches
+ tmp://沙盒Tmp文件夹
+
+ */
+/**
+ 错误类型
+ */
+typedef enum HGBFileQuickLookToolErrorType
+{
+    HGBFileQuickLookToolErrorTypePath=20//路径错误
+
+}HGBFileQuickLookToolErrorType;
+
+
 @class HGBFileQuickLookTool;
 /**
  快速预览
@@ -25,7 +52,7 @@
 
  @param quickLook quickLook
  */
--(void)quickLookDidOpenFailed:(HGBFileQuickLookTool *)quickLook;
+-(void)quickLook:(HGBFileQuickLookTool *)quickLook didOpenFailedWithError:(NSDictionary *)errorInfo;
 /**
  关闭快速预览
 
@@ -36,34 +63,23 @@
 @end
 
 @interface HGBFileQuickLookTool : NSObject
-#pragma mark 设置
 /**
- 设置代理
-
- @param delegate 代理
+ 失败提示
  */
-+(void)setQuickLookDelegate:(id<HGBFileQuickLookToolDelegate>)delegate;
+@property(assign,nonatomic)BOOL withoutFailPrompt;
 /**
- 设置失败提示
-
- @param withoutFailPrompt 失败提示标志
+ 代理
  */
-+(void)setQuickLookWithoutFailPrompt:(BOOL)withoutFailPrompt;
+@property(assign,nonatomic)id<HGBFileQuickLookToolDelegate>delegate;
+#pragma mark init
++ (instancetype)shareInstance;
 #pragma mark 打开文件
 /**
  快速浏览文件
 
- @param path 路径
+ @param source 路径或url
  @param parent 父控制器
  */
-+(void)lookFileAtPath:(NSString *)path inParent:(UIViewController *)parent;
+-(void)lookFileAtSource:(NSString *)source inParent:(UIViewController *)parent;
 
-
-/**
- 快速浏览文件
-
- @param url 路径
- @param parent 父控制器
- */
-+(void)lookFileAtUrl:(NSString *)url inParent:(UIViewController *)parent;
 @end

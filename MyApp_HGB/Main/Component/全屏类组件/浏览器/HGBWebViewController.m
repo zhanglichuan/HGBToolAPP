@@ -67,7 +67,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"浏览器:":@[@"UIWebView",@"WKWebView",@"无导航栏"]};
+    self.dataDictionary=@{@"浏览器:":@[@"UIWebView",@"WKWebView",@"无导航栏",@"UIWebView-html字符串",@"WKWebView-html字符串",@"加载失败"]};
     self.keys=@[@"浏览器:"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -114,23 +114,49 @@
     if(indexPath.section==0){
         if (indexPath.row==0){
             HGBUIWebController *webVC=[[HGBUIWebController alloc]init];
-//            [webVC loadURL:@"http://www.baidu.com"];
-            [webVC loadBundleURL:@"report/reportInfo.html"];
+//            [webVC loadHtmlSource:@"project://report/reportInfo.html"];
+            [webVC loadHtmlSource:@"http://www.baidu.com"];
             [webVC createNavigationItemWithTitle:@"UIWebView"];
             UINavigationController *nav=[[UINavigationController alloc]initWithRootViewController:webVC];
             [self presentViewController:nav animated:YES completion:nil];
         }else if (indexPath.row==1){
             HGBWKWebController *webVC=[[HGBWKWebController alloc]init];
-//            [webVC loadURL:@"http://www.baidu.com"];
-            [webVC loadBundleURL:@"report/reportInfo.html"];
+
+            [webVC loadHtmlSource:@"project://report/reportInfo.html"];
             [webVC createNavigationItemWithTitle:@"WKWebView"];
             UINavigationController *nav=[[UINavigationController alloc]initWithRootViewController:webVC];
             [self presentViewController:nav animated:YES completion:nil];
         }else if (indexPath.row==2){
             HGBUIWebController *webVC=[[HGBUIWebController alloc]init];
-            [webVC loadBundleURL:@"green/index_tpl.html"];
+            [webVC loadHtmlSource:@"project://report/reportInfo.html"];
 
             [self presentViewController:webVC animated:YES completion:nil];
+        }else if (indexPath.row==3){
+            HGBUIWebController *webVC=[[HGBUIWebController alloc]init];
+
+            NSString *path=[[NSBundle mainBundle]pathForResource:@"green" ofType:@""];
+            path=[path stringByAppendingPathComponent:@"index_tpl.html"];
+             NSString *html=[[NSString alloc]initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+            [webVC loadHtmlSource:html andWithBaseUrl:@"project://green/index_tpl.html"];
+            [webVC createNavigationItemWithTitle:@"UIWebView"];
+            UINavigationController *nav=[[UINavigationController alloc]initWithRootViewController:webVC];
+            [self presentViewController:nav animated:YES completion:nil];
+        }else if (indexPath.row==4){
+            HGBWKWebController *webVC=[[HGBWKWebController alloc]init];
+            NSString *path=[[NSBundle mainBundle]pathForResource:@"green" ofType:@""];
+            path=[path stringByAppendingPathComponent:@"index_tpl.html"];
+            NSString *html=[[NSString alloc]initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+             [webVC loadHtmlSource:html andWithBaseUrl:@"project://green/index_tpl.html"];
+            [webVC createNavigationItemWithTitle:@"WKWebView"];
+            UINavigationController *nav=[[UINavigationController alloc]initWithRootViewController:webVC];
+            [self presentViewController:nav animated:YES completion:nil];
+        }else if (indexPath.row==5){
+            HGBUIWebController *webVC=[[HGBUIWebController alloc]init];
+
+            [webVC loadHtmlSource:@"http://121:121:121:121:9090/index.html"];
+            [webVC createNavigationItemWithTitle:@"UIWebView"];
+            UINavigationController *nav=[[UINavigationController alloc]initWithRootViewController:webVC];
+            [self presentViewController:nav animated:YES completion:nil];
         }
     }
 }

@@ -8,6 +8,14 @@
 
 #import "HGBAPPInfoTool.h"
 
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 @implementation HGBAPPInfoTool
 
 /**
@@ -16,7 +24,6 @@
  @return app版本号
  */
 +(NSString*) getLocalAppVersion
-
 {
     
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
@@ -28,7 +35,6 @@
  @return app版本号
  */
 +(NSString*) getLocalAppBuildVersion
-
 {
     
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
@@ -41,7 +47,6 @@
  @return BundleID
  */
 +(NSString*) getBundleID
-
 {
     
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
@@ -56,7 +61,6 @@
  @return app的名字
  */
 +(NSString*) getAppName
-
 {
     
     NSString *appName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
@@ -75,6 +79,12 @@
     NSString *icon = [[infoPlist valueForKeyPath:@"CFBundleIcons.CFBundlePrimaryIcon.CFBundleIconFiles"] lastObject];
     
     UIImage* image = [UIImage imageNamed:icon];
+    if(image==nil){
+        icon = [infoPlist valueForKeyPath:@"CFBundleIconFile"];
+        image = [UIImage imageNamed:icon];
+
+
+    }
     return image;
 }
 /**

@@ -93,7 +93,10 @@ typedef enum HGBDatePickerType
  选中日期
  */
 @property(strong,nonatomic)NSString *selectedDateString;
-
+/**
+ 返回日期格式
+ */
+@property(strong,nonatomic)NSString *backDateFormat;
 
 #pragma mark 时间段-年月-月日模式参数
 /**

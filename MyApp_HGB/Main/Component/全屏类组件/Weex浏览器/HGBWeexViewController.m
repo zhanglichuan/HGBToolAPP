@@ -68,7 +68,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"Weex浏览器:":@[@"仅浏览器",@"带有关闭按钮-不可拖拽",@"带有关闭-贴边拖拽",@"带有关闭-拖拽"]};
+    self.dataDictionary=@{@"Weex浏览器:":@[@"仅浏览器",@"带有关闭按钮-不可拖拽",@"带有关闭-贴边拖拽",@"带有关闭-拖拽",@"weex浏览器加载js字符串"]};
     self.keys=@[@"Weex浏览器:"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -121,11 +121,12 @@
     if(indexPath.section==0){
         if (indexPath.row==0){
             HGBWeexController *weexVC=[[HGBWeexController alloc]init];
-//            weexVC.url=@"app.weex.js";
+
+            [weexVC loadJSSource:@"project://WeexBundle/bundlejs/app.weex.js"];
             [self presentViewController:weexVC animated:YES completion:nil];
         }else if (indexPath.row==1){
             HGBWeexController *weexVC=[[HGBWeexController alloc]init];
-//            weexVC.url=@"app.weex.js";
+            [weexVC loadJSSource:@"project://WeexBundle/bundlejs/app.weex.js"];
             weexVC.isShowReturnButton=YES;
             weexVC.returnButtonPositionType=HGBWeexCloseButtonPositionTypeTopLeft;
             weexVC.returnButtonDragType=HGBWeexCloseButtonDragTypeNO;
@@ -134,7 +135,7 @@
             [self presentViewController:weexVC animated:YES completion:nil];
         }else if (indexPath.row==2){
             HGBWeexController *weexVC=[[HGBWeexController alloc]init];
-//            weexVC.url=@"app.weex.js";
+            [weexVC loadJSSource:@"project://WeexBundle/bundlejs/app.weex.js"];
             weexVC.isShowReturnButton=YES;
             weexVC.returnButtonPositionType=HGBWeexCloseButtonPositionTypeTopLeft;
             weexVC.returnButtonDragType=HGBWeexCloseButtonDragTypeBorder;
@@ -142,7 +143,19 @@
             [self presentViewController:weexVC animated:YES completion:nil];
         }else if (indexPath.row==3){
             HGBWeexController *weexVC=[[HGBWeexController alloc]init];
-//            weexVC.url=@"app.weex.js";
+            [weexVC loadJSSource:@"project://WeexBundle/bundlejs/app.weex.js"];
+            weexVC.isShowReturnButton=YES;
+            weexVC.returnButtonPositionType=HGBWeexCloseButtonPositionTypeTopLeft;
+            weexVC.returnButtonDragType=HGBWeexCloseButtonDragTypeNOLimit;
+
+            [self presentViewController:weexVC animated:YES completion:nil];
+        }else if (indexPath.row==4){
+            HGBWeexController *weexVC=[[HGBWeexController alloc]init];
+            NSString *path=[[NSBundle mainBundle]pathForResource:@"WeexBundle" ofType:@""];
+            path=[path stringByAppendingPathComponent:@"bundlejs/app.weex.js"];
+            NSString *js=[[NSString alloc]initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+            [weexVC loadJSSource:js];
+
             weexVC.isShowReturnButton=YES;
             weexVC.returnButtonPositionType=HGBWeexCloseButtonPositionTypeTopLeft;
             weexVC.returnButtonDragType=HGBWeexCloseButtonDragTypeNOLimit;

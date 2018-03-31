@@ -8,6 +8,26 @@
 
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
+
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
+//快捷url提示
+/**
+ project://工程包内
+ home://沙盒路径
+ http:// https://网络路径
+ document://  或defaults://沙盒Documents文件夹
+ caches://沙盒Caches
+ tmp://沙盒Tmp文件夹
+
+ */
+
+
 /**
  基础浏览器代理
  */
@@ -25,37 +45,19 @@
 -(void)createNavigationItemWithTitle:(NSString *)title;
 
 /**
- 加载url
- 
- @param url url-完整url链接
- */
--(void)loadURL:(NSString *)url;
-/**
- 加载工程内url-简化url
- 
- @param url url bundle往下路径
- */
--(void)loadBundleURL:(NSString *)url;
-/**
- 加载沙盒document文件夹下简化url
- 
- @param url url document下路径
- */
--(void)loadDocumentURL:(NSString *)url;
-/**
- 加载沙盒文件夹下简化url
- 
- @param url url 沙盒下路径
- */
--(void)loadMainURL:(NSString *)url;
-/**
- 加载html表单
- 
- @param htmlString html内容
- */
--(void)loadHtmlString:(NSString *)htmlString;
+ 加载html
 
+ @param source 路径或url或html字符串
+ */
+-(BOOL)loadHtmlSource:(NSString *)source;
 
+/**
+ 加载html
+
+ @param source 路径或url或html字符串
+ @param baseUrl 基础路径或url或html字符串
+ */
+-(BOOL)loadHtmlSource:(NSString *)source andWithBaseUrl:(NSString *)baseUrl;
 
 /**
  打开工具栏
@@ -63,24 +65,4 @@
  @param type 打开方式 0 显示工具栏开启按钮 1直接显示工具栏
  */
 -(void)openToolBarWithType:(NSInteger)type;
-#pragma mark 沙盒途径
-/**
- 获取沙盒根路径
- 
- @return 沙盒根路径
- */
--(NSString *)getHomeFilePath;
-/**
- 获取沙盒Document路径
- 
- @return Document路径
- */
--(NSString *)getDocumentFilePath;
-/**
- 通过文件路径获取url
- 
- @param filePath 文件路径
- @return url
- */
--(NSString *)getUrlFromFilePath:(NSString *)filePath;
 @end

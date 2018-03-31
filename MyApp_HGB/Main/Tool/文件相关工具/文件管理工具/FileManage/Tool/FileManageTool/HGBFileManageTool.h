@@ -10,6 +10,24 @@
 #import <UIKit/UIKit.h>
 #import "HGBFileModel.h"
 
+//快捷url提示
+/**
+ project://工程包内
+ home://沙盒路径
+ http:// https://网络路径
+ document://  或defaults://沙盒Documents文件夹
+ caches://沙盒Caches
+ tmp://沙盒Tmp文件夹
+
+ */
+
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
 @interface HGBFileManageTool : NSObject
 #pragma mark  开发模式
 /**
@@ -33,6 +51,32 @@
  @param filePaths 文件路径集合
  */
 +(void)setIsUnDeleteableFilesWithPaths:(NSArray <NSString *>*)filePaths;
+#pragma mark url
+/**
+ url校验存在
+
+ @param url url
+ @return 是否存在
+ */
++(BOOL)urlExistCheck:(NSString *)url;
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysisToPath:(NSString *)url;
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysis:(NSString *)url;
+/**
+ url封装
+
+ @return 封装后url
+ */
++(NSString *)urlEncapsulation:(NSString *)url;
 #pragma mark 获取沙盒文件路径
 /**
  获取沙盒根路径

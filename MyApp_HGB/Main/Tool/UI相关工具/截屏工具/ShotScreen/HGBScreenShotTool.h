@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 @interface HGBScreenShotTool : NSObject
 /**
  截屏

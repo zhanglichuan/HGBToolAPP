@@ -143,6 +143,9 @@
 -(void)signDrawer:(HGBSignDrawer *)signDrawer didReturnImagePath:(NSString *)imagePath{
     NSLog(@"%@",imagePath);
 }
+-(void)signDrawer:(HGBSignDrawer *)signDrawer didFailedWithError:(NSDictionary *)errorInfo{
+    NSLog(@"%@",errorInfo);
+}
 #pragma mark get
 -(NSDictionary *)dataDictionary{
     if(_dataDictionary==nil){

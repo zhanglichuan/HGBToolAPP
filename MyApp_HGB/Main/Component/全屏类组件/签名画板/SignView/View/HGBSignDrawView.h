@@ -8,7 +8,33 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^ImageBlock)(UIImage *image);
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
+/**
+ 错误类型
+ */
+typedef enum HGBSignDrawErrorType
+{
+    HGBSignDrawErrorTypeParams=0,//参数错误
+    HGBSignDrawErrorTypeDevice=10,//设备受限
+    HGBSignDrawErrorTypeAuthority=11//权限受限
+
+}HGBSignDrawErrorType;
+
+
+/**
+ 保存相册
+
+ @param status 状态
+ @param image 图片
+ @param returnMessage 信息
+ */
+typedef void(^HGBSignDrawImageBlock)(BOOL status,UIImage *image,NSDictionary *returnMessage);
 
 @interface HGBSignDrawView : UIView
 
@@ -45,7 +71,7 @@ typedef void(^ImageBlock)(UIImage *image);
 
  @param imageBlock 保存成功回调
  */
-- (void)savePhotoToAlbumWithImageBlock:(ImageBlock)imageBlock;
+- (void)savePhotoToAlbumWithImageBlock:(HGBSignDrawImageBlock)imageBlock;
 
 
 @end

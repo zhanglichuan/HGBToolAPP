@@ -22,9 +22,15 @@
     }
     if(phoneNumber!=nil&&phoneNumber.length!=0){
         NSURL *url=[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@",phoneNumber]];
-        [[UIApplication sharedApplication] openURL:url];
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"SUCESS"];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        if([[UIApplication sharedApplication] canOpenURL:url]){
+            [[UIApplication sharedApplication] openURL:url];
+            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"SUCESS"];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        }else{
+            CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ERROR"];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        }
+
     }else{
          CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ERROR"];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];

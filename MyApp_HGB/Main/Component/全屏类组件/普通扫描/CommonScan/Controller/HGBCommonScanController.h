@@ -19,12 +19,19 @@
 #import <AudioToolbox/AudioToolbox.h>
 
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
 /**
  错误类型
  */
 typedef enum HGBCommonScanErrorType
 {
-    HGBCommonScanErrorTypeAuthority//权限受限
+    HGBCommonScanErrorTypeDevice=10,//设备不支持
+    HGBCommonScanErrorTypeAuthority=11//权限受限
 
 }HGBCommonScanErrorType;
 

@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 /**
  钥匙串保存
  */
@@ -17,10 +23,10 @@
  *  keychain存
  *
  *  @param key   要存的对象的key值
- *  @param string 要保存的value值
+ *  @param value 要保存的value值
  *  @return 保存结果
  */
-+ (BOOL)saveKeyChainForKeyWithKey:(NSString *)key value:(NSString *)string;
++ (BOOL)saveKeyChainValue:(id)value withKey:(NSString *)key;
 /**
  *  keychain取
  *
@@ -29,12 +35,12 @@
  *  @return 获取的对象
  */
 
-+ (NSString *)getKeychainStringWithKey:(NSString *)key;
++ (id)getKeychainWithKey:(NSString *)key;
 /**
  *  keychain删除
  *
  *  @param key   要存的对象的key值
  *  @return 保存结果
  */
-+ (BOOL)deleteKeyChainForKeyWithKey:(NSString *)key;
++ (BOOL)deleteKeyChainWithKey:(NSString *)key;
 @end

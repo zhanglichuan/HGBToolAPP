@@ -12,8 +12,17 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
-#define ReslutCode @"reslutCode"
-#define ReslutMessage @"reslutMessage"
+
+
+
+#define ReslutCode @"resultCode"
+#define ReslutMessage @"resultMessage"
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
 
 
 @interface HGBScanController ()<AVCaptureMetadataOutputObjectsDelegate,UIAlertViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate>
@@ -39,10 +48,7 @@
  屏幕方向
  */
 @property(assign,nonatomic)UIInterfaceOrientation orientation;
-/**
- 提示图
- */
-@property(strong,nonatomic)UIAlertView *alert;
+
 
 @end
 
@@ -388,7 +394,7 @@
             [device setFocusMode:AVCaptureFocusModeAutoFocus];
             [device unlockForConfiguration];
         } else {
-            NSLog(@"Error: %@", error);
+            HGBLog(@"Error: %@", error);
         }
     }
 }
@@ -397,10 +403,6 @@
 //初始化相机
 - (void) initialize
 {
-    //如果是模拟器返回（模拟器获取不到摄像头）
-    if (TARGET_IPHONE_SIMULATOR) {
-        return;
-    }
     
     // 下面的是比较重要的,也是最容易出现崩溃的原因,就是我们的输出流的类型
     // 1.这里可以设置多种输出类型,这里必须要保证session层包括输出流
@@ -419,7 +421,7 @@
     //设置输出流的相关属性
     // 确定输出流的代理和所在的线程,这里代理遵循的就是上面我们在准备工作中提到的第一个代理,至于线程的选择,建议选在主线程,这样方便当前页面对数据的捕获.
     [self.output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
-    NSLog(@"%f",self.style.whRatio);
+
     //设置扫描区域的大小 rectOfInterest  默认值是CGRectMake(0, 0, 1, 1) 按比例设置
     self.output.rectOfInterest = CGRectMake((((kHeight-64-(kWidth-2*self.style.xScanRetangleOffset)/self.style.whRatio))*0.5-self.style.centerUpOffset)/kHeight,self.style.xScanRetangleOffset/kWidth,(kWidth-2*self.style.xScanRetangleOffset)/self.style.whRatio/kHeight,(kWidth-2*self.style.xScanRetangleOffset)/kWidth);
         UIView *v=[[UIView alloc]initWithFrame:CGRectMake(self.style.xScanRetangleOffset,(((kHeight-64-(kWidth-2*self.style.xScanRetangleOffset)/self.style.whRatio))*0.5-self.style.centerUpOffset),(kWidth-2*self.style.xScanRetangleOffset),(kWidth-2*self.style.xScanRetangleOffset)/self.style.whRatio)];
@@ -475,6 +477,7 @@
         //设置扫描格式
         self.output.metadataObjectTypes= metadataObjectTypes;
     }
+
     
     
     //设置输出展示平台AVCaptureVideoPreviewLayer
@@ -493,35 +496,77 @@
     //开始
     [self.session startRunning];
     
+
+    
 }
 -(BOOL)JurisdictionAlert{
-    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-    if(authStatus ==AVAuthorizationStatusRestricted|| authStatus ==AVAuthorizationStatusDenied){
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        HGBLog(@"相机不可用");
+        if(self.delegate&&[self.delegate respondsToSelector:@selector(scan:didFailedWithError:)]){
+            [self.delegate scan:self didFailedWithError:@{ReslutCode:@(HGBScanErrorTypeDevice).stringValue,ReslutMessage:@"相机不可用"}];
+        }
+        [self jumpToSet];
+        return NO;
+    }
+
+    if(![self isCanUseCamera]){
+        HGBLog(@"相机访问权限受限");
         [self stopScan];
         if(self.delegate&&[self.delegate respondsToSelector:@selector(scan:didFailedWithError:)]){
-            [self.delegate scan:self didFailedWithError:@{ReslutCode:@"1",ReslutMessage:@"相机访问权限受限"}];
+            [self.delegate scan:self didFailedWithError:@{ReslutCode:@(HGBScanErrorTypeAuthority).stringValue,ReslutMessage:@"相机访问权限受限"}];
         }
-       self.alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请在iPhone的“设置”-“隐私”-“相机”功能中，找到“某某应用”打开相机访问权限" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去设置",nil];
-        [self.alert show];
+        [self jumpToSet];
+
         return NO;
     }
     return YES;
 }
-#pragma mark --alertdelegate
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(buttonIndex==1){
+#pragma mark 权限判断
+/**
+ 相机权限判断
+
+ @return 是否有权限
+ */
+- (BOOL)isCanUseCamera {
+    if (TARGET_IPHONE_SIMULATOR) {
+        return NO;
+    }
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+        HGBLog(@"%@",granted ? @"相机准许":@"相机不准许");
+    }];
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        return NO;
+    }
+
+    NSString *mediaType = AVMediaTypeVideo;//读取媒体类型
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];//读取设备授权状态
+    if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
+        return NO;
+    }
+    return YES;
+}
+#pragma mark --set
+-(void)jumpToSet{
+    UIAlertController *alert=[UIAlertController alertControllerWithTitle:@"提示" message:@"相机访问权限受限" preferredStyle:(UIAlertControllerStyleAlert)];
+    UIAlertAction *action1=[UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
+        [self returnAction:nil];
+    }];
+    [alert addAction:action1];
+    UIAlertAction *action2=[UIAlertAction actionWithTitle:@"去设置" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
         NSURL * url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-        
+
         if([[UIApplication sharedApplication] canOpenURL:url]) {
-            
+
             NSURL*url =[NSURL URLWithString:UIApplicationOpenSettingsURLString];
             [[UIApplication sharedApplication] openURL:url];
-            
+
         }
-    }else{
         [self returnAction:nil];
-    }
+    }];
+    [alert addAction:action2];
+    [self presentViewController:alert animated:YES completion:nil];
 }
+
 #pragma mark - - - 扫描提示声
 /** 播放音效文件 */
 - (void)playSoundEffect:(NSString *)name{
@@ -548,7 +593,7 @@
  *  @param clientData 回调时传递的数据
  */
 void soundCompleteCallback(SystemSoundID soundID, void *clientData){
-    NSLog(@"播放完成...");
+
 }
 #pragma mark get
 -(HGBScanViewStyle *)style{

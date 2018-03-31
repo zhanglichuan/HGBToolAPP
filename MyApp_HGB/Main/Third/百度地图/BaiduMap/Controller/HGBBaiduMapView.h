@@ -18,6 +18,11 @@
 #import "HGBBaiduMapAnnotationModel.h"
 
 
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 
 @interface HGBBaiduMapView : UIViewController
 

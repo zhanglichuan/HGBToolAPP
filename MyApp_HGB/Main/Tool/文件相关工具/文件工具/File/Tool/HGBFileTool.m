@@ -11,26 +11,42 @@
 
 #import <CommonCrypto/CommonCryptor.h>
 #import <Security/Security.h>
+#import <UIKit/UIKit.h>
+
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
 
 
 static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 
+
 @implementation HGBFileTool
 #pragma mark 文件归档和反归档-普通
-
 /**
  归档-普通
- 
+
  @param object 要归档的数据
- @param filePath 归档的路径
+ @param destination 归档的路径或url
  @return 保存结果
  */
-+ (BOOL)archiverWithObject:(id)object filePath:(NSString *)filePath
++ (BOOL)archiverWithObject:(id)object toDestination:(NSString *)destination
 {
-    if(filePath==nil||filePath.length==0){
+    if(destination==nil||destination.length==0){
+        HGBLog(@"目标文件地址不能为空");
         return NO;
     }
-    filePath=[HGBFileTool getDestinationCompletePathFromSimplifyFilePath:filePath];
+    if(object==nil){
+        HGBLog(@"数据不能为空");
+        return NO;
+    }
+
+    destination=[HGBFileTool urlAnalysis:destination];
+    NSString *filePath=[[NSURL URLWithString:destination]path];
     NSString *fileName = [filePath lastPathComponent];
     
     
@@ -40,8 +56,8 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
         [filemanage removeItemAtPath:filePath error:nil];
     }else{
         NSString *directoryPath=[filePath stringByDeletingLastPathComponent];
-        if(![HGBFileTool isExitAtFilePath:directoryPath]){
-            [HGBFileTool createDirectoryPath:directoryPath];
+        if(![HGBFileTool isExitAtFileSource:directoryPath]){
+            [HGBFileTool createDirectorySource:directoryPath];
         }
     }
     
@@ -60,45 +76,69 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 }
 /**
  反归档-普通
- 
- @param filePath 要解归档的路径
- @return 解归档后对象
+
+ @param source 要解归档的路径或url
+ @return 保存结果
  */
-+ (id)unarcheiverWithfilePath:(NSString *)filePath
++ (id)unarcheiverWithFileSource:(NSString *)source
 {
-    if(filePath==nil||filePath.length==0){
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return nil;
     }
-    filePath=[HGBFileTool getCompletePathFromSimplifyFilePath:filePath];
+
+    source=[HGBFileTool urlAnalysis:source];
+    NSString *filePath=[[NSURL URLWithString:source]path];
     NSString *fileName = [filePath lastPathComponent];
     
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     if(!data){
+         HGBLog(@"数据为空");
         return nil;
     }
     //将NSData通过反归档,转化成CheckViolationModel的数组对象
-    NSKeyedUnarchiver *unarcheiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    //通过反归档得到复杂对象
-    id reslutObj = [unarcheiver decodeObjectForKey:fileName];
-    return reslutObj;
+    @try{
+        NSKeyedUnarchiver *unarcheiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+        //通过反归档得到复杂对象
+        id reslutObj = [unarcheiver decodeObjectForKey:fileName];
+        return reslutObj;
+    }@catch(NSException *e){
+         HGBLog(@"%@",e);
+        return nil;
+    }@finally{
+
+    }
+
     
 }
 #pragma mark 文件归档和反归档-加密
 /**
  归档-加密
- 
+
  @param object 要归档的数据
- @param filePath 归档的路径
+ @param destination 归档路径或url
+ @param key 密钥
  @return 保存结果
  */
-+ (BOOL)archiverEncryptWithObject:(id)object filePath:(NSString *)filePath
++ (BOOL)archiverEncryptWithObject:(id)object toDestination:(NSString *)destination andWithKey:(NSString *)key
 {
-    if(filePath==nil||filePath.length==0){
+    if(destination==nil||destination.length==0){
+        HGBLog(@"源文件地址不能为空");
         return NO;
     }
-     filePath=[HGBFileTool getDestinationCompletePathFromSimplifyFilePath:filePath];
-     NSString *fileName = [filePath lastPathComponent];
+    if(object==nil){
+        HGBLog(@"数据不能为空");
+        return NO;
+    }
 
+    destination=[HGBFileTool urlAnalysis:destination];
+    NSString *filePath=[[NSURL URLWithString:destination]path];
+    NSString *fileName = [filePath lastPathComponent];
+
+    NSString *encryptKey=key;
+    if(encryptKey==nil){
+        encryptKey=[NSString stringWithFormat:@"%@",fileName];
+    }
     
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
     BOOL isExit=[filemanage fileExistsAtPath:filePath];
@@ -106,8 +146,8 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
         [filemanage removeItemAtPath:filePath error:nil];
     }else{
         NSString *directoryPath=[filePath stringByDeletingLastPathComponent];
-        if(![HGBFileTool isExitAtFilePath:directoryPath]){
-            [HGBFileTool createDirectoryPath:directoryPath];
+        if(![HGBFileTool isExitAtFileSource:directoryPath]){
+            [HGBFileTool createDirectorySource:directoryPath];
         }
     }
     
@@ -120,7 +160,7 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
     
     //结束归档
     [archiver finishEncoding];
-    archiverData=[NSMutableData dataWithData:[HGBFileTool AES256ParmEncryptData:archiverData WithKey:[NSString stringWithFormat:@"%@",fileName]]];
+    archiverData=[NSMutableData dataWithData:[HGBFileTool AES256ParmEncryptData:archiverData WithKey:encryptKey]];
     
     BOOL flag=[archiverData writeToFile:filePath atomically:YES];
     return flag;
@@ -128,54 +168,76 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 }
 /**
  反归档-加密
- 
- @param filePath 要解归档的路径
+
+ @param source 要解归档路径或url
+ @param key 密钥
  @return 解归档后对象
  */
-+ (id)unarcheiverWithEncryptFilePath:(NSString *)filePath
++ (id)unarcheiverWithEncryptFileSource:(NSString *)source andWithKey:(NSString *)key
 {
-    if(filePath==nil||filePath.length==0){
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return nil;
     }
-    filePath=[HGBFileTool getCompletePathFromSimplifyFilePath:filePath];
+
+    source=[HGBFileTool urlAnalysis:source];
+    NSString *filePath=[[NSURL URLWithString:source]path];
     NSString *fileName = [filePath lastPathComponent];
+
+    NSString *encryptKey=key;
+    if(encryptKey==nil){
+        encryptKey=[NSString stringWithFormat:@"%@",fileName];
+    }
     
     NSData *data = [NSData dataWithContentsOfFile:filePath];
-    data=[HGBFileTool AES256ParmDecryptData:data WithKey:[NSString stringWithFormat:@"%@",fileName]];
+    data=[HGBFileTool AES256ParmDecryptData:data WithKey:encryptKey];
     if(!data){
+        HGBLog(@"数据为空");
         return nil;
     }
     //将NSData通过反归档,转化成CheckViolationModel的数组对象
-    NSKeyedUnarchiver *unarcheiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-    //通过反归档得到复杂对象
-    id reslutObj = [unarcheiver decodeObjectForKey:fileName];
-    return reslutObj;
+
+    @try{
+        NSKeyedUnarchiver *unarcheiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+        //通过反归档得到复杂对象
+        id reslutObj = [unarcheiver decodeObjectForKey:fileName];
+        return reslutObj;
+    }@catch(NSException *e){
+         HGBLog(@"%@",e);
+        return nil;
+    }@finally{
+
+    }
+
     
 }
 #pragma mark 文档通用
 
 /**
  文件拷贝
- 
- @param srcPath 文件路径
- @param filePath 复制文件路径
+
+ @param source 文件路径或url
+ @param destination 复制文件路径或url
  @return 结果
  */
-+(BOOL)copyFilePath:(NSString *)srcPath ToPath:(NSString *)filePath{
-    if(srcPath==nil||srcPath.length==0){
++(BOOL)copyFileSource:(NSString *)source toDestination:(NSString *)destination{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return NO;
     }
-    if(filePath==nil||filePath.length==0){
-        filePath=[srcPath lastPathComponent];
+    if(destination==nil||destination.length==0){
+        HGBLog(@"目标文件地址不能为空");
+        return nil;
     }
-    srcPath=[HGBFileTool getCompletePathFromSimplifyFilePath:srcPath];
-    filePath=[HGBFileTool getDestinationCompletePathFromSimplifyFilePath:filePath];
-    if(![HGBFileTool isExitAtFilePath:srcPath]){
+    NSString* srcPath=[HGBFileTool urlAnalysisToPath:source];
+   NSString* filePath=[HGBFileTool urlAnalysisToPath:destination];
+    if(![HGBFileTool isExitAtFileSource:srcPath]){
+        HGBLog(@"源文件不存在");
         return NO;
     }
     NSString *directoryPath=[filePath stringByDeletingLastPathComponent];
-    if(![HGBFileTool isExitAtFilePath:directoryPath]){
-        [HGBFileTool createDirectoryPath:directoryPath];
+    if(![HGBFileTool isExitAtFileSource:directoryPath]){
+        [HGBFileTool createDirectorySource:directoryPath];
     }
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
     BOOL flag=[filemanage copyItemAtPath:srcPath toPath:filePath error:nil];
@@ -188,28 +250,30 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 
 /**
  文件剪切
- 
- @param srcPath 文件路径
- @param filePath 复制文件路径
+
+ @param source 文件路径或url
+ @param destination 复制文件路径或url
  @return 结果
  */
-+(BOOL)moveFilePath:(NSString *)srcPath ToPath:(NSString *)filePath{
++(BOOL)moveFileSource:(NSString *)source toDestination:(NSString *)destination{
 
-    if(srcPath==nil||srcPath.length==0){
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return NO;
     }
-    if(filePath==nil||filePath.length==0){
-        filePath=[srcPath lastPathComponent];
+    if(destination==nil||destination.length==0){
+        HGBLog(@"目标文件地址不能为空");
+        return nil;
     }
-    srcPath=[HGBFileTool getCompletePathFromSimplifyFilePath:srcPath];
-    filePath=[HGBFileTool getDestinationCompletePathFromSimplifyFilePath:filePath];
-
-    if(![HGBFileTool isExitAtFilePath:srcPath]){
+    NSString* srcPath=[HGBFileTool urlAnalysisToPath:source];
+    NSString* filePath=[HGBFileTool urlAnalysisToPath:destination];
+    if(![HGBFileTool isExitAtFileSource:srcPath]){
+        HGBLog(@"源文件不存在");
         return NO;
     }
     NSString *directoryPath=[filePath stringByDeletingLastPathComponent];
-    if(![HGBFileTool isExitAtFilePath:directoryPath]){
-        [HGBFileTool createDirectoryPath:directoryPath];
+    if(![HGBFileTool isExitAtFileSource:directoryPath]){
+        [HGBFileTool createDirectorySource:directoryPath];
     }
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
     BOOL flag=[filemanage moveItemAtPath:srcPath toPath:filePath error:nil];
@@ -222,15 +286,17 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 
 /**
  删除文档
- 
- @param filePath 文件路径
+
+ @param source 归档的路径或url
  @return 结果
  */
-+ (BOOL)removeFilePath:(NSString *)filePath{
-    if(filePath==nil||filePath.length==0){
-        return YES;
++ (BOOL)removeFileSource:(NSString *)source{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
+        return NO;
     }
-    filePath=[HGBFileTool getDestinationCompletePathFromSimplifyFilePath:filePath];
+   NSString* filePath=[HGBFileTool urlAnalysisToPath:source];
+
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
     BOOL isExit=[filemanage fileExistsAtPath:filePath];
     BOOL deleteFlag=NO;
@@ -243,16 +309,16 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 }
 /**
  文档是否存在
- 
- @param filePath 文件路径
+
+ @param source 归档的路径或url
  @return 结果
  */
-+(BOOL)isExitAtFilePath:(NSString *)filePath{
-    if(filePath==nil||filePath.length==0){
++(BOOL)isExitAtFileSource:(NSString *)source{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return NO;
     }
-    filePath=[HGBFileTool getDestinationCompletePathFromSimplifyFilePath:filePath];
-     filePath=[HGBFileTool getDestinationCompletePathFromSimplifyFilePath:filePath];
+    NSString* filePath=[HGBFileTool urlAnalysisToPath:source];
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
     BOOL isExit=[filemanage fileExistsAtPath:filePath];
     return isExit;
@@ -263,14 +329,15 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 /**
  路径是不是文件夹
 
- @param path 路径
+ @param source 路径或url
  @return 结果
  */
-+(BOOL)isDirectoryAtPath:(NSString *)path{
-    if(path==nil||path.length==0){
++(BOOL)isDirectoryAtSource:(NSString *)source{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return NO;
     }
-    path=[HGBFileTool getDestinationCompletePathFromSimplifyFilePath:path];
+    NSString* path=[HGBFileTool urlAnalysisToPath:source];
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
     BOOL isDir,isExit;
     isExit=[filemanage fileExistsAtPath:path isDirectory:&isDir];
@@ -283,15 +350,17 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 /**
  创建文件夹
 
- @param directoryPath 路径
+ @param source 路径或url
  @return 结果
  */
-+(BOOL)createDirectoryPath:(NSString *)directoryPath{
-    if(directoryPath==nil||directoryPath.length==0){
++(BOOL)createDirectorySource:(NSString *)source{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return NO;
     }
-    directoryPath=[HGBFileTool getDestinationCompletePathFromSimplifyFilePath:directoryPath];
-    if([HGBFileTool isExitAtFilePath:directoryPath]){
+    NSString* directoryPath=[HGBFileTool urlAnalysisToPath:source];
+    if([HGBFileTool isExitAtFileSource:directoryPath]){
+        HGBLog(@"源文件不存在");
         return YES;
     }
     NSFileManager *filemanage=[NSFileManager defaultManager];
@@ -306,15 +375,17 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 /**
  获取文件夹直接子路径
 
- @param directoryPath 文件夹路径
+ @param source 文件夹路径或url
  @return 结果
  */
-+(NSArray *)getDirectSubPathsInDirectoryPath:(NSString *)directoryPath{
-    if(directoryPath==nil||directoryPath.length==0){
++(NSArray *)getDirectSubPathsInDirectorySource:(NSString *)source{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return nil;
     }
-    directoryPath=[HGBFileTool getCompletePathFromSimplifyFilePath:directoryPath];
-    if(![HGBFileTool isExitAtFilePath:directoryPath]){
+    NSString* directoryPath=[HGBFileTool urlAnalysisToPath:source];
+    if(![HGBFileTool isExitAtFileSource:directoryPath]){
+        HGBLog(@"源文件不存在");
         return nil;
     }
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
@@ -322,17 +393,19 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
     return paths;
 }
 /**
- 获取文件夹所有子路径
- 
- @param directoryPath 文件夹路径
+ 获取文件夹所有子路径或url
+
+ @param source 文件夹路径
  @return 结果
  */
-+(NSArray *)getAllSubPathsInDirectoryPath:(NSString *)directoryPath{
-    if(directoryPath==nil||directoryPath.length==0){
++(NSArray *)getAllSubPathsInDirectorySource:(NSString *)source{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return nil;
     }
-    directoryPath=[HGBFileTool getCompletePathFromSimplifyFilePath:directoryPath];
-    if(![HGBFileTool isExitAtFilePath:directoryPath]){
+    NSString* directoryPath=[HGBFileTool urlAnalysisToPath:source];
+    if(![HGBFileTool isExitAtFileSource:directoryPath]){
+        HGBLog(@"源文件不存在");
         return nil;
     }
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
@@ -343,16 +416,18 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 /**
  获取文件信息
 
- @param filePath 文件路径
+ @param source 文件路径或url
  @return 文件信息
  */
-+(NSDictionary *)getFileInfoFromFilePath:(NSString *)filePath{
++(NSDictionary *)getFileInfoFromFileSource:(NSString *)source{
 
-    if(filePath==nil||filePath.length==0){
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return nil;
     }
-    filePath=[HGBFileTool getCompletePathFromSimplifyFilePath:filePath];
-    if(![HGBFileTool isExitAtFilePath:filePath]){
+    NSString* filePath=[HGBFileTool urlAnalysisToPath:source];
+    if(![HGBFileTool isExitAtFileSource:filePath]){
+        HGBLog(@"源文件不存在");
         return nil;
     }
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
@@ -362,15 +437,17 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 /**
  文档是否可读
 
- @param filePath 文件路径
+ @param source 文件路径或url
  @return 结果
  */
-+(BOOL)isReadableFileAtFilePath:(NSString *)filePath{
-    if(filePath==nil||filePath.length==0){
++(BOOL)isReadableFileAtFileSource:(NSString *)source{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return NO;
     }
-     filePath=[HGBFileTool getCompletePathFromSimplifyFilePath:filePath];
-    if(![HGBFileTool isExitAtFilePath:filePath]){
+    NSString* filePath=[HGBFileTool urlAnalysisToPath:source];
+    if(![HGBFileTool isExitAtFileSource:filePath]){
+        HGBLog(@"源文件不存在");
         return NO;
     }
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
@@ -380,15 +457,17 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 /**
  文档是否可写
 
- @param filePath 文件路径
+ @param source 文件路径或url
  @return 结果
  */
-+(BOOL)isWriteableFileAtFilePath:(NSString *)filePath{
-    if(filePath==nil||filePath.length==0){
++(BOOL)isWriteableFileAtFileSource:(NSString *)source{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return NO;
     }
-     filePath=[HGBFileTool getCompletePathFromSimplifyFilePath:filePath];
-    if(![HGBFileTool isExitAtFilePath:filePath]){
+    NSString* filePath=[HGBFileTool urlAnalysisToPath:source];
+    if(![HGBFileTool isExitAtFileSource:filePath]){
+        HGBLog(@"源文件不存在");
         return NO;
     }
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
@@ -398,15 +477,17 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 /**
  文档是否可删
 
- @param filePath 文件路径
+ @param source 文件路径或url
  @return 结果
  */
-+(BOOL)isDeleteableFileAtFilePath:(NSString *)filePath{
-    if(filePath==nil||filePath.length==0){
++(BOOL)isDeleteableFileAtFileSource:(NSString *)source{
+    if(source==nil||source.length==0){
+        HGBLog(@"源文件地址不能为空");
         return NO;
     }
-     filePath=[HGBFileTool getCompletePathFromSimplifyFilePath:filePath];
-    if(![HGBFileTool isExitAtFilePath:filePath]){
+    NSString* filePath=[HGBFileTool urlAnalysisToPath:source];
+    if(![HGBFileTool isExitAtFileSource:filePath]){
+        HGBLog(@"源文件不存在");
         return NO;
     }
     NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
@@ -414,36 +495,7 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
     return isDelete;
 }
 
-#pragma mark bundle
-/**
- 获取主资源文件路径
 
- @return 主资源文件路径
- */
-+(NSString *)getMainBundlePath{
-    return [[NSBundle mainBundle]resourcePath];
-}
-
-
-#pragma mark 获取沙盒文件路径
-/**
- 获取沙盒根路径
- 
- @return 根路径
- */
-+(NSString *)getHomeFilePath{
-    NSString *path_huang=NSHomeDirectory();
-    return path_huang;
-}
-/**
- 获取沙盒Document路径
- 
- @return Document路径
- */
-+(NSString *)getDocumentFilePath{
-    NSString  *path_huang =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
-    return path_huang;
-}
 #pragma mark 加密
 + (NSData *)AES256ParmEncryptData:(NSData *)data WithKey:(NSString *)key   //加密
 {
@@ -493,44 +545,159 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 }
 
 
-#pragma mark 获取文件完整路径
-
+#pragma mark url
 /**
- 将简化路径转化为完整路径
+ 判断路径是否是URL
 
- @param simplifyFilePath 简化路径
- @return 完整路径
+ @param url url路径
+ @return 结果
  */
-+(NSString *)getCompletePathFromSimplifyFilePath:(NSString *)simplifyFilePath{
-    NSString *path=[simplifyFilePath copy];
-    if(![HGBFileTool isExitAtFilePath:path]){
-         path=[[HGBFileTool getHomeFilePath] stringByAppendingPathComponent:simplifyFilePath];
-        if(![HGBFileTool isExitAtFilePath:path]){
-             path=[[HGBFileTool getDocumentFilePath] stringByAppendingPathComponent:simplifyFilePath];
-            if(![HGBFileTool isExitAtFilePath:path]){
-                path=[[HGBFileTool getMainBundlePath] stringByAppendingPathComponent:simplifyFilePath];
-                if(![HGBFileTool isExitAtFilePath:path]){
-                    path=simplifyFilePath;
-                }
-
-            }
-
-        }
-
++(BOOL)isURL:(NSString*)url{
+    if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"/User"]||[url hasPrefix:@"/var"]||[url hasPrefix:@"http://"]||[url hasPrefix:@"https://"]||[url hasPrefix:@"file://"]){
+        return YES;
+    }else{
+        return NO;
     }
-    return path;
 }
 /**
- 将简化目标路径转化为完整路径
+ url校验存在
 
- @param simplifyFilePath 简化路径
- @return 完整路径
+ @param url url
+ @return 是否存在
  */
-+(NSString *)getDestinationCompletePathFromSimplifyFilePath:(NSString *)simplifyFilePath{
-    if(!([simplifyFilePath containsString:[HGBFileTool getHomeFilePath]]||[simplifyFilePath containsString:[HGBFileTool getMainBundlePath]])){
-        simplifyFilePath=[[HGBFileTool getHomeFilePath] stringByAppendingPathComponent:simplifyFilePath];
++(BOOL)urlExistCheck:(NSString *)url{
+    if(url==nil||url.length==0){
+        return NO;
     }
-    return simplifyFilePath;
+    if(![HGBFileTool isURL:url]){
+        return nil;
+    }
+    if(![url containsString:@"://"]){
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    if([url hasPrefix:@"file://"]){
+        NSString *filePath=[[NSURL URLWithString:url]path];
+        if(filePath==nil||filePath.length==0){
+            return NO;
+        }
+        NSFileManager *filemanage=[NSFileManager defaultManager];//创建对象
+        return [filemanage fileExistsAtPath:filePath];
+    }else{
+        NSURL *urlCheck=[NSURL URLWithString:url];
+
+        return [[UIApplication sharedApplication]canOpenURL:urlCheck];
+
+    }
+}
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysisToPath:(NSString *)url{
+    if(url==nil){
+        return nil;
+    }
+    if(![HGBFileTool isURL:url]){
+        return nil;
+    }
+    NSString *urlstr=[HGBFileTool urlAnalysis:url];
+    return [[NSURL URLWithString:urlstr]path];
+}
+/**
+ url解析
+
+ @return 解析后url
+ */
++(NSString *)urlAnalysis:(NSString *)url{
+    if(url==nil){
+        return nil;
+    }
+    if(![HGBFileTool isURL:url]){
+        return nil;
+    }
+    if([url containsString:@"://"]){
+        //project://工程包内
+        //home://沙盒路径
+        //http:// https://网络路径
+        //document://沙盒Documents文件夹
+        //caches://沙盒Caches
+        //tmp://沙盒Tmp文件夹
+        if([url hasPrefix:@"project://"]||[url hasPrefix:@"home://"]||[url hasPrefix:@"document://"]||[url hasPrefix:@"defaults://"]||[url hasPrefix:@"caches://"]||[url hasPrefix:@"tmp://"]){
+            if([url hasPrefix:@"project://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"project://" withString:@""];
+                NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+                url=[projectPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"home://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"home://" withString:@""];
+                NSString *homePath=NSHomeDirectory();
+                url=[homePath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"document://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"document://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"defaults://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"defaults://" withString:@""];
+                NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+                url=[documentPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"caches://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"caches://" withString:@""];
+                NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+                url=[cachesPath stringByAppendingPathComponent:url];
+            }else if([url hasPrefix:@"tmp://"]){
+                url=[url stringByReplacingOccurrencesOfString:@"tmp://" withString:@""];
+                NSString *tmpPath =NSTemporaryDirectory();
+                url=[tmpPath stringByAppendingPathComponent:url];
+            }
+            url=[[NSURL fileURLWithPath:url]absoluteString];
+
+        }else{
+
+        }
+    }else {
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    return url;
+}
+/**
+ url封装
+
+ @return 封装后url
+ */
++(NSString *)urlEncapsulation:(NSString *)url{
+    if(![HGBFileTool isURL:url]){
+        return nil;
+    }
+    NSString *homePath=NSHomeDirectory();
+    NSString  *documentPath =[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) lastObject];
+    NSString  *cachesPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES) lastObject];
+    NSString *projectPath=[[NSBundle mainBundle]resourcePath];
+    NSString *tmpPath =NSTemporaryDirectory();
+
+    if([url hasPrefix:@"file://"]){
+        url=[url stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+    }
+    if([url hasPrefix:projectPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",projectPath] withString:@"project://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",projectPath] withString:@"project://"];
+    }else if([url hasPrefix:documentPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",documentPath] withString:@"defaults://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",documentPath] withString:@"defaults://"];
+    }else if([url hasPrefix:cachesPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",cachesPath] withString:@"caches://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",cachesPath] withString:@"caches://"];
+    }else if([url hasPrefix:tmpPath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",tmpPath] withString:@"tmp://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",tmpPath] withString:@"tmp://"];
+    }else if([url hasPrefix:homePath]){
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",homePath] withString:@"home://"];
+        url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@",homePath] withString:@"home://"];
+    }else if([url containsString:@"://"]){
+
+    }else{
+        url=[[NSURL fileURLWithPath:url]absoluteString];
+    }
+    return url;
 }
 
 @end

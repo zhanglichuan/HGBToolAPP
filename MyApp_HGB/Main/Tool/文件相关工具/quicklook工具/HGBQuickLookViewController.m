@@ -114,9 +114,9 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     if(indexPath.section==0){
         if (indexPath.row==0){
-            [HGBQuickLookTool lookFileAtPath:@"test.pdf" inParent:self];
+            [[HGBQuickLookTool shareInstance] lookFileAtSource:@"project://test.pdf" inParent:self];
         }else if (indexPath.row==1){
-            [HGBQuickLookTool lookFileAtPath:@"test.docx" inParent:self];
+            [[HGBQuickLookTool shareInstance] lookFileAtSource:@"project://test.docx" inParent:self];
         }
         
     }

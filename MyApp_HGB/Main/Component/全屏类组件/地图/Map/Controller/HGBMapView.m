@@ -20,6 +20,15 @@
 
 #import "HGBMapBottomSheet.h"
 
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
+
 @interface HGBMapView ()<CLLocationManagerDelegate,MKMapViewDelegate,HGBAnnotationViewDelegate,HGBMapBottomSheetDelegate>
 /**
  地址
@@ -192,7 +201,8 @@ static int funcType=0;
     [self.secondButton setTitleColor:[UIColor colorWithRed:191.0/256 green:191.0/256 blue:191.0/256 alpha:1] forState:(UIControlStateNormal)];
     CLLocationCoordinate2D coordinate=[HGBMapCoordinateTool transformFromWGSToGCJ:self.mapView.region.center];
     NSDictionary *dic=@{@"lng":@(coordinate.longitude).stringValue,@"lat":@(coordinate.latitude).stringValue,@"scope":@""};
-    NSLog(@"1:%@",dic);
+    [dic objectForKey:@"scope"];
+
 
 
 }
@@ -205,7 +215,8 @@ static int funcType=0;
 
     CLLocationCoordinate2D coordinate=[HGBMapCoordinateTool transformFromWGSToGCJ:self.mapView.region.center];
     NSDictionary *dic=@{@"lng":@(coordinate.longitude).stringValue,@"lat":@(coordinate.latitude).stringValue,@"scope":@""};
-    NSLog(@"2:%@",dic);
+    [dic objectForKey:@"scope"];
+
 }
 #pragma mark 地图缩放功能
 //地图缩放
@@ -325,6 +336,13 @@ static int funcType=0;
         [self.locationManager requestWhenInUseAuthorization];
     }
     [self.locationManager startUpdatingLocation];
+    if ([CLLocationManager authorizationStatus] ==kCLAuthorizationStatusDenied||[CLLocationManager authorizationStatus] ==kCLAuthorizationStatusRestricted) {
+
+        NSString *promptString=@"";
+        promptString=@"定位失败:请到设置隐私中开启本程序定位权限";
+        HGBLog(@"%@",promptString);
+
+    }
 }
 
 #pragma mark 定位
@@ -347,7 +365,7 @@ static int funcType=0;
 {
 
     [self.locationManager stopUpdatingLocation];
-    NSLog(@"探测失败");
+    HGBLog(@"探测失败:%@",error);
     CLLocationCoordinate2D coordinate= CLLocationCoordinate2DMake(31.2295612784, 121.4729663090);
     [self.locationManager stopUpdatingLocation];
     MKCoordinateSpan span;
@@ -358,7 +376,7 @@ static int funcType=0;
     [self.mapView setRegion:region];
 
     [manager stopUpdatingLocation];
-    NSLog(@"Error: %@",[error localizedDescription]);
+
     switch([error code]) {
         case kCLErrorDenied:{
             [self alertAuthorityWithPrompt:@"请到设置隐私中开启本程序定位权限"];
@@ -405,7 +423,8 @@ static int funcType=0;
     //    NSDictionary *dic=@{@"lng":@"121.50909",@"lat":@"31.23743",@"scope":@""};
     CLLocationCoordinate2D coordinate=[HGBMapCoordinateTool transformFromWGSToGCJ:self.mapView.region.center];
     NSDictionary *dic=@{@"lng":@(coordinate.longitude).stringValue,@"lat":@(coordinate.latitude).stringValue,@"scope":@""};
-    NSLog(@"region:%@",dic);
+    [dic objectForKey:@"scope"];
+
 }
 
 -(void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated{
@@ -525,7 +544,7 @@ static int funcType=0;
 }
 
 - (void)bottomSheetDidClickcancelButton:(HGBMapBottomSheet *)bottomSheet {
-    NSLog(@"cancel");
+    
 }
 
 #pragma mark 获取地图导航支持的类型
@@ -548,12 +567,12 @@ static int funcType=0;
 }
 #pragma mark alert
 -(void)alertWithPrompt:(NSString *)prompt{
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:nil message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action=[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
     }];
     [alert addAction:action];
-    [self.parent presentViewController:alert animated:YES completion:nil];
+    [self presentViewController:alert animated:YES completion:nil];
 #else
     UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:nil message:prompt delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
     alertview.tag=0;
@@ -561,10 +580,10 @@ static int funcType=0;
 #endif
 }
 -(void)alertAuthorityWithPrompt:(NSString *)prompt{
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     UIAlertController *alert=[UIAlertController alertControllerWithTitle:@"权限提示" message:prompt preferredStyle:(UIAlertControllerStyleAlert)];
     UIAlertAction *action1=[UIAlertAction actionWithTitle:@"设置" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
-        if(![HGBMediaTool openAppSetView]){
+        if(![self openAppSetView]){
             [self alertWithPrompt:@"跳转失败,请在设置界面开启权限"];
         }
 
@@ -573,7 +592,7 @@ static int funcType=0;
     UIAlertAction *action2=[UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
     }];
     [alert addAction:action2];
-    [self.parent presentViewController:alert animated:YES completion:nil];
+    [self presentViewController:alert animated:YES completion:nil];
 #else
     UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:nil message:prompt delegate:self cancelButtonTitle:@"设置" otherButtonTitles:@"取消", nil];
     alertview.tag=1;
@@ -581,7 +600,7 @@ static int funcType=0;
 #endif
 
 }
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
 #else
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if(alertView.tag==0){
@@ -608,7 +627,7 @@ static int funcType=0;
     NSURL * url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
     if([[UIApplication sharedApplication] canOpenURL:url]) {
 
-#ifdef KiOS10Later
+#ifdef __IPHONE_10_0
         static BOOL sucessFlag=YES;
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
 

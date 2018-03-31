@@ -390,6 +390,10 @@ static HGBDatePicker *obj=nil;
     }
     
     self.date=[self.f dateFromString:dateStr];
+    if(self.backDateFormat&&self.backDateFormat.length!=0){
+        self.f.dateFormat=self.backDateFormat;
+        dateStr=[self.f stringFromDate:self.date];
+    }
     if(self.delegate&&[self.delegate respondsToSelector:@selector(datePicker: didSelectedDate:)]){
         [self.delegate datePicker:self didSelectedDate:self.date];
       

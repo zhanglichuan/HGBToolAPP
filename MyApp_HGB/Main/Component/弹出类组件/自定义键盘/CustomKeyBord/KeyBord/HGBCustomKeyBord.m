@@ -225,7 +225,16 @@ static  HGBCustomKeyBord *obj = nil;
  @param parent 父控制器
  */
 -(void)popKeyBordInParent:(UIViewController *)parent{
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [self popKeyBordWithType:self.keybordShowType inParent:parent];
+}
+- (void)keyboardWillHide:(NSNotification *)notification {
+
+    [self disappearSwitchBtnClickWithBlock:^{
+
+    }];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+
 }
 /**
  弹出键盘

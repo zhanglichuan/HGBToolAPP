@@ -17,12 +17,20 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <AudioToolbox/AudioToolbox.h>
 
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
 /**
  错误类型
  */
 typedef enum HGBScanErrorType
 {
-    HGBScanErrorTypeAuthority//权限受限
+    HGBScanErrorTypeDevice=10,//设备不可用
+    HGBScanErrorTypeAuthority=11//权限受限
 
 }HGBScanErrorType;
 

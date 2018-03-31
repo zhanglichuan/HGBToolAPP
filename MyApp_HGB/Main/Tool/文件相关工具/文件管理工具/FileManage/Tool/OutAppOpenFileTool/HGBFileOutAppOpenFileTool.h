@@ -8,24 +8,89 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-typedef void (^CompleteBlock)(NSInteger status);
+
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+//快捷url提示
+/**
+ project://工程包内
+ home://沙盒路径
+ http:// https://网络路径
+ document://  或defaults://沙盒Documents文件夹
+ caches://沙盒Caches
+ tmp://沙盒Tmp文件夹
+
+ */
+
+/**
+ 错误类型
+ */
+typedef enum HGBFileOutAppOpenFileToolErrorType
+{
+    HGBFileOutAppOpenFileToolErrorTypePath=20//路径错误
+
+}HGBFileOutAppOpenFileToolErrorType;
+
+@class HGBFileOutAppOpenFileTool;
+
+/**
+ 快速预览
+ */
+@protocol HGBFileOutAppOpenFileToolDelegate <NSObject>
+@optional
+/**
+ 打开成功
+
+ @param outLook outLook
+ */
+-(void)outLookDidOpenSucessed:(HGBFileOutAppOpenFileTool *)outLook;
+/**
+ 打开失败
+
+ @param outLook outLook
+ */
+-(void)outLook:(HGBFileOutAppOpenFileTool *)outLook didOpenFailedWithError:(NSDictionary *)errorInfo;
+/**
+ 取消快速预览
+
+ @param outLook outLook
+ */
+-(void)outLookDidCanceled:(HGBFileOutAppOpenFileTool *)outLook;
+/**
+ 关闭快速预览
+
+ @param outLook outLook
+ */
+-(void)outLookDidClose:(HGBFileOutAppOpenFileTool *)outLook;
+
+@end
+
 
 @interface HGBFileOutAppOpenFileTool : NSObject
 /**
- 使用外部app打开文件
-
- @param url 路径
- @param parent 父控制器
- @param completeBlock 结果 0失败 1成功 2取消
+ 失败提示
  */
-+(void)openFileWithExetenAppWithUrl:(NSString *)url inParent:(UIViewController *)parent andWithCompleteBlock:(CompleteBlock )completeBlock;
+@property(assign,nonatomic)BOOL withoutFailPrompt;
 
 /**
- 使用外部app打开文件
-
- @param path 路径
- @param parent 父控制器
- @param completeBlock 结果 0失败 1成功 2取消
+ 代理
  */
-+(void)openFileWithExetenAppWithPath:(NSString *)path inParent:(UIViewController *)parent andWithCompleteBlock:(CompleteBlock )completeBlock;
+@property(assign,nonatomic)id<HGBFileOutAppOpenFileToolDelegate>delegate;
+#pragma mark init
++(instancetype)shareInstance;
+#pragma mark open
+
+
+
+/**
+ 快速浏览文件
+
+ @param source 路径或url
+ @param parent 父控制器
+ */
+-(void)lookFileAtSource:(NSString *)source inParent:(UIViewController *)parent;
 @end

@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
+
 @interface HGBQROrBarCodeTool : NSObject
 
 #pragma mark 二维码生成-普通

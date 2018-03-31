@@ -9,6 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "UIVieW+HGBSize.h"
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
 @interface HGBSizeTool : NSObject
 #pragma mark 获取字符串宽高
 /**

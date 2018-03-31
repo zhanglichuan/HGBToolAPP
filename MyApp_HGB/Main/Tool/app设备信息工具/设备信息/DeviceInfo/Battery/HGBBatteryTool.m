@@ -9,6 +9,16 @@
 #import "HGBBatteryTool.h"
 #import <sys/utsname.h>
 
+
+#define ReslutCode @"resultCode"
+#define ReslutMessage @"resultMessage"
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
 // 设备型号的枚举值
 typedef NS_ENUM(NSUInteger, HGBDiviceType) {
     iPhone_1G = 0,
@@ -332,6 +342,16 @@ static const CGFloat BatteryVoltageContainer[] = {
 
         if ([device batteryState] != UIDeviceBatteryStateUnknown) {
             [self _doUpdateBatteryStatus];
+        }else{
+            HGBLog(@"设备受限");
+            if(self.delegate&&[self.delegate respondsToSelector:@selector(batteryStatusUpdate:didFailedWithError:)]){
+                [self.delegate batteryStatusUpdate:self didFailedWithError:@{ReslutCode:@(HGBBatteryToolErrorTypeDevice).stringValue,ReslutMessage:@"设备受限"}];
+            }
+        }
+    }else{
+        HGBLog(@"设备受限");
+        if(self.delegate&&[self.delegate respondsToSelector:@selector(batteryStatusUpdate:didFailedWithError:)]){
+            [self.delegate batteryStatusUpdate:self didFailedWithError:@{ReslutCode:@(HGBBatteryToolErrorTypeDevice).stringValue,ReslutMessage:@"设备受限"}];
         }
     }
 }
@@ -379,7 +399,10 @@ static const CGFloat BatteryVoltageContainer[] = {
             break;
     }
 
-    [self.delegate batteryStatusDidUpdated:self];
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(batteryStatusDidUpdated:)]){
+         [self.delegate batteryStatusDidUpdated:self];
+    }
+
 }
 #pragma mark - Private Method
 + (HGBDiviceType)transformMachineToIdevice{

@@ -9,10 +9,39 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@class HGBBatteryTool;
-@protocol HGBBatteryToolDelegate
 
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
+
+/**
+ 错误类型
+ */
+typedef enum HGBBatteryToolErrorType
+{
+    HGBBatteryToolErrorTypeDevice=10,//设备受限
+    HGBBatteryToolErrorTypeAuthority=11//权限问题
+
+}HGBBatteryToolErrorType;
+@class HGBBatteryTool;
+@protocol HGBBatteryToolDelegate<NSObject>
+
+/**
+ 电池信息更新
+
+ @param battery 电池
+ */
 - (void)batteryStatusDidUpdated:(HGBBatteryTool*)battery ;
+/**
+ 电池信息获取失败
+
+ @param battery 电池
+ @param errorInfo 错误信息
+ */
+- (void)batteryStatusUpdate:(HGBBatteryTool*)battery didFailedWithError:(NSDictionary *)errorInfo;;
 @end
 
 @interface HGBBatteryTool : NSObject

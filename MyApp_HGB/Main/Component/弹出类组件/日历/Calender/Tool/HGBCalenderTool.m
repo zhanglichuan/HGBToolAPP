@@ -7,29 +7,8 @@
 //
 
 #import "HGBCalenderTool.h"
-#ifndef SYSTEM_VERSION
-#define SYSTEM_VERSION [[[UIDevice currentDevice] systemVersion] floatValue]//系统版本号
-#endif
 
-#ifndef KiOS6Later
-#define KiOS6Later (SYSTEM_VERSION >= 6)
-#endif
 
-#ifndef KiOS7Later
-#define KiOS7Later (SYSTEM_VERSION >= 7)
-#endif
-
-#ifndef KiOS8Later
-#define KiOS8Later (SYSTEM_VERSION >= 8)
-#endif
-
-#ifndef KiOS9Later
-#define KiOS9Later (SYSTEM_VERSION >= 9)
-#endif
-
-#ifndef KiOS10Later
-#define KiOS10Later (SYSTEM_VERSION >= 10)
-#endif
 
 @implementation HGBCalenderTool
 
@@ -126,7 +105,7 @@
     }
     NSCalendar *calendar;
     NSInteger unitFlags ;
-#ifdef KiOS8Later
+#ifdef __IPHONE_8_0
     calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     unitFlags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday |
     NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;

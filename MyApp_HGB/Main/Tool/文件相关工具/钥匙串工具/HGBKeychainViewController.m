@@ -114,12 +114,12 @@
     if(indexPath.section==0){
 
         if (indexPath.row==0){
-            NSLog(@"%d",[HGBKeychainTool saveKeyChainForKeyWithKey:@"name-name" value:@"hello"]);
+            NSLog(@"%d",[HGBKeychainTool saveKeyChainValue:@"hello" withKey:@"name-name"]);
         }else if (indexPath.row==1){
 
-             NSLog(@"%@",[HGBKeychainTool getKeychainStringWithKey:@"name-name"]);
+             NSLog(@"%@",[HGBKeychainTool getKeychainWithKey:@"name-name"]);
         }else if (indexPath.row==2){
-            NSLog(@"%d",[HGBKeychainTool deleteKeyChainForKeyWithKey:@"name-name"]);
+            NSLog(@"%d",[HGBKeychainTool deleteKeyChainWithKey:@"name-name"]);
 
         }
 

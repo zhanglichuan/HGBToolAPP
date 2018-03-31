@@ -18,9 +18,11 @@
 #import "AppDelegate+HGBWeex.h"
 #import "AppDelegate+HGBWChatShare.h"
 #import "AppDelegate+HGBUMShare.h"
-
+#import "AppDelegate+HGBAppCheck.h"
 #import "HGBRootViewController.h"
-
+#import "AppDelegate+HGBException.h"
+#import "AppDelegate+HGB3DTouch.h"
+#import "AppDelegate+HGBURLProtocol.h"
 
 @interface AppDelegate ()
 
@@ -38,6 +40,12 @@
     [self init_Push_ServerWithOptions:launchOptions];
     //app内购初始化
     [self init_Purchase_ServerWithOptions:launchOptions];
+    //错误捕捉
+    [self init_Exception_ServerWithOptions:launchOptions];
+    //3DTouch
+    [self init_3DTouch_ServerWithOptions:launchOptions];
+    //URL拦截
+    [self init_URLIntercept_ServerWithOptions:launchOptions];
 
 
 
@@ -57,6 +65,8 @@
     HGBRootViewController *rootVC=[[HGBRootViewController alloc]init];
     self.window.rootViewController=rootVC;
     [self.window makeKeyAndVisible];
+    //app自检
+//    [self init_AppCheck_ServerWithOptions:launchOptions];
 
     return YES;
 }

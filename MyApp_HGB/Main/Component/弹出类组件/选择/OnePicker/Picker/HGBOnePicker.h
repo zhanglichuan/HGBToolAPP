@@ -13,13 +13,19 @@
  两项选择代理
  */
 @protocol HGBOnePickerDelegate <NSObject>
+@optional
 /**
  选择
 
  @param title 信息
  */
 -(void)onePicker:(HGBOnePicker *)picker didSelectedWithTitle:(NSString *)title;
-@optional
+/**
+ 选择
+
+ @param index 坐标
+ */
+-(void)onePicker:(HGBOnePicker *)picker didSelectedWithIndex:(NSInteger)index;
 /**
  取消
  */
@@ -51,9 +57,17 @@
  */
 @property(strong,nonatomic)NSString *selectedItem;
 /**
+ 选中项
+ */
+@property(assign,nonatomic)NSInteger selectedIndex;
+/**
  数据源:
  */
 @property (nonatomic,strong)NSArray *dataSource;
+/**
+ 是否排序
+ */
+@property(nonatomic,assign)BOOL isSequence;
 /**
  创建
  */

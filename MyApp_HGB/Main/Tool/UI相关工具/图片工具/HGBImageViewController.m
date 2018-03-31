@@ -75,7 +75,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"图片工具:":@[@"图片剪切",@"尺寸变化",@"图片压缩",@"图片压缩不失真",@"图片旋转",@"获取圆形图片",@"图片方向处理",@"颜色转图片"]};
+    self.dataDictionary=@{@"图片工具:":@[@"图片剪切",@"尺寸变化",@"图片压缩",@"图片压缩不失真",@"图片旋转",@"获取圆形图片",@"图片方向处理",@"颜色转图片",@"图片组合",@"黑白图片1",@"黑白图片2",@"黑白图片3"]};
 
     self.keys=@[@"图片工具:"];
 
@@ -162,7 +162,16 @@
             self.imageView.image=[HGBImageTool fixOrientationWithImage:self.originimageView.image];
             NSLog(@"%f-%f",self.imageView.image.size.width,self.imageView.image.size.height);
         }else if (indexPath.row==7){
-            self.imageView.image=[HGBImageTool imageFromColor:[UIColor redColor]];
+             self.imageView.image=[HGBImageTool imageFromColor:[UIColor redColor]];
+        }else if (indexPath.row==8){
+             self.imageView.image=[HGBImageTool imageDrawWithBaseImage:[UIImage imageNamed:@"test"] andWithImages:@[[UIImage imageNamed:@"iscon"]] andWithImageRects:@[NSStringFromCGRect(CGRectMake(200, 100, 100, 100))]];
+
+        }else if (indexPath.row==9){
+            self.imageView.image=[HGBImageTool getColorProcessingImage:[UIImage imageNamed:@"test"] andWithType:HGBImageToolColorProcessingImageTypeWhiteAndBlack];
+        }else if (indexPath.row==10){
+            self.imageView.image=[HGBImageTool getColorProcessingImage:[UIImage imageNamed:@"test"] andWithType:HGBImageToolColorProcessingImageTypeDusk];
+        }else if (indexPath.row==11){
+            self.imageView.image=[HGBImageTool getColorProcessingImage:[UIImage imageNamed:@"test"] andWithType:HGBImageToolColorProcessingImageTypeSnow];
         }
 
     }

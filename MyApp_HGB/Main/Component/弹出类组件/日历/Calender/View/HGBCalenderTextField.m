@@ -98,11 +98,11 @@
 }
 #pragma mark calenderViewdelegate
 -(void)calenderView:(HGBCalenderView *)calender didFinishWithYear:(NSInteger)year andWithMonth:(NSInteger)month andWithDay:(NSInteger)day andWithWeek:(NSInteger)week{
-    NSLog(@"%ld-%ld-%ld-%ld",year,month,day,week);
+
 
 }
 -(void)calenderView:(HGBCalenderView *)calender didFinishWithDate:(NSDate *)date{
-    NSLog(@"%@",date);
+    
     self.date=date;
     if(self.date){
         NSDateFormatter *f=[[NSDateFormatter alloc]init];

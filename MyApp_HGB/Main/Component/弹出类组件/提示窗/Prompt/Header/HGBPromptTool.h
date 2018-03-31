@@ -10,6 +10,6 @@
 #define HGBPromptTool_h
 
 #import "HGBAlertTool.h"
-#import "HGBPromgressHud.h"
+#import "HGBHUD.h"
 
 #endif /* HGBPromptTool_h */

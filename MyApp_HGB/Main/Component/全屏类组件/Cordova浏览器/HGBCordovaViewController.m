@@ -67,7 +67,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"Cordova浏览器:":@[@"仅浏览器",@"带有关闭按钮-不可拖拽",@"带有关闭-贴边拖拽",@"带有关闭-拖拽"]};
+    self.dataDictionary=@{@"Cordova浏览器:":@[@"仅浏览器",@"带有关闭按钮-不可拖拽",@"带有关闭-贴边拖拽",@"带有关闭-拖拽",@"加载html字符串"]};
     self.keys=@[@"Cordova浏览器:"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -120,11 +120,12 @@
     if(indexPath.section==0){
         if (indexPath.row==0){
             HGBCordovaController *cordovaVC=[[HGBCordovaController alloc]init];
-            cordovaVC.startPage=@"index.html";
+
+            [cordovaVC loadHtmlSource:@"project://CordovaBundle/www/index.html"];
             [self presentViewController:cordovaVC animated:YES completion:nil];
         }else if (indexPath.row==1){
             HGBCordovaController *cordovaVC=[[HGBCordovaController alloc]init];
-            cordovaVC.startPage=@"index.html";
+              [cordovaVC loadHtmlSource:@"project://CordovaBundle/www/index.html"];
             cordovaVC.isShowReturnButton=YES;
             cordovaVC.returnButtonPositionType=HGBCordovaCloseButtonPositionTypeTopLeft;
             cordovaVC.returnButtonDragType=HGBCordovaCloseButtonDragTypeNO;
@@ -133,7 +134,7 @@
             [self presentViewController:cordovaVC animated:YES completion:nil];
         }else if (indexPath.row==2){
             HGBCordovaController *cordovaVC=[[HGBCordovaController alloc]init];
-            cordovaVC.startPage=@"index.html";
+              [cordovaVC loadHtmlSource:@"project://CordovaBundle/www/index.html"];
             cordovaVC.isShowReturnButton=YES;
             cordovaVC.returnButtonPositionType=HGBCordovaCloseButtonPositionTypeTopLeft;
             cordovaVC.returnButtonDragType=HGBCordovaCloseButtonDragTypeBorder;
@@ -141,7 +142,18 @@
             [self presentViewController:cordovaVC animated:YES completion:nil];
         }else if (indexPath.row==3){
             HGBCordovaController *cordovaVC=[[HGBCordovaController alloc]init];
-            cordovaVC.startPage=@"index.html";
+              [cordovaVC loadHtmlSource:@"project://CordovaBundle/www/index.html"];
+            cordovaVC.isShowReturnButton=YES;
+            cordovaVC.returnButtonPositionType=HGBCordovaCloseButtonPositionTypeTopLeft;
+            cordovaVC.returnButtonDragType=HGBCordovaCloseButtonDragTypeNOLimit;
+
+            [self presentViewController:cordovaVC animated:YES completion:nil];
+        }else if (indexPath.row==4){
+            HGBCordovaController *cordovaVC=[[HGBCordovaController alloc]init];
+            NSString *path=[[NSBundle mainBundle]pathForResource:@"CordovaBundle" ofType:@""];
+            path=[path stringByAppendingPathComponent:@"www/index.html"];
+            NSString *html=[[NSString alloc]initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+            [cordovaVC loadHtmlSource:html andWithBaseUrl:@"project://CordovaBundle/www/index.html"];
             cordovaVC.isShowReturnButton=YES;
             cordovaVC.returnButtonPositionType=HGBCordovaCloseButtonPositionTypeTopLeft;
             cordovaVC.returnButtonDragType=HGBCordovaCloseButtonDragTypeNOLimit;

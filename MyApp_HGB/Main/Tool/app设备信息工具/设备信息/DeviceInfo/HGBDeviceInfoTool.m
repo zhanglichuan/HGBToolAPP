@@ -27,6 +27,14 @@
 
 #include <mach/mach.h> // 获取CPU信息所需要引入的头文件
 
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 @implementation HGBDeviceInfoTool
 #pragma mark 获取手机唯一标识
 /**
@@ -56,7 +64,7 @@
     return [HGBUniqueIDTool getDefaultsUUIDCode];
 }
 
-- (NSString *)getIDFA {
++(NSString *)getIDFA {
     return [HGBUniqueIDTool getAdvertisingIdentifier];
 }
 #pragma mark 获取ip
@@ -163,6 +171,27 @@
     return [HGBDeviceDataTool getDeviceModelName];
 }
 #pragma mark 设备信息2
+/**
+ 检查设备是否越狱
+
+ @return 是否越狱
+ */
++(BOOL)isJailBreakCheck{
+    NSArray *paths=@[
+        @"/Applications/Cydia.app",
+        @"/Library/MobileSubstrate/MobileSubstrate.dylib",
+        @"/bin/bash",
+        @"/usr/sbin/sshd",
+        @"/etc/apt"];
+
+    for (int i=0; i<paths.count; i++) {
+        NSString *path=paths[i];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+            return YES;
+        }
+    }
+    return NO;
+}
 /**
  获取设备上次重启的时间
 

@@ -15,10 +15,19 @@
 #import <ImageIO/ImageIO.h>
 
 
-#define ReslutCode @"reslutCode"
-#define ReslutMessage @"reslutMessage"
 
-@interface HGBCommonScanController ()<AVCaptureVideoDataOutputSampleBufferDelegate,UIAlertViewDelegate>
+#define ReslutCode @"resultCode"
+#define ReslutMessage @"resultMessage"
+
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
+@interface HGBCommonScanController ()<AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     UIImage *captureImage;//图片
     
@@ -46,10 +55,7 @@
  屏幕方向
  */
 @property(assign,nonatomic)UIInterfaceOrientation orientation;
-/**
- 提示图
- */
-@property(strong,nonatomic)UIAlertView *alert;
+
 @end
 
 @implementation HGBCommonScanController
@@ -425,7 +431,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             [device setFocusMode:AVCaptureFocusModeAutoFocus];
             [device unlockForConfiguration];
         } else {
-            NSLog(@"Error: %@", error);
+            HGBLog(@"Error: %@", error);
         }
     }
 }
@@ -434,10 +440,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 //初始化相机
 - (void) initialize
 {
-    //如果是模拟器返回（模拟器获取不到摄像头）
-    if (TARGET_IPHONE_SIMULATOR) {
-        return;
-    }
     if(![self JurisdictionAlert]){
         return;
     }
@@ -499,28 +501,70 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     
 }
 -(BOOL)JurisdictionAlert{
-    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-    if(authStatus ==AVAuthorizationStatusRestricted|| authStatus ==AVAuthorizationStatusDenied){
-        [self stopScan];
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        HGBLog(@"相机不可用");
         if(self.delegate&&[self.delegate respondsToSelector:@selector(commonScan:didFailedWithError:)]){
-            [self.delegate commonScan:self didFailedWithError:@{ReslutCode:@(HGBCommonScanErrorTypeAuthority),ReslutMessage:@"相机访问权限受限"}];
+            [self.delegate commonScan:self didFailedWithError:@{ReslutCode:@(HGBCommonScanErrorTypeDevice).stringValue,ReslutMessage:@"相机不可用"}];
         }
-        self.alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请在iPhone的“设置”-“隐私”-“相机”功能中，找到“某某应用”打开相机访问权限" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去设置",nil];
-        [self.alert show];
+        [self jumpToSet];
+        return NO;
+    }
+
+    if(![self isCanUseCamera]){
+        [self stopScan];
+        HGBLog(@"相机访问权限受限");
+        if(self.delegate&&[self.delegate respondsToSelector:@selector(commonScan:didFailedWithError:)]){
+            [self.delegate commonScan:self didFailedWithError:@{ReslutCode:@(HGBCommonScanErrorTypeAuthority).stringValue,ReslutMessage:@"相机访问权限受限"}];
+        }
+        [self jumpToSet];
         return NO;
     }
     return YES;
 }
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(buttonIndex==0){
-        [self returnAction:nil];
-    }else{
-        NSURL * url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-        if([[UIApplication sharedApplication] canOpenURL:url]) {
-            [[UIApplication sharedApplication] openURL:url];
-        }
+#pragma mark 权限判断
+/**
+ 相机权限判断
+
+ @return 是否有权限
+ */
+- (BOOL)isCanUseCamera {
+    if (TARGET_IPHONE_SIMULATOR) {
+        return NO;
+    }
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+        HGBLog(@"%@",granted ? @"相机准许":@"相机不准许");
+    }];
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        return NO;
     }
 
+    NSString *mediaType = AVMediaTypeVideo;//读取媒体类型
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];//读取设备授权状态
+    if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
+        return NO;
+    }
+    return YES;
+}
+#pragma mark --set
+-(void)jumpToSet{
+    UIAlertController *alert=[UIAlertController alertControllerWithTitle:@"提示" message:@"相机访问权限受限" preferredStyle:(UIAlertControllerStyleAlert)];
+    UIAlertAction *action1=[UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
+        [self returnAction:nil];
+    }];
+    [alert addAction:action1];
+    UIAlertAction *action2=[UIAlertAction actionWithTitle:@"去设置" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
+        NSURL * url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+
+        if([[UIApplication sharedApplication] canOpenURL:url]) {
+
+            NSURL*url =[NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+
+        }
+        [self returnAction:nil];
+    }];
+    [alert addAction:action2];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 #pragma mark 图片方向处理
 /**

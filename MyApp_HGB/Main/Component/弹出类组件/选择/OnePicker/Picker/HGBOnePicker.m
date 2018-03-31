@@ -38,10 +38,6 @@
  */
 @property (nonatomic,strong)NSMutableArray *firstTypesArr;
 /**
- 第二列数组
- */
-@property (nonatomic,strong)NSMutableArray *secondTypesArr;
-/**
  结果数组
  */
 @property (nonatomic,strong)NSMutableArray *souceArr;
@@ -166,13 +162,14 @@ static HGBOnePicker *obj=nil;
         [obj popViewRemoved];
     }
 
-    NSString *firstStr,*secondStr;
+    NSString *firstStr;
     if(self.selectedItem){
         firstStr=self.selectedItem;
-        secondStr=self.selectedItem;
     }
     NSArray *keyArr =self.dataSource;
-    keyArr=[keyArr sortedArrayUsingSelector:@selector(compare:)];
+    if(self.isSequence){
+         keyArr=[keyArr sortedArrayUsingSelector:@selector(compare:)];
+    }
     int i=0;
     for(i=0;i<keyArr.count;i++){
         NSString *key=keyArr[i];
@@ -184,7 +181,11 @@ static HGBOnePicker *obj=nil;
 
     }
     if(i==keyArr.count){
-        i=0;
+        if(keyArr.count>self.selectedIndex&&self.selectedIndex>0){
+            i=(int)self.selectedIndex;
+        }else{
+            i=0;
+        }
     }
     self.firstTypesArr=[NSMutableArray arrayWithArray:keyArr];
     _firstIndex=i;
@@ -256,6 +257,10 @@ static HGBOnePicker *obj=nil;
         [self.delegate onePicker:self didSelectedWithTitle:self.souceArr[0]];
 
     }
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(onePicker: didSelectedWithIndex:)]){
+        [self.delegate onePicker:self didSelectedWithIndex:_firstIndex];
+
+    }
     [self popViewDisappearWithSucessBlock:^{
 
     }];
@@ -313,7 +318,6 @@ static HGBOnePicker *obj=nil;
 }
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    self.secondTypesArr=[NSMutableArray array];
     self.souceArr=[NSMutableArray array];
 
 
@@ -338,12 +342,6 @@ static HGBOnePicker *obj=nil;
         _firstTypesArr=[NSMutableArray array];
     }
     return _firstTypesArr;
-}
--(NSMutableArray *)secondTypesArr{
-    if(_secondTypesArr==nil){
-        _secondTypesArr=[NSMutableArray array];
-    }
-    return _secondTypesArr;
 }
 -(NSMutableArray *)souceArr{
     if(_souceArr==nil){

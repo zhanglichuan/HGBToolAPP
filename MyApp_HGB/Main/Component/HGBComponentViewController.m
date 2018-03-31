@@ -42,7 +42,7 @@
 #import "HGBPageViewController.h"
 #import "HGBChatViewController.h"
 #import "HGBCenterViewController.h"
-
+#import "HGBCompassViewController.h"
 
 #define Identify_Cell @"cell"
 
@@ -95,7 +95,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDic=@{@"弹出类组件:":@[@"键盘",@"提示",@"底部弹出窗",@"日期选择",@"时间选择",@"Picker选择",@"日历"],@"全屏类组件:":@[@"相机",@"普通扫描",@"二维码扫描",@"浏览器",@"锁屏",@"简介",@"表格选择",@"签名",@"地图",@"Cordova浏览器",@"Weex浏览器"],@"小组件":@[@"表格索引",@"轮播图",@"数字轮播",@"搜索框",@"图片",@"文本",@"下拉列表",@"消息",@"星星评价",@"页码控制器",@"图表",@"中间弹窗"]};
+    self.dataDic=@{@"弹出类组件:":@[@"键盘",@"提示",@"底部弹出窗",@"日期选择",@"时间选择",@"Picker选择",@"日历",@"中间弹窗"],@"全屏类组件:":@[@"相机",@"普通扫描",@"二维码扫描",@"浏览器",@"锁屏",@"简介",@"表格选择",@"签名",@"地图",@"Cordova浏览器",@"Weex浏览器",@"指南针"],@"小组件":@[@"表格索引",@"轮播图",@"数字轮播",@"搜索框",@"图片",@"文本",@"下拉列表",@"消息",@"星星评价",@"页码控制器",@"图表"]};
     self.keys=@[@"弹出类组件:",@"全屏类组件:",@"小组件"];
    
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -163,6 +163,9 @@
             [self presentController:[[HGBBottomSelectViewController alloc]init]];
         }else if (indexPath.row==6){
             [self presentController:[[HGBCalenderViewController alloc]init]];
+        }else if (indexPath.row==7){
+            [self presentController:[[HGBCenterViewController alloc]init]];
+
         }
 
     }else if(indexPath.section==1){
@@ -190,6 +193,9 @@
         }else if (indexPath.row==10){
 
             [self presentController:[[HGBWeexViewController alloc]init]];
+        }else if (indexPath.row==11){
+
+            [self presentController:[[HGBCompassViewController alloc]init]];
         }
     }else if(indexPath.section==2){
         if(indexPath.row==0){
@@ -216,9 +222,6 @@
         }else if (indexPath.row==10){
             [self presentController:[[HGBChatViewController alloc]init]];
             
-        }else if (indexPath.row==11){
-            [self presentController:[[HGBCenterViewController alloc]init]];
-
         }
     }
 }

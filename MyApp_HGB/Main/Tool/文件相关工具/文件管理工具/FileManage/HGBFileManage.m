@@ -16,7 +16,6 @@
  */
 +(void)popFileManageControllerInParent:(UIViewController *)parent{
     HGBFileManageController *fileVC=[[HGBFileManageController alloc]init];
-    fileVC.withoutFileSwitch=NO;
     UINavigationController *nav=[[UINavigationController alloc]initWithRootViewController:fileVC];
     [parent presentViewController:nav animated:YES completion:nil];
 }

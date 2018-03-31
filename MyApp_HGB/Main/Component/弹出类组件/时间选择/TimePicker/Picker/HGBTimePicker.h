@@ -92,8 +92,10 @@ typedef enum HGBTimePickerType
  */
 @property(strong,nonatomic)NSString *selectedTimeString;
 
-
-#pragma mark 过去或未来年限
+/**
+ 返回日期格式
+ */
+@property(strong,nonatomic)NSString *backTimeFormat;
 
 #pragma mark 时间段-年月-月日模式参数
 /**

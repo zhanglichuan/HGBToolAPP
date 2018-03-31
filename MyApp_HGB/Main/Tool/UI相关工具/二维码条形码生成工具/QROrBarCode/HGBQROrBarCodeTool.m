@@ -8,6 +8,14 @@
 
 #import "HGBQROrBarCodeTool.h"
 
+
+#ifdef HGBLogFlag
+#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define HGBLog(...);
+#endif
+
+
 @implementation HGBQROrBarCodeTool
 
 #pragma mark 二维码生成-普通
@@ -19,6 +27,10 @@
  *  return          二维码
  */
 +(UIImage *)createQRCodeImageWithString:(NSString *)codeString{
+    if(codeString==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
     return [HGBQROrBarCodeTool createQRCodeImageWithString:codeString andWithWidth:200 andWithHeight:200];
 }
 /**
@@ -30,6 +42,11 @@
  @return 图片
  */
 +(UIImage *)createQRCodeImageWithString:(NSString *)codeString andWithWidth:(CGFloat)width andWithHeight:(CGFloat)height{
+
+    if(codeString==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
 
     CIFilter *filter=[CIFilter filterWithName:@"CIQRCodeGenerator"];
     [filter setDefaults];
@@ -50,11 +67,18 @@
 
 
     // 消除模糊
-    CGFloat scaleX = width / codeImage.extent.size.width; // extent 返回图片的frame
-    CGFloat scaleY = height / codeImage.extent.size.height;
-    CIImage *transformedImage = [codeImage imageByApplyingTransform:CGAffineTransformScale(CGAffineTransformIdentity, scaleX, scaleY)];
+//    CGFloat scaleX = width / codeImage.extent.size.width; // extent 返回图片的frame
+//    CGFloat scaleY = height / codeImage.extent.size.height;
+//    CIImage *transformedImage = [codeImage imageByApplyingTransform:CGAffineTransformScale(CGAffineTransformIdentity, scaleX, scaleY)];
 
-    return [HGBQROrBarCodeTool createNonInterpolatedUIImageFormCIImage:transformedImage withSize:200];
+    UIImage *finalImage=[HGBQROrBarCodeTool createNonInterpolatedUIImageFormCIImage:codeImage withSize:200];
+    UIGraphicsBeginImageContext(finalImage.size);
+    // 将二维码图片画上去
+    [finalImage drawInRect:CGRectMake(0, 0, finalImage.size.width, finalImage.size.height)];
+    finalImage = UIGraphicsGetImageFromCurrentImageContext();
+    // 关闭上下文
+    UIGraphicsEndImageContext();
+    return finalImage;
 }
 #pragma mark 二维码生成-logo
 /**
@@ -67,6 +91,11 @@
  */
 +(UIImage *)createQRCodeImageWithString:(NSString *)codeString andWithLogoImage:(UIImage *)logoImage{
 
+    if(codeString==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+
+    }
     return [HGBQROrBarCodeTool createQRCodeImageWithString:codeString andWithLogoImage:logoImage andWithWidth:200 andWithHeight:200];
 }
 /**
@@ -78,6 +107,10 @@
  *  return             带logo二维码
  */
 +(UIImage *)createQRCodeImageWithString:(NSString *)codeString andWithLogoImage:(UIImage *)logoImage  andWithWidth:(CGFloat)width andWithHeight:(CGFloat)height{
+    if(codeString==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
     UIImage *image = [HGBQROrBarCodeTool createQRCodeImageWithString:codeString andWithWidth:width andWithHeight:height];
 
     // 为二维码加自定义图片
@@ -109,6 +142,11 @@
  *  return          二维码
  */
 +(NSString *)identifyQRCodeImage:(UIImage *)image{
+    if(image==nil){
+        HGBLog(@"图片不能为空");
+        return nil;
+    }
+
     // 开启绘图, 获取图片 上下文<图片大小>
     UIGraphicsBeginImageContext(image.size);
     // 将二维码图片画上去
@@ -140,6 +178,10 @@
  @return 图片
  */
 +(UIImage*)createBarCodeWithString:(NSString*)codeString{
+    if(codeString==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
    return  [HGBQROrBarCodeTool createBarCodeWithString:codeString andWithWidth:200 andWithHeight:120];
 }
 /**
@@ -152,6 +194,10 @@
  */
 +(UIImage*)createBarCodeWithString:(NSString*)codeString andWithWidth:(CGFloat)width andWithHeight:(CGFloat)height
 {
+    if(codeString==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
     // 生成二维码图片
     CIImage *codeImage;
     NSData *data = [codeString dataUsingEncoding:NSISOLatin1StringEncoding allowLossyConversion:false];
@@ -163,12 +209,19 @@
     [filter setValue:[NSNumber numberWithInteger:0] forKey:@"inputQuietSpace"];
     codeImage = [filter outputImage];
     
-    // 消除模糊
-    CGFloat scaleX = width / codeImage.extent.size.width; // extent 返回图片的frame
-    CGFloat scaleY = height / codeImage.extent.size.height;
-    CIImage *transformedImage = [codeImage imageByApplyingTransform:CGAffineTransformScale(CGAffineTransformIdentity, scaleX, scaleY)];
-    
-    return [HGBQROrBarCodeTool createNonInterpolatedUIImageFormCIImage:transformedImage withSize:200];
+//    // 消除模糊
+//    CGFloat scaleX = width / codeImage.extent.size.width; // extent 返回图片的frame
+//    CGFloat scaleY = height / codeImage.extent.size.height;
+//    CIImage *transformedImage = [codeImage imageByApplyingTransform:CGAffineTransformScale(CGAffineTransformIdentity, scaleX, scaleY)];
+
+    UIImage *finalImage=[HGBQROrBarCodeTool createNonInterpolatedUIImageFormCIImage:codeImage withSize:200];
+    UIGraphicsBeginImageContext(finalImage.size);
+    // 将二维码图片画上去
+    [finalImage drawInRect:CGRectMake(0, 0, finalImage.size.width, finalImage.size.height)];
+    finalImage = UIGraphicsGetImageFromCurrentImageContext();
+    // 关闭上下文
+    UIGraphicsEndImageContext();
+    return finalImage;
     
 }
 

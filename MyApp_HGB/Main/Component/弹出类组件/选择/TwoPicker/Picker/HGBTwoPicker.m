@@ -177,7 +177,9 @@ static HGBTwoPicker *obj=nil;
         firstStr=self.selectedItems[0];
     }
     NSArray *keyArr = [self.dataSource allKeys];
-    keyArr=[keyArr sortedArrayUsingSelector:@selector(compare:)];
+    if(self.isSequence){
+          keyArr=[keyArr sortedArrayUsingSelector:@selector(compare:)];
+    }
     int i=0,j=0;
     for(i=0;i<keyArr.count;i++){
         NSString *key=keyArr[i];
@@ -189,7 +191,11 @@ static HGBTwoPicker *obj=nil;
        
     }
     if(i==keyArr.count){
-        i=0;
+        if(keyArr.count>self.firstSelectedIndex&&self.firstSelectedIndex>0){
+            i=(int)self.firstSelectedIndex;
+        }else{
+            i=0;
+        }
     }
     self.firstTypesArr=[NSMutableArray arrayWithArray:keyArr];
     _firstIndex=i;
@@ -206,7 +212,11 @@ static HGBTwoPicker *obj=nil;
         }
     }
     if(j==secondArr.count){
-        j=0;
+        if(secondArr.count>self.secondSelectedIndex&&self.secondSelectedIndex>0){
+            j=(int)self.secondSelectedIndex;
+        }else{
+            j=0;
+        }
     }
     _secondIndex=j;
     self.secondTypesArr=[NSMutableArray arrayWithArray:secondArr];
@@ -275,6 +285,10 @@ static HGBTwoPicker *obj=nil;
 {
     if(self.delegate&&[self.delegate respondsToSelector:@selector(twoPicker: didSelectedWithTitleArr:)]){
         [self.delegate twoPicker:self didSelectedWithTitleArr:self.souceArr];
+
+    }
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(twoPicker: didSelectedWithFirstIndex:andWithSecondIndex:)]){
+        [self.delegate twoPicker:self didSelectedWithFirstIndex:_firstIndex andWithSecondIndex:_secondIndex];
 
     }
     [self popViewDisappearWithSucessBlock:^{

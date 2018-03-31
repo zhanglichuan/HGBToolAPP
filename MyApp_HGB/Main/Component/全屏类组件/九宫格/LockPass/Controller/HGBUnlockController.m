@@ -76,7 +76,7 @@
 }
 #pragma mark delegate
 - (void)lockView:(HGBLockView *)hvwLockView didFinishedWithPath:(NSString *)path {
-//    NSLog(@"%@",path);
+
     if(path.length<4){
         self.promptLab.text=@"至少连接四个点,请重新输入";
     }else{

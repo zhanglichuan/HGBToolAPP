@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "HGBTapGestureRecognizer.h"
+
+#ifdef DEBUG
+#define HGBLogFlag YES
+#else
+#endif
+
 @class HGBDropDown;
 @class HGBTopicContainerView;
 

@@ -37,6 +37,12 @@
  @param week 选中周
  */
 -(void)calenderView:(HGBCalenderView *)calender didFinishWithYear:(NSInteger )year andWithMonth:(NSInteger )month andWithDay:(NSInteger )day andWithWeek:(NSInteger )week;
+/**
+ 返回结果
+
+ @param dateString 日期字符串
+ */
+-(void)calenderView:(HGBCalenderView *)calender  didFinishWithFormatDateString:(NSString *)dateString;
 @end
 @interface HGBCalenderView : UIView
 /**
@@ -56,7 +62,12 @@
  */
 @property(strong,nonatomic)NSDate *selectDate;
 /**
+ 返回日期格式
+ */
+@property(strong,nonatomic)NSString *backDateFormat;
+/**
  提示显示 1-29 30 31 对应
  */
 @property(strong,nonatomic)NSMutableDictionary *promptDic;
+
 @end
