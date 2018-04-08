@@ -51,7 +51,7 @@
     //标题
     UILabel *titleLab=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 136*wScale, 16)];
     titleLab.font=[UIFont boldSystemFontOfSize:16];
-    titleLab.text=@"图片工具";
+    titleLab.text=@"水印工具";
     titleLab.textAlignment=NSTextAlignmentCenter;
     titleLab.textColor=[UIColor whiteColor];
     self.navigationItem.titleView=titleLab;

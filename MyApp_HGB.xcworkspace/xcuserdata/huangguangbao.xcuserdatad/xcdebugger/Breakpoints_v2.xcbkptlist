@@ -13,53 +13,5 @@
             stopOnStyle = "0">
          </BreakpointContent>
       </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MyApp_HGB/Main/Tool/&#x786c;&#x4ef6;&#x63a5;&#x53e3;&#x5de5;&#x5177;/&#x97f3;&#x9891;/Audio/Tool/HGBAudioTool.m"
-            timestampString = "544078224.400895"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "721"
-            endingLineNumber = "721"
-            landmarkName = "-cutAudioWithSource:andWithStartTime:andWithEndTime:toDestination:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MyApp_HGB/Main/Tool/&#x786c;&#x4ef6;&#x63a5;&#x53e3;&#x5de5;&#x5177;/&#x97f3;&#x9891;/Audio/Tool/HGBAudioTool.m"
-            timestampString = "544078224.4010971"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "719"
-            endingLineNumber = "719"
-            landmarkName = "-cutAudioWithSource:andWithStartTime:andWithEndTime:toDestination:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MyApp_HGB/Main/Tool/&#x786c;&#x4ef6;&#x63a5;&#x53e3;&#x5de5;&#x5177;/&#x97f3;&#x9891;/Audio/Tool/HGBAudioTool.m"
-            timestampString = "544078224.4012001"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "722"
-            endingLineNumber = "722"
-            landmarkName = "-cutAudioWithSource:andWithStartTime:andWithEndTime:toDestination:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

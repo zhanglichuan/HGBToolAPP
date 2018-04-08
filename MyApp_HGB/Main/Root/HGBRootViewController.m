@@ -7,12 +7,12 @@
 //
 
 #import "HGBRootViewController.h"
-#import "HGBToolViewController.h"
+
 #import "HGBMainViewController.h"
-#import "HGBComponentViewController.h"
-#import "HGBThirdViewController.h"
+#import "HGBCategoryController.h"
+#import "HGBFriendController.h"
 #import "HGBMyViewController.h"
-#import "HGBComponentToolViewController.h"
+
 @interface HGBRootViewController ()
 
 @end
@@ -49,12 +49,12 @@
 }
 #pragma mark UI
 -(void)viewSetUp{
-    [self addSubControler:[[HGBMainViewController alloc]init] withTitle:@"首页" andWithImage:[UIImage imageNamed:@"icon_home_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_home_select"] andWithNavFlag:YES];
-    [self addSubControler:[[HGBComponentViewController alloc]init] withTitle:@"组件" andWithImage:[UIImage imageNamed:@"icon_component_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_component_select"] andWithNavFlag:YES];
-    [self addSubControler:[[HGBToolViewController alloc]init] withTitle:@"工具" andWithImage:[UIImage imageNamed:@"icon_tool_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_tool_select"] andWithNavFlag:YES];
-    [self addSubControler:[[HGBComponentToolViewController alloc]init] withTitle:@"组件工具" andWithImage:[UIImage imageNamed:@"icon_componenttool_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_ icon_componenttool_select"] andWithNavFlag:YES];
-    [self addSubControler:[[HGBThirdViewController alloc]init] withTitle:@"第三方" andWithImage:[UIImage imageNamed:@"icon_third_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_third_select"] andWithNavFlag:YES];
-     [self addSubControler:[[HGBMyViewController alloc]init] withTitle:@"我的" andWithImage:[UIImage imageNamed:@"icon_my_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_my_select"] andWithNavFlag:YES];
+    [self addSubControler:[[HGBMainViewController alloc]init] withTitle:@"首页" andWithImage:[UIImage imageNamed:@"icon_home_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_home_select"] andWithNavFlag:NO];
+    [self addSubControler:[[HGBCategoryController alloc]init] withTitle:@"工具与组件" andWithImage:[UIImage imageNamed:@"icon_category_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_category_selected"] andWithNavFlag:NO];
+    [self addSubControler:[[HGBFriendController alloc]init] withTitle:@"朋友" andWithImage:[UIImage imageNamed:@"icon_friend_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_friend_select"] andWithNavFlag:YES];
+    [self addSubControler:[[HGBMyViewController alloc]init] withTitle:@"我的" andWithImage:[UIImage imageNamed:@"icon_my_normal"] andWithSelectorImage:[UIImage imageNamed:@"icon_ icon_my_select"] andWithNavFlag:YES];
+
+
 
 }
 
