@@ -244,6 +244,14 @@
 			<key>name</key>
 			<string>Safari</string>
 		</dict>
+		<dict>
+			<key>page</key>
+			<string>HGBClientUSBController</string>
+			<key>image</key>
+			<string>icon_usb</string>
+			<key>name</key>
+			<string>USB客户端</string>
+		</dict>
 	</array>
 	<key>common</key>
 	<array>

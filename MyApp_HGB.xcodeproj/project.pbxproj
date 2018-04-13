@@ -282,6 +282,13 @@
 		4388E0311F7F84E200DA30DF /* HGBCommonCameraBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4388DF7E1F7F724D00DA30DF /* HGBCommonCameraBundle.bundle */; };
 		4388E0321F7F84E200DA30DF /* HGBTableSelectorBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4388DFE31F7F72A700DA30DF /* HGBTableSelectorBundle.bundle */; };
 		4388E0331F7F84E200DA30DF /* HGBLocationBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 433867911F73E9C200110AC4 /* HGBLocationBundle.bundle */; };
+		4391355E208084FB000FC695 /* HGBClientUSBTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 43913550208084FB000FC695 /* HGBClientUSBTool.m */; };
+		4391355F208084FB000FC695 /* PTUSBHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 43913552208084FB000FC695 /* PTUSBHub.m */; };
+		43913560208084FB000FC695 /* PTProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 43913553208084FB000FC695 /* PTProtocol.m */; };
+		43913561208084FB000FC695 /* PTChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 43913556208084FB000FC695 /* PTChannel.m */; };
+		43913562208084FB000FC695 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4391355C208084FB000FC695 /* Info.plist */; };
+		4391356520808515000FC695 /* HGBClientUSBController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4391356420808515000FC695 /* HGBClientUSBController.m */; };
+		43913567208089B3000FC695 /* icon_usb.png in Resources */ = {isa = PBXBuildFile; fileRef = 43913566208089B2000FC695 /* icon_usb.png */; };
 		4393D11B1F96F9D7000841C1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4393D11A1F96F9D7000841C1 /* CFNetwork.framework */; };
 		4393D1221F96FAB2000841C1 /* HGBShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4393D1101F96F7D6000841C1 /* HGBShareViewController.m */; };
 		4393D1241F96FAEA000841C1 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4393D11D1F96FA52000841C1 /* libWeChatSDK.a */; };
@@ -1305,6 +1312,22 @@
 		4388E0251F7F740500DA30DF /* HGBTableSelectorViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBTableSelectorViewController.m; sourceTree = "<group>"; };
 		4388E0271F7F743500DA30DF /* HGB9PassViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGB9PassViewController.h; sourceTree = "<group>"; };
 		4388E0281F7F743500DA30DF /* HGB9PassViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGB9PassViewController.m; sourceTree = "<group>"; };
+		43913550208084FB000FC695 /* HGBClientUSBTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HGBClientUSBTool.m; sourceTree = "<group>"; };
+		43913552208084FB000FC695 /* PTUSBHub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTUSBHub.m; sourceTree = "<group>"; };
+		43913553208084FB000FC695 /* PTProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTProtocol.m; sourceTree = "<group>"; };
+		43913554208084FB000FC695 /* prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = prefix.pch; sourceTree = "<group>"; };
+		43913555208084FB000FC695 /* Peertalk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Peertalk.h; sourceTree = "<group>"; };
+		43913556208084FB000FC695 /* PTChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTChannel.m; sourceTree = "<group>"; };
+		43913557208084FB000FC695 /* PTPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTPrivate.h; sourceTree = "<group>"; };
+		43913558208084FB000FC695 /* PTExampleProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTExampleProtocol.h; sourceTree = "<group>"; };
+		43913559208084FB000FC695 /* PTProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTProtocol.h; sourceTree = "<group>"; };
+		4391355A208084FB000FC695 /* PTUSBHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTUSBHub.h; sourceTree = "<group>"; };
+		4391355B208084FB000FC695 /* PTChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTChannel.h; sourceTree = "<group>"; };
+		4391355C208084FB000FC695 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4391355D208084FB000FC695 /* HGBClientUSBTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HGBClientUSBTool.h; sourceTree = "<group>"; };
+		4391356320808515000FC695 /* HGBClientUSBController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBClientUSBController.h; sourceTree = "<group>"; };
+		4391356420808515000FC695 /* HGBClientUSBController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBClientUSBController.m; sourceTree = "<group>"; };
+		43913566208089B2000FC695 /* icon_usb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_usb.png; sourceTree = "<group>"; };
 		4393D1101F96F7D6000841C1 /* HGBShareViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBShareViewController.m; sourceTree = "<group>"; };
 		4393D1111F96F7D7000841C1 /* HGBShareViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBShareViewController.h; sourceTree = "<group>"; };
 		4393D11A1F96F9D7000841C1 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -4531,6 +4554,52 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		4391354A208082A1000FC695 /* USB */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = USB;
+			path = "MyApp_HGB/Main/Tool/硬件接口工具/USB";
+			sourceTree = SOURCE_ROOT;
+		};
+		4391354B208082B3000FC695 /* USB */ = {
+			isa = PBXGroup;
+			children = (
+				4391354F208084FB000FC695 /* ClientUSBTool */,
+				4391356320808515000FC695 /* HGBClientUSBController.h */,
+				4391356420808515000FC695 /* HGBClientUSBController.m */,
+			);
+			path = USB;
+			sourceTree = "<group>";
+		};
+		4391354F208084FB000FC695 /* ClientUSBTool */ = {
+			isa = PBXGroup;
+			children = (
+				43913550208084FB000FC695 /* HGBClientUSBTool.m */,
+				43913551208084FB000FC695 /* peertalk */,
+				4391355D208084FB000FC695 /* HGBClientUSBTool.h */,
+			);
+			path = ClientUSBTool;
+			sourceTree = "<group>";
+		};
+		43913551208084FB000FC695 /* peertalk */ = {
+			isa = PBXGroup;
+			children = (
+				43913552208084FB000FC695 /* PTUSBHub.m */,
+				43913553208084FB000FC695 /* PTProtocol.m */,
+				43913554208084FB000FC695 /* prefix.pch */,
+				43913555208084FB000FC695 /* Peertalk.h */,
+				43913556208084FB000FC695 /* PTChannel.m */,
+				43913557208084FB000FC695 /* PTPrivate.h */,
+				43913558208084FB000FC695 /* PTExampleProtocol.h */,
+				43913559208084FB000FC695 /* PTProtocol.h */,
+				4391355A208084FB000FC695 /* PTUSBHub.h */,
+				4391355B208084FB000FC695 /* PTChannel.h */,
+				4391355C208084FB000FC695 /* Info.plist */,
+			);
+			path = peertalk;
+			sourceTree = "<group>";
+		};
 		4393D1121F96F7D7000841C1 /* UMShare */ = {
 			isa = PBXGroup;
 			children = (
@@ -7097,6 +7166,7 @@
 		43E1470320722E6700758840 /* func */ = {
 			isa = PBXGroup;
 			children = (
+				43913566208089B2000FC695 /* icon_usb.png */,
 				43E1489C207381BE00758840 /* icon_audio.png */,
 				43E14895207381AA00758840 /* icon_acess.png */,
 				43E148A0207381C800758840 /* icon_adressbook.png */,
@@ -7851,6 +7921,7 @@
 		43F9F5A61F6A6A9600E565B2 /* 常用普通工具 */ = {
 			isa = PBXGroup;
 			children = (
+				4391354A208082A1000FC695 /* USB */,
 				43047495202C2FC4005D70F5 /* URL拦截 */,
 				43047487202C28EF005D70F5 /* 下载管理 */,
 				43F2218920106269008ADFE6 /* 强制转屏 */,
@@ -7973,6 +8044,7 @@
 		43F9F5B31F6A6A9600E565B2 /* 硬件接口工具 */ = {
 			isa = PBXGroup;
 			children = (
+				4391354B208082B3000FC695 /* USB */,
 				4326A8EA2026C41300E0D74F /* Safari */,
 				4326A8DD2025D83B00E0D74F /* 系统分享 */,
 				43AFED89201EE796000D412D /* 视频 */,
@@ -8638,6 +8710,7 @@
 				43E1476020734BC800758840 /* icon_indexpath.png in Resources */,
 				433591CE1F9F328D0053F6C3 /* HGBCalenderBundle.bundle in Resources */,
 				43E1489220736FE600758840 /* icon_error.png in Resources */,
+				43913562208084FB000FC695 /* Info.plist in Resources */,
 				43E1487C20736CC700758840 /* icon_thread.png in Resources */,
 				43E1476F2073530C00758840 /* icon_navbar.png in Resources */,
 				43F9905C20720CB0006C276C /* icon_common.png in Resources */,
@@ -8673,6 +8746,7 @@
 				43E1475C20734BC800758840 /* icon_dropdown.png in Resources */,
 				43E1488420736CC700758840 /* icon_js.png in Resources */,
 				43E147C920735B8B00758840 /* icon_sandbox.png in Resources */,
+				43913567208089B3000FC695 /* icon_usb.png in Resources */,
 				43E14717207238C300758840 /* icon_pastbord.png in Resources */,
 				43E147772073554600758840 /* icon_tableview.png in Resources */,
 				43F98FE72071C62B006C276C /* icon_home_normal.png in Resources */,
@@ -8908,6 +8982,7 @@
 				43A093AC1FA857B800B4D5D9 /* HGBCell.m in Sources */,
 				43A093921FA855AB00B4D5D9 /* HGBlayout.m in Sources */,
 				43A0938D1FA852DE00B4D5D9 /* HGBHTMLtoPDF.m in Sources */,
+				43913561208084FB000FC695 /* PTChannel.m in Sources */,
 				4326A8E12025D85100E0D74F /* HGBShareTool.m in Sources */,
 				43A0938E1FA852DE00B4D5D9 /* HGBHTMLToPDFTool.m in Sources */,
 				43BD20581FA2BF1300C934F8 /* HGBBaseCollectionViewController.m in Sources */,
@@ -8950,6 +9025,7 @@
 				43E051D820171D5B006D8B37 /* LzmaDec.c in Sources */,
 				433592231F9F48E70053F6C3 /* HGBNumberScrollAnimatedView.m in Sources */,
 				4326A93120281F2A00E0D74F /* HGBFileTableCell.m in Sources */,
+				4391355E208084FB000FC695 /* HGBClientUSBTool.m in Sources */,
 				43E5F9151FECE47C003C63AA /* HGBControllerJumpTool.m in Sources */,
 				433592241F9F48E70053F6C3 /* HGBSearchBar.m in Sources */,
 				433EBBCF1FFDE1FD00C1B5F5 /* HGBBlueToothPrintViewController.m in Sources */,
@@ -8985,6 +9061,7 @@
 				43BD20281FA2235300C934F8 /* HCollectionViewController.m in Sources */,
 				433591D71F9F329E0053F6C3 /* HGBCalenderDayView.m in Sources */,
 				43E05504201DB117006D8B37 /* HGBTorchViewController.m in Sources */,
+				43913560208084FB000FC695 /* PTProtocol.m in Sources */,
 				43E5F91C1FECE47C003C63AA /* HGBApplicationBageViewController.m in Sources */,
 				4326A8F12026C44200E0D74F /* HGBSafariViewController.m in Sources */,
 				433591D81F9F329E0053F6C3 /* HGBCalenderWeekView.m in Sources */,
@@ -9268,6 +9345,7 @@
 				43E5F90F1FECE47C003C63AA /* HGBPP5ViewController.m in Sources */,
 				433868401F749D2900110AC4 /* HGBImageTool.m in Sources */,
 				433868411F749D2900110AC4 /* UIImage+HGBImageTool.m in Sources */,
+				4391355F208084FB000FC695 /* PTUSBHub.m in Sources */,
 				437E40BC2011D9C800CAE128 /* HGBRollBallView.m in Sources */,
 				4356CABF200A2B9B002F3EF2 /* HGBAppStatusTool.m in Sources */,
 				43F221A420106B1C008ADFE6 /* HGBSubOrientationViewController.m in Sources */,
@@ -9340,6 +9418,7 @@
 				43F9F6561F6A7CB800E565B2 /* HGBFileWebController.m in Sources */,
 				43F9F6E41F6A82A700E565B2 /* HGBQuickLookTool.m in Sources */,
 				43CE03AD200B070C00A856E5 /* HGBBackgroundTaskTool.m in Sources */,
+				4391356520808515000FC695 /* HGBClientUSBController.m in Sources */,
 				43F9F64C1F6A7CB800E565B2 /* HGBFileManage.m in Sources */,
 				43EF0A001F95D397005D5E13 /* HGBPurchaseTool.m in Sources */,
 				43F9F5CD1F6A6F1E00E565B2 /* HGBJSONViewController.m in Sources */,
