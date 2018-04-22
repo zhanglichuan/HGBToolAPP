@@ -41,6 +41,7 @@ static HGBTurnScreenReslutBlock appOrientationReslut=nil;
 - (void)turnOrientation:(UIInterfaceOrientation)interfaceOrientation;
 {
 
+    
     NSNumber *resetOrientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationUnknown];
 
     [[UIDevice currentDevice] setValue:resetOrientationTarget forKey:@"orientation"];

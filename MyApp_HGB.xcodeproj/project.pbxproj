@@ -29,6 +29,7 @@
 		431CFE1A2024357600139F76 /* 3DTouchBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 431CFE192024357500139F76 /* 3DTouchBundle.bundle */; };
 		431CFE1D202438D400139F76 /* HGB3DTouchNextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 431CFE1C202438D400139F76 /* HGB3DTouchNextViewController.m */; };
 		431CFE232024537D00139F76 /* HGBAppIcon3DTouchModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 431CFE222024537D00139F76 /* HGBAppIcon3DTouchModel.m */; };
+		431DB58F208B1B17009EBA09 /* HGBNotificationDataBaseTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 431DB58E208B1B17009EBA09 /* HGBNotificationDataBaseTool.m */; };
 		4322BD7E2009BA4B00DE8E65 /* HGBNetworkInfoTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 4322BD7C2009BA4B00DE8E65 /* HGBNetworkInfoTool.m */; };
 		4322BD812009BA6500DE8E65 /* HGBNetworkInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4322BD802009BA6500DE8E65 /* HGBNetworkInfoViewController.m */; };
 		432303DD1F8F707F0013938F /* HGBThirdMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 432303DC1F8F707F0013938F /* HGBThirdMapViewController.m */; };
@@ -194,6 +195,7 @@
 		4356CAC2200A2BB3002F3EF2 /* HGBAPPStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4356CAC1200A2BB3002F3EF2 /* HGBAPPStatusViewController.m */; };
 		435B28D02057CDC700064283 /* HGBDownLoadTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 435B28CF2057CDC600064283 /* HGBDownLoadTask.m */; };
 		435BB9501FAF254600E35AA9 /* HGBBluetoothTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 435BB94F1FAF254600E35AA9 /* HGBBluetoothTool.m */; };
+		435F5C5A2087081800DCC705 /* xychannel.cer in Resources */ = {isa = PBXBuildFile; fileRef = 43BBC69B2086EABD00CB8D8A /* xychannel.cer */; };
 		4360D3691FA0935000055621 /* HGBTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4360D3681FA0935000055621 /* HGBTitleCell.m */; };
 		436314E91F7C46FE0009318D /* HGBTimeToolViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 436314E81F7C46FE0009318D /* HGBTimeToolViewController.m */; };
 		436314EA1F7C488F0009318D /* HGBCoordinateTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 430C1C181F7503A500511706 /* HGBCoordinateTool.m */; };
@@ -291,8 +293,15 @@
 		43913567208089B3000FC695 /* icon_usb.png in Resources */ = {isa = PBXBuildFile; fileRef = 43913566208089B2000FC695 /* icon_usb.png */; };
 		4393D11B1F96F9D7000841C1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4393D11A1F96F9D7000841C1 /* CFNetwork.framework */; };
 		4393D1221F96FAB2000841C1 /* HGBShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4393D1101F96F7D6000841C1 /* HGBShareViewController.m */; };
-		4393D1241F96FAEA000841C1 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4393D11D1F96FA52000841C1 /* libWeChatSDK.a */; };
 		4393D19F1F9846B5000841C1 /* report in Resources */ = {isa = PBXBuildFile; fileRef = 4393D19E1F98468A000841C1 /* report */; };
+		439FFBFA208D446500243BC2 /* HGBSocketController.m in Sources */ = {isa = PBXBuildFile; fileRef = 439FFBEF208D446500243BC2 /* HGBSocketController.m */; };
+		439FFBFB208D446500243BC2 /* HGBClientSocketTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 439FFBF2208D446500243BC2 /* HGBClientSocketTool.m */; };
+		439FFBFC208D446500243BC2 /* HGBServerSocketTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 439FFBF3208D446500243BC2 /* HGBServerSocketTool.m */; };
+		439FFC1E208D4C2600243BC2 /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 439FFC13208D4C2500243BC2 /* AsyncUdpSocket.m */; };
+		439FFC1F208D4C2600243BC2 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 439FFC15208D4C2500243BC2 /* AsyncSocket.m */; };
+		439FFC20208D4C2600243BC2 /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 439FFC18208D4C2500243BC2 /* GCDAsyncUdpSocket.m */; };
+		439FFC21208D4C2600243BC2 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 439FFC19208D4C2500243BC2 /* GCDAsyncSocket.m */; };
+		439FFC22208D4C2600243BC2 /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 439FFC1D208D4C2500243BC2 /* README.markdown */; };
 		43A093621FA81B9D00B4D5D9 /* HGBCPUTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 43A093611FA81B9C00B4D5D9 /* HGBCPUTool.m */; };
 		43A093651FA81BAF00B4D5D9 /* HGBDiskTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 43A093641FA81BAF00B4D5D9 /* HGBDiskTool.m */; };
 		43A093681FA81BC100B4D5D9 /* HGBMemoryTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 43A093671FA81BC100B4D5D9 /* HGBMemoryTool.m */; };
@@ -324,6 +333,7 @@
 		43B27DCB1FBD79E6008764A7 /* HGBVersionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B27DCA1FBD79E6008764A7 /* HGBVersionViewController.m */; };
 		43B27DD11FBD7A63008764A7 /* HGBVersionTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B27DD01FBD7A63008764A7 /* HGBVersionTool.m */; };
 		43B27DDD1FBE73EB008764A7 /* manifest.plist in Resources */ = {isa = PBXBuildFile; fileRef = 43B27DDC1FBE73EA008764A7 /* manifest.plist */; };
+		43BBC69A2086E7FB00CB8D8A /* csr.crt in Resources */ = {isa = PBXBuildFile; fileRef = 43BBC6992086E7FA00CB8D8A /* csr.crt */; };
 		43BD1FE81FA1F01C00C934F8 /* HGBBarChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 43BD1FCC1FA1F00900C934F8 /* HGBBarChat.m */; };
 		43BD1FE91FA1F01C00C934F8 /* HGBBarValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 43BD1FCE1FA1F00900C934F8 /* HGBBarValue.m */; };
 		43BD1FEA1FA1F01C00C934F8 /* HGBBarChatLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 43BD1FD11FA1F00900C934F8 /* HGBBarChatLayer.m */; };
@@ -424,8 +434,6 @@
 		43C2F8631FA9D4F0001113FD /* js_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F85A1FA9D4D5001113FD /* js_rsa.c */; };
 		43C2F8641FA9D52F001113FD /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43C2F85F1FA9D4D5001113FD /* libcrypto.a */; };
 		43C2F8651FA9D52F001113FD /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43C2F8601FA9D4D5001113FD /* libssl.a */; };
-		43C2F86B1FA9E50C001113FD /* HGBWChatShareSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F86A1FA9E50C001113FD /* HGBWChatShareSheet.m */; };
-		43C2F86E1FAA0B1D001113FD /* HGBWChatShareTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F86D1FAA0B1D001113FD /* HGBWChatShareTool.m */; };
 		43C2F8EE1FAAB736001113FD /* AppDelegate+HGBBaiduMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F8C91FAAB6DE001113FD /* AppDelegate+HGBBaiduMap.m */; };
 		43C2F8EF1FAAB736001113FD /* HGBBaiduMapBottomBaseTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F8CE1FAAB6DE001113FD /* HGBBaiduMapBottomBaseTableViewCell.m */; };
 		43C2F8F01FAAB736001113FD /* HGBBaiduMapBottomSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F8D21FAAB6DE001113FD /* HGBBaiduMapBottomSheet.m */; };
@@ -447,8 +455,6 @@
 		43C2F9221FAABB4C001113FD /* HGBMapActionLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F9151FAABB38001113FD /* HGBMapActionLabel.m */; };
 		43C2F9231FAABB4C001113FD /* HGBAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F9181FAABB38001113FD /* HGBAnnotationView.m */; };
 		43C2F9241FAABB4C001113FD /* HGBPointAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F91A1FAABB38001113FD /* HGBPointAnnotation.m */; };
-		43C2F95D1FAAFDE2001113FD /* AppDelegate+HGBWChatShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F95C1FAAFDE2001113FD /* AppDelegate+HGBWChatShare.m */; };
-		43C2F9601FAB085A001113FD /* HGBWChartBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 43C2F95F1FAB083A001113FD /* HGBWChartBundle.bundle */; };
 		43C2F96A1FAB2363001113FD /* HGBUMShareTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F9691FAB2363001113FD /* HGBUMShareTool.m */; };
 		43C2F96D1FAB2382001113FD /* AppDelegate+HGBUMShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2F96C1FAB2382001113FD /* AppDelegate+HGBUMShare.m */; };
 		43C2F96E1FAB248F001113FD /* HGBUMShare.plist in Resources */ = {isa = PBXBuildFile; fileRef = 43C2F9671FAB22E2001113FD /* HGBUMShare.plist */; };
@@ -848,6 +854,8 @@
 		431CFE1C202438D400139F76 /* HGB3DTouchNextViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGB3DTouchNextViewController.m; sourceTree = "<group>"; };
 		431CFE212024537D00139F76 /* HGBAppIcon3DTouchModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBAppIcon3DTouchModel.h; sourceTree = "<group>"; };
 		431CFE222024537D00139F76 /* HGBAppIcon3DTouchModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBAppIcon3DTouchModel.m; sourceTree = "<group>"; };
+		431DB58D208B1B17009EBA09 /* HGBNotificationDataBaseTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HGBNotificationDataBaseTool.h; sourceTree = "<group>"; };
+		431DB58E208B1B17009EBA09 /* HGBNotificationDataBaseTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HGBNotificationDataBaseTool.m; sourceTree = "<group>"; };
 		4322BD7C2009BA4B00DE8E65 /* HGBNetworkInfoTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HGBNetworkInfoTool.m; sourceTree = "<group>"; };
 		4322BD7D2009BA4B00DE8E65 /* HGBNetworkInfoTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HGBNetworkInfoTool.h; sourceTree = "<group>"; };
 		4322BD7F2009BA6500DE8E65 /* HGBNetworkInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBNetworkInfoViewController.h; sourceTree = "<group>"; };
@@ -1331,12 +1339,23 @@
 		4393D1101F96F7D6000841C1 /* HGBShareViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBShareViewController.m; sourceTree = "<group>"; };
 		4393D1111F96F7D7000841C1 /* HGBShareViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBShareViewController.h; sourceTree = "<group>"; };
 		4393D11A1F96F9D7000841C1 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		4393D11D1F96FA52000841C1 /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWeChatSDK.a; sourceTree = "<group>"; };
-		4393D11E1F96FA52000841C1 /* README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
-		4393D11F1F96FA52000841C1 /* WechatAuthSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WechatAuthSDK.h; sourceTree = "<group>"; };
-		4393D1201F96FA52000841C1 /* WXApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WXApi.h; sourceTree = "<group>"; };
-		4393D1211F96FA52000841C1 /* WXApiObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WXApiObject.h; sourceTree = "<group>"; };
 		4393D19E1F98468A000841C1 /* report */ = {isa = PBXFileReference; lastKnownFileType = folder; path = report; sourceTree = "<group>"; };
+		439FFBEF208D446500243BC2 /* HGBSocketController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HGBSocketController.m; sourceTree = "<group>"; };
+		439FFBF0208D446500243BC2 /* HGBSocketController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HGBSocketController.h; sourceTree = "<group>"; };
+		439FFBF2208D446500243BC2 /* HGBClientSocketTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HGBClientSocketTool.m; sourceTree = "<group>"; };
+		439FFBF3208D446500243BC2 /* HGBServerSocketTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HGBServerSocketTool.m; sourceTree = "<group>"; };
+		439FFBF4208D446500243BC2 /* HGBClientSocketTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HGBClientSocketTool.h; sourceTree = "<group>"; };
+		439FFBF9208D446500243BC2 /* HGBServerSocketTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HGBServerSocketTool.h; sourceTree = "<group>"; };
+		439FFC13208D4C2500243BC2 /* AsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncUdpSocket.m; sourceTree = "<group>"; };
+		439FFC14208D4C2500243BC2 /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
+		439FFC15208D4C2500243BC2 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
+		439FFC16208D4C2500243BC2 /* AsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncUdpSocket.h; sourceTree = "<group>"; };
+		439FFC18208D4C2500243BC2 /* GCDAsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncUdpSocket.m; sourceTree = "<group>"; };
+		439FFC19208D4C2500243BC2 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
+		439FFC1A208D4C2500243BC2 /* GCDAsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncUdpSocket.h; sourceTree = "<group>"; };
+		439FFC1B208D4C2500243BC2 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
+		439FFC1C208D4C2500243BC2 /* CocoaAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaAsyncSocket.h; sourceTree = "<group>"; };
+		439FFC1D208D4C2500243BC2 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.markdown; sourceTree = "<group>"; };
 		43A093601FA81B9C00B4D5D9 /* HGBCPUTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBCPUTool.h; sourceTree = "<group>"; };
 		43A093611FA81B9C00B4D5D9 /* HGBCPUTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBCPUTool.m; sourceTree = "<group>"; };
 		43A093631FA81BAF00B4D5D9 /* HGBDiskTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBDiskTool.h; sourceTree = "<group>"; };
@@ -1395,6 +1414,8 @@
 		43B27DCF1FBD7A63008764A7 /* HGBVersionTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBVersionTool.h; sourceTree = "<group>"; };
 		43B27DD01FBD7A63008764A7 /* HGBVersionTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBVersionTool.m; sourceTree = "<group>"; };
 		43B27DDC1FBE73EA008764A7 /* manifest.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = manifest.plist; sourceTree = "<group>"; };
+		43BBC6992086E7FA00CB8D8A /* csr.crt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = csr.crt; sourceTree = "<group>"; };
+		43BBC69B2086EABD00CB8D8A /* xychannel.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = xychannel.cer; sourceTree = "<group>"; };
 		43BD1FCB1FA1F00900C934F8 /* HGBBarChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBBarChat.h; sourceTree = "<group>"; };
 		43BD1FCC1FA1F00900C934F8 /* HGBBarChat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBBarChat.m; sourceTree = "<group>"; };
 		43BD1FCD1FA1F00900C934F8 /* HGBBarValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBBarValue.h; sourceTree = "<group>"; };
@@ -1671,10 +1692,6 @@
 		43C2F85D1FA9D4D5001113FD /* JSRSA.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSRSA.m; sourceTree = "<group>"; };
 		43C2F85F1FA9D4D5001113FD /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcrypto.a; sourceTree = "<group>"; };
 		43C2F8601FA9D4D5001113FD /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libssl.a; sourceTree = "<group>"; };
-		43C2F8691FA9E50C001113FD /* HGBWChatShareSheet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBWChatShareSheet.h; sourceTree = "<group>"; };
-		43C2F86A1FA9E50C001113FD /* HGBWChatShareSheet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBWChatShareSheet.m; sourceTree = "<group>"; };
-		43C2F86C1FAA0B1D001113FD /* HGBWChatShareTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBWChatShareTool.h; sourceTree = "<group>"; };
-		43C2F86D1FAA0B1D001113FD /* HGBWChatShareTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBWChatShareTool.m; sourceTree = "<group>"; };
 		43C2F8C81FAAB6DE001113FD /* AppDelegate+HGBBaiduMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+HGBBaiduMap.h"; sourceTree = "<group>"; };
 		43C2F8C91FAAB6DE001113FD /* AppDelegate+HGBBaiduMap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+HGBBaiduMap.m"; sourceTree = "<group>"; };
 		43C2F8CD1FAAB6DE001113FD /* HGBBaiduMapBottomBaseTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBBaiduMapBottomBaseTableViewCell.h; sourceTree = "<group>"; };
@@ -1719,12 +1736,8 @@
 		43C2F9181FAABB38001113FD /* HGBAnnotationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBAnnotationView.m; sourceTree = "<group>"; };
 		43C2F9191FAABB38001113FD /* HGBPointAnnotation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBPointAnnotation.h; sourceTree = "<group>"; };
 		43C2F91A1FAABB38001113FD /* HGBPointAnnotation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBPointAnnotation.m; sourceTree = "<group>"; };
-		43C2F9251FAAE2E7001113FD /* HGBWChatShareHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBWChatShareHeader.h; sourceTree = "<group>"; };
 		43C2F9271FAAE495001113FD /* HGBCenterPopHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBCenterPopHeader.h; sourceTree = "<group>"; };
 		43C2F9551FAAEF30001113FD /* HGBUMAnalyticsConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBUMAnalyticsConfig.h; sourceTree = "<group>"; };
-		43C2F95B1FAAFDE2001113FD /* AppDelegate+HGBWChatShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+HGBWChatShare.h"; sourceTree = "<group>"; };
-		43C2F95C1FAAFDE2001113FD /* AppDelegate+HGBWChatShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+HGBWChatShare.m"; sourceTree = "<group>"; };
-		43C2F95F1FAB083A001113FD /* HGBWChartBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HGBWChartBundle.bundle; sourceTree = "<group>"; };
 		43C2F9671FAB22E2001113FD /* HGBUMShare.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = HGBUMShare.plist; sourceTree = "<group>"; };
 		43C2F9681FAB2363001113FD /* HGBUMShareTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBUMShareTool.h; sourceTree = "<group>"; };
 		43C2F9691FAB2363001113FD /* HGBUMShareTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBUMShareTool.m; sourceTree = "<group>"; };
@@ -2264,7 +2277,6 @@
 				43EC85061FA97F6700115B40 /* AddressBookUI.framework in Frameworks */,
 				43EC85041FA97F6100115B40 /* Contacts.framework in Frameworks */,
 				43EC85021FA97F5A00115B40 /* ContactsUI.framework in Frameworks */,
-				4393D1241F96FAEA000841C1 /* libWeChatSDK.a in Frameworks */,
 				4393D11B1F96F9D7000841C1 /* CFNetwork.framework in Frameworks */,
 				43F9F6D41F6A7E5E00E565B2 /* MapKit.framework in Frameworks */,
 				43F9F6C41F6A7E2200E565B2 /* libz.tbd in Frameworks */,
@@ -2481,6 +2493,15 @@
 			path = ViewController;
 			sourceTree = "<group>";
 		};
+		431DB58C208B1B17009EBA09 /* DataBase */ = {
+			isa = PBXGroup;
+			children = (
+				431DB58D208B1B17009EBA09 /* HGBNotificationDataBaseTool.h */,
+				431DB58E208B1B17009EBA09 /* HGBNotificationDataBaseTool.m */,
+			);
+			path = DataBase;
+			sourceTree = "<group>";
+		};
 		4322BD7A2009BA4B00DE8E65 /* 网络信息工具 */ = {
 			isa = PBXGroup;
 			children = (
@@ -2525,7 +2546,6 @@
 			children = (
 				4393D1111F96F7D7000841C1 /* HGBShareViewController.h */,
 				4393D1101F96F7D6000841C1 /* HGBShareViewController.m */,
-				4393D1161F96F892000841C1 /* wChatShare */,
 				4393D1121F96F7D7000841C1 /* UMShare */,
 			);
 			path = "分享";
@@ -4554,14 +4574,6 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		4391354A208082A1000FC695 /* USB */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = USB;
-			path = "MyApp_HGB/Main/Tool/硬件接口工具/USB";
-			sourceTree = SOURCE_ROOT;
-		};
 		4391354B208082B3000FC695 /* USB */ = {
 			isa = PBXGroup;
 			children = (
@@ -4611,63 +4623,67 @@
 			path = UMShare;
 			sourceTree = "<group>";
 		};
-		4393D1161F96F892000841C1 /* wChatShare */ = {
+		439FFBEE208D446500243BC2 /* Socket */ = {
 			isa = PBXGroup;
 			children = (
-				43C2F95F1FAB083A001113FD /* HGBWChartBundle.bundle */,
-				43C2F9571FAAFA6F001113FD /* Category */,
-				43C2F9521FAAEEFE001113FD /* Header */,
-				4393D1291F96FD67000841C1 /* Controller */,
-				4393D12A1F96FD67000841C1 /* Model */,
-				4393D1261F96FD66000841C1 /* Tool */,
-				4393D1251F96FD66000841C1 /* View */,
-				4393D11C1F96FA52000841C1 /* OpenSDK1.7.4 */,
+				439FFBEF208D446500243BC2 /* HGBSocketController.m */,
+				439FFBF0208D446500243BC2 /* HGBSocketController.h */,
+				439FFBF1208D446500243BC2 /* Socket */,
 			);
-			path = wChatShare;
+			path = Socket;
 			sourceTree = "<group>";
 		};
-		4393D11C1F96FA52000841C1 /* OpenSDK1.7.4 */ = {
+		439FFBF1208D446500243BC2 /* Socket */ = {
 			isa = PBXGroup;
 			children = (
-				4393D11D1F96FA52000841C1 /* libWeChatSDK.a */,
-				4393D11E1F96FA52000841C1 /* README.txt */,
-				4393D11F1F96FA52000841C1 /* WechatAuthSDK.h */,
-				4393D1201F96FA52000841C1 /* WXApi.h */,
-				4393D1211F96FA52000841C1 /* WXApiObject.h */,
+				439FFC10208D4C2500243BC2 /* CocoaAsyncSocket */,
+				439FFBF2208D446500243BC2 /* HGBClientSocketTool.m */,
+				439FFBF3208D446500243BC2 /* HGBServerSocketTool.m */,
+				439FFBF4208D446500243BC2 /* HGBClientSocketTool.h */,
+				439FFBF9208D446500243BC2 /* HGBServerSocketTool.h */,
 			);
-			path = OpenSDK1.7.4;
+			path = Socket;
 			sourceTree = "<group>";
 		};
-		4393D1251F96FD66000841C1 /* View */ = {
+		439FFC10208D4C2500243BC2 /* CocoaAsyncSocket */ = {
 			isa = PBXGroup;
 			children = (
+				439FFC11208D4C2500243BC2 /* Source */,
+				439FFC1D208D4C2500243BC2 /* README.markdown */,
 			);
-			path = View;
+			path = CocoaAsyncSocket;
 			sourceTree = "<group>";
 		};
-		4393D1261F96FD66000841C1 /* Tool */ = {
+		439FFC11208D4C2500243BC2 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				43C2F86C1FAA0B1D001113FD /* HGBWChatShareTool.h */,
-				43C2F86D1FAA0B1D001113FD /* HGBWChatShareTool.m */,
+				439FFC12208D4C2500243BC2 /* RunLoop */,
+				439FFC17208D4C2500243BC2 /* GCD */,
+				439FFC1C208D4C2500243BC2 /* CocoaAsyncSocket.h */,
 			);
-			path = Tool;
+			path = Source;
 			sourceTree = "<group>";
 		};
-		4393D1291F96FD67000841C1 /* Controller */ = {
+		439FFC12208D4C2500243BC2 /* RunLoop */ = {
 			isa = PBXGroup;
 			children = (
-				43C2F8691FA9E50C001113FD /* HGBWChatShareSheet.h */,
-				43C2F86A1FA9E50C001113FD /* HGBWChatShareSheet.m */,
+				439FFC13208D4C2500243BC2 /* AsyncUdpSocket.m */,
+				439FFC14208D4C2500243BC2 /* AsyncSocket.h */,
+				439FFC15208D4C2500243BC2 /* AsyncSocket.m */,
+				439FFC16208D4C2500243BC2 /* AsyncUdpSocket.h */,
 			);
-			path = Controller;
+			path = RunLoop;
 			sourceTree = "<group>";
 		};
-		4393D12A1F96FD67000841C1 /* Model */ = {
+		439FFC17208D4C2500243BC2 /* GCD */ = {
 			isa = PBXGroup;
 			children = (
+				439FFC18208D4C2500243BC2 /* GCDAsyncUdpSocket.m */,
+				439FFC19208D4C2500243BC2 /* GCDAsyncSocket.m */,
+				439FFC1A208D4C2500243BC2 /* GCDAsyncUdpSocket.h */,
+				439FFC1B208D4C2500243BC2 /* GCDAsyncSocket.h */,
 			);
-			path = Model;
+			path = GCD;
 			sourceTree = "<group>";
 		};
 		43A0935C1FA815CB00B4D5D9 /* DeviceData */ = {
@@ -6585,6 +6601,7 @@
 		43C2F94F1FAAEE85001113FD /* Tool */ = {
 			isa = PBXGroup;
 			children = (
+				431DB58C208B1B17009EBA09 /* DataBase */,
 				433867AB1F73E9ED00110AC4 /* HGBNotificationTool.h */,
 				433867AC1F73E9ED00110AC4 /* HGBNotificationTool.m */,
 			);
@@ -6607,14 +6624,6 @@
 				43EF09FF1F95D397005D5E13 /* HGBPurchaseTool.m */,
 			);
 			path = Tool;
-			sourceTree = "<group>";
-		};
-		43C2F9521FAAEEFE001113FD /* Header */ = {
-			isa = PBXGroup;
-			children = (
-				43C2F9251FAAE2E7001113FD /* HGBWChatShareHeader.h */,
-			);
-			path = Header;
 			sourceTree = "<group>";
 		};
 		43C2F9531FAAEF10001113FD /* Category */ = {
@@ -6640,15 +6649,6 @@
 				43C2F8DB1FAAB6DE001113FD /* HGBBaiduMapHeader.h */,
 			);
 			path = Header;
-			sourceTree = "<group>";
-		};
-		43C2F9571FAAFA6F001113FD /* Category */ = {
-			isa = PBXGroup;
-			children = (
-				43C2F95B1FAAFDE2001113FD /* AppDelegate+HGBWChatShare.h */,
-				43C2F95C1FAAFDE2001113FD /* AppDelegate+HGBWChatShare.m */,
-			);
-			path = Category;
 			sourceTree = "<group>";
 		};
 		43C2F9641FAB0B25001113FD /* Resource */ = {
@@ -7921,7 +7921,6 @@
 		43F9F5A61F6A6A9600E565B2 /* 常用普通工具 */ = {
 			isa = PBXGroup;
 			children = (
-				4391354A208082A1000FC695 /* USB */,
 				43047495202C2FC4005D70F5 /* URL拦截 */,
 				43047487202C28EF005D70F5 /* 下载管理 */,
 				43F2218920106269008ADFE6 /* 强制转屏 */,
@@ -8024,6 +8023,8 @@
 		43F9F5B11F6A6A9600E565B2 /* 网络工具 */ = {
 			isa = PBXGroup;
 			children = (
+				43BBC69B2086EABD00CB8D8A /* xychannel.cer */,
+				43BBC6992086E7FA00CB8D8A /* csr.crt */,
 				43EF09EC1F95B75E005D5E13 /* NetWork */,
 				43EF09F41F95B7C2005D5E13 /* HGBNetWorkViewController.h */,
 				43EF09F51F95B7C2005D5E13 /* HGBNetWorkViewController.m */,
@@ -8044,6 +8045,7 @@
 		43F9F5B31F6A6A9600E565B2 /* 硬件接口工具 */ = {
 			isa = PBXGroup;
 			children = (
+				439FFBEE208D446500243BC2 /* Socket */,
 				4391354B208082B3000FC695 /* USB */,
 				4326A8EA2026C41300E0D74F /* Safari */,
 				4326A8DD2025D83B00E0D74F /* 系统分享 */,
@@ -8625,6 +8627,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				435F5C5A2087081800DCC705 /* xychannel.cer in Resources */,
 				43E148AA207381DD00758840 /* icon_location.png in Resources */,
 				43E148AD207381DD00758840 /* icon_fig.png in Resources */,
 				43E1470220722DBC00758840 /* HGBFuntion.plist in Resources */,
@@ -8645,7 +8648,6 @@
 				43E147732073530C00758840 /* icon_tabbadge.png in Resources */,
 				43C2F9901FAB25C1001113FD /* UMSocialSDKResources.bundle in Resources */,
 				43C2F96E1FAB248F001113FD /* HGBUMShare.plist in Resources */,
-				43C2F9601FAB085A001113FD /* HGBWChartBundle.bundle in Resources */,
 				43E1475F20734BC800758840 /* icon_chart.png in Resources */,
 				43C2F91B1FAABB3E001113FD /* HGBMapBundle.bundle in Resources */,
 				43C2F8F81FAAB73E001113FD /* HGBBaiduMapBundle.bundle in Resources */,
@@ -8700,6 +8702,7 @@
 				43E1472420723E1400758840 /* icon_selectpop.png in Resources */,
 				43E1472920723E1400758840 /* icon_calenderpop.png in Resources */,
 				43F9901C2071F61D006C276C /* icon_other.png in Resources */,
+				43BBC69A2086E7FB00CB8D8A /* csr.crt in Resources */,
 				433592581F9F4AE70053F6C3 /* cir3.png in Resources */,
 				4335922F1F9F49090053F6C3 /* HGBSearchBarBundle.bundle in Resources */,
 				43E146FA2072227800758840 /* icon_friend_selected.png in Resources */,
@@ -8738,6 +8741,7 @@
 				43E1488520736CC700758840 /* icon_xml.png in Resources */,
 				43E14715207238C200758840 /* icon_font.png in Resources */,
 				43BF8B711F905E750097BD67 /* build in Resources */,
+				439FFC22208D4C2600243BC2 /* README.markdown in Resources */,
 				43E147C420735B8B00758840 /* icon_filemanager.png in Resources */,
 				43F9901B2071F61D006C276C /* icon_fullscreen.png in Resources */,
 				43F98FDB2071C62B006C276C /* icon.png in Resources */,
@@ -9010,6 +9014,7 @@
 				43E051DD20171D5B006D8B37 /* Delta.c in Sources */,
 				4381645120749B8A00EE3D02 /* HGBFriendController.m in Sources */,
 				43BD1FEE1FA1F01C00C934F8 /* HGBBrokenLineLayer.m in Sources */,
+				439FFBFB208D446500243BC2 /* HGBClientSocketTool.m in Sources */,
 				43E5F8FD1FECE47C003C63AA /* HGBNavigationBarTool.m in Sources */,
 				43E5F91D1FECE47C003C63AA /* HGBApplicationBadgeTool.m in Sources */,
 				43BD1FEF1FA1F01C00C934F8 /* HGBPointShowMessageView.m in Sources */,
@@ -9058,6 +9063,7 @@
 				433591D61F9F329E0053F6C3 /* HGBCalenderView.m in Sources */,
 				43E5F90D1FECE47C003C63AA /* HGBPP3ViewController.m in Sources */,
 				43C516111FA6B84D000E4589 /* HGBFontViewController.m in Sources */,
+				439FFC20208D4C2600243BC2 /* GCDAsyncUdpSocket.m in Sources */,
 				43BD20281FA2235300C934F8 /* HCollectionViewController.m in Sources */,
 				433591D71F9F329E0053F6C3 /* HGBCalenderDayView.m in Sources */,
 				43E05504201DB117006D8B37 /* HGBTorchViewController.m in Sources */,
@@ -9072,6 +9078,7 @@
 				43E5F9161FECE47C003C63AA /* HGBPD1ViewController.m in Sources */,
 				4393D1221F96FAB2000841C1 /* HGBShareViewController.m in Sources */,
 				43EF09F21F95B76D005D5E13 /* HGBNetworkRequest.m in Sources */,
+				431DB58F208B1B17009EBA09 /* HGBNotificationDataBaseTool.m in Sources */,
 				43EF09F31F95B76D005D5E13 /* HGBNetWorkTool.m in Sources */,
 				43EF09E41F95B45B005D5E13 /* HGBModalTransitionAnimation.m in Sources */,
 				43BF8C8E1F907EFF0097BD67 /* HGBKeybordPading.c in Sources */,
@@ -9082,6 +9089,7 @@
 				43BF8CB91F90B28D0097BD67 /* HGBCallPhoneWeexPlugin.m in Sources */,
 				43BF8C681F907EC90097BD67 /* HGBBottomBaseTableViewCell.m in Sources */,
 				43E051C820171D5B006D8B37 /* unzip.c in Sources */,
+				439FFC21208D4C2600243BC2 /* GCDAsyncSocket.m in Sources */,
 				43E051DB20171D5B006D8B37 /* 7zBuf2.c in Sources */,
 				43BF8C691F907EC90097BD67 /* HGBBottomSheet.m in Sources */,
 				43BF8C6A1F907EC90097BD67 /* HGBBottomCell.m in Sources */,
@@ -9180,6 +9188,7 @@
 				43BD20741FA2D77600C934F8 /* HGBBadgeButton.m in Sources */,
 				43A0936F1FA8388300B4D5D9 /* HGBBatteryTool.m in Sources */,
 				4388E0031F7F732D00DA30DF /* HGBJSModel.m in Sources */,
+				439FFC1E208D4C2600243BC2 /* AsyncUdpSocket.m in Sources */,
 				43E051E020171D5B006D8B37 /* Ppmd8Dec.c in Sources */,
 				43E5F8FE1FECE47C003C63AA /* HNav1ViewController.m in Sources */,
 				43E053052019A0A5006D8B37 /* HGBPasteboardViewController.m in Sources */,
@@ -9197,6 +9206,7 @@
 				431CFE082023FEEB00139F76 /* UIViewController+HGB3DTouch.m in Sources */,
 				4388E00B1F7F732D00DA30DF /* HGBInstructionView.m in Sources */,
 				4388E00C1F7F732D00DA30DF /* HGBTableSelector.m in Sources */,
+				439FFBFA208D446500243BC2 /* HGBSocketController.m in Sources */,
 				43BD20621FA2C21700C934F8 /* H1ViewController.m in Sources */,
 				43D00AE11FF6854E001CE871 /* HGBINBluetoothTool.m in Sources */,
 				4388E00D1F7F732D00DA30DF /* HGBTableSelectorCell.m in Sources */,
@@ -9247,7 +9257,6 @@
 				4338680F1F749D2900110AC4 /* HGBPredicateTool.m in Sources */,
 				433868101F749D2900110AC4 /* HGBCommunicationViewController.m in Sources */,
 				43E0552F201DBB6D006D8B37 /* HGB3DTouchViewController.m in Sources */,
-				43C2F95D1FAAFDE2001113FD /* AppDelegate+HGBWChatShare.m in Sources */,
 				433868121F749D2900110AC4 /* HGBMediaViewController.m in Sources */,
 				430C1BFE1F74F38E00511706 /* AppDelegate+HGBPush.m in Sources */,
 				433592341F9F49510053F6C3 /* HGBIndexViewController.m in Sources */,
@@ -9322,6 +9331,7 @@
 				43E5F9241FECE593003C63AA /* HGBStatusBarViewController.m in Sources */,
 				433868331F749D2900110AC4 /* HGBClearStorageTool.m in Sources */,
 				433868341F749D2900110AC4 /* HGBClearViewController.m in Sources */,
+				439FFBFC208D446500243BC2 /* HGBServerSocketTool.m in Sources */,
 				4356CA24200A08C4002F3EF2 /* AppDelegate+HGBException.m in Sources */,
 				436314F61F7C4AFB0009318D /* HGBSizeViewController.m in Sources */,
 				433868351F749D2900110AC4 /* HGBDeviceInfoTool.m in Sources */,
@@ -9357,7 +9367,6 @@
 				4345C73E1F67B91500ABF35D /* AppDelegate.m in Sources */,
 				43047499202C2FC5005D70F5 /* HGBURLProtocol.m in Sources */,
 				43F9F64B1F6A7CB800E565B2 /* HGBFileManageController.m in Sources */,
-				43C2F86E1FAA0B1D001113FD /* HGBWChatShareTool.m in Sources */,
 				43F990572071FB97006C276C /* HGBFunctionModel.m in Sources */,
 				43F9F6EE1F6A82D200E565B2 /* HGBOUTViewController.m in Sources */,
 				43E5F9131FECE47C003C63AA /* UIViewController+HGBModalTransition.m in Sources */,
@@ -9384,7 +9393,6 @@
 				43BF8B7B1F9060D30097BD67 /* HGBBackPlugin.m in Sources */,
 				43E5F91A1FECE47C003C63AA /* HGBPD5ViewController.m in Sources */,
 				4323040E1F9058060013938F /* HGBCordovaViewController.m in Sources */,
-				43C2F86B1FA9E50C001113FD /* HGBWChatShareSheet.m in Sources */,
 				43FC7A751F8F652000FD2E79 /* HGBMapViewController.m in Sources */,
 				43E5F9081FECE47C003C63AA /* HGBCopyViewTool.m in Sources */,
 				43F2213F200EEF5C008ADFE6 /* HGBDistanceViewController.m in Sources */,
@@ -9422,6 +9430,7 @@
 				43F9F64C1F6A7CB800E565B2 /* HGBFileManage.m in Sources */,
 				43EF0A001F95D397005D5E13 /* HGBPurchaseTool.m in Sources */,
 				43F9F5CD1F6A6F1E00E565B2 /* HGBJSONViewController.m in Sources */,
+				439FFC1F208D4C2600243BC2 /* AsyncSocket.m in Sources */,
 				43BF8CB61F90B27C0097BD67 /* HGBBackWeexPlugin.m in Sources */,
 				43F9F64D1F6A7CB800E565B2 /* HGBFileModel.m in Sources */,
 				43F9F6121F6A77D000E565B2 /* HGBJSViewController.m in Sources */,

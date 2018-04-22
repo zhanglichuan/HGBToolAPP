@@ -123,10 +123,12 @@
     if (indexPath.section==0){
         AppDelegate *app=(AppDelegate *)[UIApplication sharedApplication].delegate;
         if (indexPath.row==0){
+            [app setAllowOrientation:(UIInterfaceOrientationMaskLandscapeLeft)];
             [app turnOrientation:(UIInterfaceOrientationLandscapeLeft)];
 
         }else if (indexPath.row==1){
 
+            [app setAllowOrientation:(UIInterfaceOrientationMaskLandscape)];
               [app turnOrientation:(UIInterfaceOrientationPortrait)];
 
         }else if (indexPath.row==2){

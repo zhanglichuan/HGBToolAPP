@@ -77,7 +77,7 @@
 
 
 
-    UIScrollView *scrollView=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, kWidth, kHeight-64)];
+    UIScrollView *scrollView=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, kWidth, kHeight)];
     scrollView.backgroundColor=[UIColor colorWithRed:245.0/256 green:242.0/256 blue:242.0/256 alpha:1];
     scrollView.alwaysBounceVertical=YES;
     scrollView.alwaysBounceHorizontal=NO;

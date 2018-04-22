@@ -9,6 +9,8 @@
 #import "HGBClientUSBController.h"
 
 #import "HGBClientUSBTool.h"
+
+
 #define kWidth [[UIScreen mainScreen] bounds].size.width
 #define kHeight [[UIScreen mainScreen] bounds].size.height
 //屏幕比例

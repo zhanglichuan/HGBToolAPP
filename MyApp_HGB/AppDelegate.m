@@ -16,7 +16,7 @@
 #import "AppDelegate+HGBBaiduMap.h"
 #import "AppDelegate+HGBUMengAnalytics.h"
 #import "AppDelegate+HGBWeex.h"
-#import "AppDelegate+HGBWChatShare.h"
+
 #import "AppDelegate+HGBUMShare.h"
 #import "AppDelegate+HGBAppCheck.h"
 #import "HGBRootViewController.h"
@@ -55,8 +55,7 @@
     [self init_BaiduMap_ServerWithBaiduMapAppKey:@"fEH1pg9fLuIHZ6ubiyAhEHfNaKkrwHei" andWithLaunchOptions:launchOptions];
     //友盟统计
     [self init_UMengAnalytics_ServerWithUMengAnalyticsAppKey:@"59df2c8b82b6356c4b00006f" andWithLaunchOptions:launchOptions];
-    //微信分享
-    [self init_WChatShare_ServerWithWChatShareAppKey:nil andWithLaunchOptions:launchOptions];
+
     //友盟分享
     [self init_UMShare_ServerWithLaunchOptions:launchOptions];
     
@@ -94,18 +93,6 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     
-}
-#pragma mark url
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options
-{
-    //    NSLog(@"%@",options);
-    return [self applicationOpenURL:url];
-}
--(BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url{
-    return [self applicationOpenURL:url];
-}
--(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
-    return [self applicationOpenURL:url];
 }
 
 @end

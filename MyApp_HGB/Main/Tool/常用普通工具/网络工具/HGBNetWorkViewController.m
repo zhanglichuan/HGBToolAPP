@@ -8,6 +8,7 @@
 
 #import "HGBNetWorkViewController.h"
 
+
 #import "HGBCommonSelectCell.h"
 #define Identify_Cell @"cell"
 
@@ -66,7 +67,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"网络请求工具:":@[@"post",@"get",@"upload",@"download"]};
+    self.dataDictionary=@{@"网络请求工具:":@[@"post",@"get",@"upload",@"download",@"test1",@"https-test"]};
     self.keys=@[@"网络请求工具:"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -141,6 +142,32 @@
         }else if (indexPath.row==3){
             [[HGBNetWorkTool shareInstance] downLoadFileWithURL:@"http://120.24.47.57/amap/down/8c128ce4-2e29-44e3-8ea5-17706adc706d/1506652122930.ipa" andWithStoreFile:@"document://1.ipa" andWithCompleteBlock:^(BOOL status, NSDictionary *returnMessage) {
                 NSLog(@"%@",returnMessage);
+            }];
+        }else if (indexPath.row==4){
+            NSDictionary *params=@{
+                @"req_msg":@{
+                    @"data":@{
+                        @"sec":@"MTIzNDU2Nzg="
+                    }
+                }
+                };
+            [[HGBNetWorkTool shareInstance]setHeaders:@{@"APPID":@"6FAC47080A078CB400B64C70FDF6C1AD",@"DEVICEID":@"13E2539A-5040-4C59-B678-9AADADF6BAB8",@"TOKEN":@"7bc61d8f7b2e4b15a18470d84d15c9ce",@"SIGN":@"",@"SECURITY_VERSION":@"1"}];
+            [HGBNetWorkTool shareInstance].cerFilePath=@"project://xychannel.cer";
+//            [HGBNetWorkTool shareInstance].cerFilePassword=@"123456";
+            [[HGBNetWorkTool shareInstance] post:@"https://192.168.188.200:8443/MobileApiSystem/mobileinit/initController/init" params:nil andWithSuccessBlock:^(id responseObject) {
+                NSString *string=[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+                NSLog(@"%@",string);
+            } failedBlock:^(NSError *error) {
+                NSLog(@"%@",error);
+            }];
+        }else if (indexPath.row==5){
+            
+            [HGBNetWorkTool shareInstance].cerFilePath=@"project://csr.crt";
+            [[HGBNetWorkTool shareInstance] post:@"https://192.168.188.120:8091/manifest.plist" params:nil andWithSuccessBlock:^(id responseObject) {
+                NSString *string=[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+                NSLog(@"%@",string);
+            } failedBlock:^(NSError *error) {
+                NSLog(@"%@",error);
             }];
         }
     }

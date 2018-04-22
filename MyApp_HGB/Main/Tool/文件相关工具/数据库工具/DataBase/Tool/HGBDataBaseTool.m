@@ -74,11 +74,22 @@ static HGBDataBaseTool *instance=nil;
 
         NSString *bundleId=[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
         
-        NSString *dataBasePath=[NSString stringWithFormat:@"document://%@data.db",bundleId];
+        NSString *dataBasePath=[NSString stringWithFormat:@"document://%@database.db",bundleId];
         
         [instance openDataBaseWithSource:dataBasePath];
     }
     return instance;
+}
+#pragma mark 重启数据库
+/**
+ 重启数据库
+
+ @return 结果
+ */
+-(BOOL)reset{
+    NSString *bundleId=[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
+    NSString *dataBasePath=[NSString stringWithFormat:@"document://%@database.db",bundleId];
+    return [self openDataBaseWithSource:dataBasePath];
 }
 #pragma mark 打开数据库
 /**
@@ -139,13 +150,13 @@ static HGBDataBaseTool *instance=nil;
             self.openFlag=NO;
             self.dataBaseEncrptFlag=NO;
             self.encryptDataDic=[NSMutableDictionary dictionary];
-            instance=nil;
+
             return YES;
         }
     }else{
 //        HGBLog(@"关闭数据库成功");
         self.openFlag=NO;
-        instance=nil;
+        
         
         return YES;
     }
@@ -487,18 +498,13 @@ static HGBDataBaseTool *instance=nil;
     
     NSArray *names=[nodes allKeys];
     for(NSString *name in names){
+        id value=[nodes objectForKey:name];
+        NSString *string=[HGBDataBaseTool objectEncapsulation:value];
         if([encryptTableDataArr containsObject:name]){
-            id value=[nodes objectForKey:name];
+            [dic setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
+        }else{
+            [dic setObject:string forKey:name];
 
-            if([value isKindOfClass:[NSData class]]){
-                NSData *data=(NSData *)value;
-                [dic setObject:[HGBDataBaseTool encryptDataWithAES256:data andWithKey:key] forKey:name];
-                
-            }else{
-                NSString *string=[NSString stringWithFormat:@"%@",value];
-
-                [dic setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
-            }
         }
     }
     
@@ -562,16 +568,13 @@ static HGBDataBaseTool *instance=nil;
     NSArray *names=[conditionDic allKeys];
     for(NSString *name in names){
        
+        id value=[conditionDic objectForKey:name];
+        NSString *string=[HGBDataBaseTool objectEncapsulation:value];
         if([encryptTableDataArr containsObject:name]){
-            id value=[conditionDic objectForKey:name];
-            if([value isKindOfClass:[NSData class]]){
-                NSData *data=(NSData *)value;
-                [dic setObject:[HGBDataBaseTool encryptDataWithAES256:data andWithKey:key] forKey:name];
-                
-            }else{
-                NSString *string=[NSString stringWithFormat:@"%@",value];
-                [dic setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
-            }
+            [dic setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
+        }else{
+            [dic setObject:string forKey:name];
+
         }
     }
     
@@ -633,16 +636,13 @@ static HGBDataBaseTool *instance=nil;
     NSArray *names_condition=[conditionDic allKeys];
     for(NSString *name in names_condition){
         
+        id value=[conditionDic objectForKey:name];
+        NSString *string=[HGBDataBaseTool objectEncapsulation:value];
         if([encryptTableDataArr containsObject:name]){
-            id value=[conditionDic objectForKey:name];
-            if([value isKindOfClass:[NSData class]]){
-                NSData *data=(NSData *)value;
-                [dic_condition setObject:[HGBDataBaseTool encryptDataWithAES256:data andWithKey:key] forKey:name];
-                
-            }else{
-                NSString *string=[NSString stringWithFormat:@"%@",value];
-                [dic_condition setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
-            }
+            [dic_condition setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
+        }else{
+            [dic_condition setObject:string forKey:name];
+
         }
     }
     //加密修改内容
@@ -651,16 +651,13 @@ static HGBDataBaseTool *instance=nil;
     NSArray *names_change=[changeDic allKeys];
     for(NSString *name in names_change){
        
+        id value=[changeDic objectForKey:name];
+        NSString *string=[HGBDataBaseTool objectEncapsulation:value];
         if([encryptTableDataArr containsObject:name]){
-            id value=[changeDic objectForKey:name];
-            if([value isKindOfClass:[NSData class]]){
-                NSData *data=(NSData *)value;
-                [dic_change setObject:[HGBDataBaseTool encryptDataWithAES256:data andWithKey:key] forKey:name];
-                
-            }else{
-                NSString *string=[NSString stringWithFormat:@"%@",value];
-                [dic_change setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
-            }
+            [dic_change setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
+        }else{
+            [dic_change setObject:string forKey:name];
+
         }
     }
     //sql
@@ -736,16 +733,13 @@ static HGBDataBaseTool *instance=nil;
     NSArray *names=[conditionDic allKeys];
     for(NSString *name in names){
         
+        id value=[conditionDic objectForKey:name];
+        NSString *string=[HGBDataBaseTool objectEncapsulation:value];
         if([encryptTableDataArr containsObject:name]){
-            id value=[conditionDic objectForKey:name];
-            if([value isKindOfClass:[NSData class]]){
-                NSData *data=(NSData *)value;
-                [dic setObject:[HGBDataBaseTool encryptDataWithAES256:data andWithKey:key] forKey:name];
-                
-            }else{
-                NSString *string=[NSString stringWithFormat:@"%@",value];
-                [dic setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
-            }
+            [dic setObject:[HGBDataBaseTool encryptStringWithAES256:string andWithKey:key] forKey:name];
+        }else{
+            [dic setObject:string forKey:name];
+
         }
     }
     
@@ -778,21 +772,16 @@ static HGBDataBaseTool *instance=nil;
                 NSArray *subnames=[nameDic allKeys];
                 if(subnames.count!=0){
                     NSString *subname=[nameDic objectForKey:@"name"];
-                    NSString *type=[nameDic objectForKey:@"type"];
-                    if([type isEqualToString:@"text"]){
-                        
-                        
-                        
-                    }else{
-                        
-                    }
                     const unsigned char *value=sqlite3_column_text(stmt, i);
                     NSString *valueStr=[NSString stringWithFormat:@"%s",value];
+                    NSString *string;
                     if([encryptTableDataArr containsObject:subname]){
-                         [dic setObject:[HGBDataBaseTool decryptStringWithAES256:valueStr andWithKey:key] forKey:subname];
+                        string=[HGBDataBaseTool decryptStringWithAES256:valueStr andWithKey:key];
                     }else{
-                         [dic setObject:valueStr forKey:subname];
+                        string=valueStr;
                     }
+                    id lastvalue=[HGBDataBaseTool stringAnalysis:string];
+                    [dic setObject:lastvalue forKey:subname];
                    
                 }
                 
@@ -1119,6 +1108,198 @@ static HGBDataBaseTool *instance=nil;
     
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
     
+}
+#pragma mark object-string
+/**
+ object编码
+
+ @param object 对象
+ @return 编码字符串
+ */
++(NSString *)objectEncapsulation:(id)object{
+    NSString *string;
+    if([object isKindOfClass:[NSString class]]){
+        string=[NSString stringWithFormat:@"%@",object];
+    }else if([object isKindOfClass:[NSArray class]]){
+        object=[HGBDataBaseTool ObjectToJSONString:object];
+        string=[@"array://" stringByAppendingString:object];
+    }else if([object isKindOfClass:[NSDictionary class]]){
+        object=[HGBDataBaseTool ObjectToJSONString:object];
+        string=[@"dictionary://" stringByAppendingString:object];
+    }else if([object isKindOfClass:[NSNumber class]]){
+        string=[NSString stringWithFormat:@"number://%@",object];
+    }else if([object isKindOfClass:[NSData class]]){
+        NSData *encodeData =object;
+        NSString *base64String = [encodeData base64EncodedStringWithOptions:0];
+        string=[NSString stringWithFormat:@"data://%@",base64String];
+    }else{
+        string=object;
+    }
+
+
+
+
+    return string;
+}
+/**
+ 字符串解码
+
+ @param string 字符串
+ @return 对象
+ */
++(id)stringAnalysis:(NSString *)string{
+    id object;
+    if([string hasPrefix:@"string://"]){
+        string=[string stringByReplacingOccurrencesOfString:@"string://" withString:@""];
+        object=string;
+    }else if([string hasPrefix:@"array://"]){
+        string=[string stringByReplacingOccurrencesOfString:@"array://" withString:@""];
+        object=[HGBDataBaseTool JSONStringToObject:string];
+    }else if ([string hasPrefix:@"dictionary://"]){
+        string=[string stringByReplacingOccurrencesOfString:@"dictionary://" withString:@""];
+        object=[HGBDataBaseTool JSONStringToObject:string];
+    }else if ([string hasPrefix:@"number://"]){
+        string=[string stringByReplacingOccurrencesOfString:@"number://" withString:@""];
+        object=[[NSNumber alloc]initWithFloat:string.floatValue];
+    }else if ([string hasPrefix:@"number://"]){
+        string=[string stringByReplacingOccurrencesOfString:@"data://" withString:@""];
+        NSData *decodedData = [[NSData alloc] initWithBase64EncodedString:string options:0];
+        object=decodedData;
+    }else{
+        object=string;
+    }
+    return object;
+
+}
+#pragma mark json
+/**
+ 把Json对象转化成json字符串
+
+ @param object json对象
+ @return json字符串
+ */
++ (NSString *)ObjectToJSONString:(id)object
+{
+
+    if(!([object isKindOfClass:[NSDictionary class]]||[object isKindOfClass:[NSArray class]]||[object isKindOfClass:[NSString class]])){
+        return nil;
+    }
+    if([object isKindOfClass:[NSString class]]){
+        return object;
+    }
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:object options:0 error:nil];
+    NSString * myString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    return myString;
+}
+/**
+ 把Json字符串转化成json对象
+
+ @param jsonString json字符串
+ @return json字符串
+ */
++ (id)JSONStringToObject:(NSString *)jsonString{
+    if(![jsonString isKindOfClass:[NSString class]]){
+        return nil;
+    }
+    jsonString=[HGBDataBaseTool jsonStringHandle:jsonString];
+    //    NSLog(@"%@",jsonString);
+    NSError *error = nil;
+    NSData  *data=[jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    if(jsonString.length>0&&[[jsonString substringToIndex:1] isEqualToString:@"{"]){
+        NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+        if(error){
+            HGBLog(@"%@",error);
+            return jsonString;
+        }else{
+            return dic;
+        }
+    }else if(jsonString.length>0&&[[jsonString substringToIndex:1] isEqualToString:@"["]){
+        NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+        if(error){
+            HGBLog(@"%@",error);
+            return jsonString;
+        }else{
+            return array;
+        }
+    }else{
+        return jsonString;
+    }
+
+
+}
+/**
+ json字符串处理
+
+ @param jsonString 字符串处理
+ @return 处理后字符串
+ */
++(NSString *)jsonStringHandle:(NSString *)jsonString{
+    NSString *string=jsonString;
+    //大括号
+
+    //中括号
+    while ([string containsString:@"【"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"【" withString:@"]"];
+    }
+    while ([string containsString:@"】"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"】" withString:@"]"];
+    }
+
+    //小括弧
+    while ([string containsString:@"（"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"（" withString:@"("];
+    }
+
+    while ([string containsString:@"）"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"）" withString:@")"];
+    }
+
+
+    while ([string containsString:@"("]) {
+        string=[string stringByReplacingOccurrencesOfString:@"(" withString:@"["];
+    }
+
+    while ([string containsString:@")"]) {
+        string=[string stringByReplacingOccurrencesOfString:@")" withString:@"]"];
+    }
+
+
+    //逗号
+    while ([string containsString:@"，"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"，" withString:@","];
+    }
+    while ([string containsString:@";"]) {
+        string=[string stringByReplacingOccurrencesOfString:@";" withString:@","];
+    }
+    while ([string containsString:@"；"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"；" withString:@","];
+    }
+    //引号
+    while ([string containsString:@"“"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"“" withString:@"\""];
+    }
+    while ([string containsString:@"”"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"”" withString:@"\""];
+    }
+    while ([string containsString:@"‘"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"‘" withString:@"\""];
+    }
+    while ([string containsString:@"'"]) {
+        string=[string stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+    }
+    //冒号
+    while ([string containsString:@"："]) {
+        string=[string stringByReplacingOccurrencesOfString:@"：" withString:@":"];
+    }
+    //等号
+    while ([string containsString:@"="]) {
+        string=[string stringByReplacingOccurrencesOfString:@"=" withString:@":"];
+    }
+    while ([string containsString:@"="]) {
+        string=[string stringByReplacingOccurrencesOfString:@"=" withString:@":"];
+    }
+    return string;
+
 }
 #pragma mark 文件
 /**

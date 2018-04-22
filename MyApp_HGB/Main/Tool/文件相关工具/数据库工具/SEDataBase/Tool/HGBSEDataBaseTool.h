@@ -31,7 +31,13 @@
  @return 数据库类
  */
 +(instancetype)shareInstance;
+#pragma mark 重启数据库
+/**
+ 重启数据库
 
+ @return 结果
+ */
+-(BOOL)reset;
 #pragma mark 打开数据库
 /**
  打开数据库-数据库仅能打开一个,该数据打开时上一数据库关闭,上一数据库关闭失败，该数据打开失败

@@ -153,7 +153,7 @@
             
         }
 
-    }else if(indexPath.section==2){
+    }else if(indexPath.section==1){
         if (indexPath.row==0){
             [HGBDataBaseTool  shareInstance];
         }else if (indexPath.row==1){

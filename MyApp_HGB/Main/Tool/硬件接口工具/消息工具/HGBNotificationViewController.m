@@ -66,8 +66,8 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"通知":@[@"发送通知",@"监听通知",@"移除监听"],@"本地推送":@[@"发送本地推送",@"监听本地推送",@"取消本地推送"],@"远程推送":@[@"获取devicetoken",@"监听推送消息",@"监听devicetoken",@"停止远程推送",@"重启远程推送"]};
-    self.keys=@[@"通知",@"本地推送",@"远程推送"];
+    self.dataDictionary=@{@"通知":@[@"发送通知",@"监听通知",@"移除监听"],@"本地推送":@[@"发送本地推送",@"监听本地推送",@"取消本地推送"],@"远程推送":@[@"获取devicetoken",@"监听推送消息",@"监听devicetoken",@"停止远程推送",@"重启远程推送"],@"消息文件":@[@"获取所有消息",@"获取状态消息",@"获取一条消息",@"修改消息",@"删除一条消息",@"删除全部消息"]};
+    self.keys=@[@"通知",@"本地推送",@"远程推送",@"消息文件"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
     [self.tableView reloadData];
@@ -166,6 +166,24 @@
 
         }else if (indexPath.row==4){
             [[HGBNotificationTool shareInstance]resumeRemotePush];
+        }
+
+    }else if(indexPath.section==3){
+        if (indexPath.row==0){
+            NSLog(@"notis:%@",[[HGBNotificationTool shareInstance]getNotifications]);
+        }else if (indexPath.row==1){
+             NSLog(@"notis:%@",[[HGBNotificationTool shareInstance]getNotificationsByStatus:@"0"]);
+
+        }else if (indexPath.row==2){
+            NSLog(@"noti:%@",[[HGBNotificationTool shareInstance]getNotificationById:@"0"]);
+
+        }else if (indexPath.row==3){
+            [[HGBNotificationTool shareInstance]changeNotificationWithNotificationId:@"0" andWithStatus:@"1" andWithNotification:@{@"name":@"huang"}];
+
+        }else if (indexPath.row==4){
+            [[HGBNotificationTool shareInstance]deleteNotificationById:@"1"];
+        }else if (indexPath.row==5){
+            [[HGBNotificationTool shareInstance]deleteAllNotification];
         }
 
     }

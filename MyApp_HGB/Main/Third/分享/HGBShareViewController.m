@@ -12,11 +12,10 @@
 #import "HGBCommonSelectCell.h"
 #define Identify_Cell @"cell"
 
-#import "HGBWChatShareSheet.h"
 #import "HGBUMShareTool.h"
 
 
-@interface HGBShareViewController ()<HGBWChatShareSheetDelegate>
+@interface HGBShareViewController ()
 /**
  数据源
  */
@@ -71,7 +70,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"分享:":@[@"友盟分享",@"微信分享"]};
+    self.dataDictionary=@{@"分享:":@[@"友盟分享"]};
     self.keys=@[@"分享:"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -126,16 +125,10 @@
             [HGBUMShareTool shareInstance].shareTitle=@"hello";
             [HGBUMShareTool shareInstance].shareDescription=@"hello world";
 //            [HGBUMShareTool sh]
-        }else if (indexPath.row==1){
-            HGBWChatShareSheet *sheet=[HGBWChatShareSheet instanceWithParent:self andWithDelegate:self];
-            [sheet popInParentView];
         }
     }
 }
-#pragma mark delegate
--(void)wChatShareSheet:(HGBWChatShareSheet *)wChatShareSheet didShareWithShareStatus:(HGBWChatShareStatus)status andWithReslutInfo:(NSDictionary *)reslutInfo{
-    NSLog(@"%@",reslutInfo);
-}
+
 #pragma mark get
 -(NSDictionary *)dataDictionary{
     if(_dataDictionary==nil){
