@@ -141,5 +141,37 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MyApp_HGB/Main/Tool/&#x5e38;&#x7528;&#x666e;&#x901a;&#x5de5;&#x5177;/&#x65e5;&#x5fd7;&#x5de5;&#x5177;/SELog/Tool/HGBSELogTool.m"
+            timestampString = "547614596.911918"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "94"
+            endingLineNumber = "94"
+            landmarkName = "+getLogListPaths"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MyApp_HGB/Main/Tool/&#x5e38;&#x7528;&#x666e;&#x901a;&#x5de5;&#x5177;/&#x65e5;&#x5fd7;&#x5de5;&#x5177;/SELog/Tool/HGBSELogTool.m"
+            timestampString = "547614596.914384"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "97"
+            endingLineNumber = "97"
+            landmarkName = "+getLogListPaths"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

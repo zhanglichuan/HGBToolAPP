@@ -8,6 +8,8 @@
 
 #import "AppDelegate.h"
 
+
+#import "AppDelegate+HGBLog.h"
 #import "AppDelegate+HGBDataBase.h"
 #import "AppDelegate+HGBSEDataBase.h"
 #import "AppDelegate+HGBPush.h"
@@ -23,7 +25,7 @@
 #import "AppDelegate+HGBException.h"
 #import "AppDelegate+HGB3DTouch.h"
 #import "AppDelegate+HGBURLProtocol.h"
-
+#import "AppDelegate+HGBSELog.h"
 @interface AppDelegate ()
 
 @end
@@ -32,6 +34,9 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    //日志
+//    [self init_Log_ServerWithOptions:launchOptions];
+    [self init_SELog_ServerWithOptions:launchOptions];
     //数据库初始化
     [self init_DataBase_ServerWithOptions:launchOptions];
     //SE数据库初始化

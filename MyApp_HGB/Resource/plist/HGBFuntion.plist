@@ -439,6 +439,14 @@
 			<key>name</key>
 			<string>URL拦截</string>
 		</dict>
+		<dict>
+			<key>page</key>
+			<string>HGBLogController</string>
+			<key>image</key>
+			<string>icon_log</string>
+			<key>name</key>
+			<string>日志工具</string>
+		</dict>
 	</array>
 	<key>file</key>
 	<array>

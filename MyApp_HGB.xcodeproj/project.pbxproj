@@ -48,6 +48,12 @@
 		4326A93E2028201200E0D74F /* HGBFileFullCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4326A93D2028201200E0D74F /* HGBFileFullCollectionCell.m */; };
 		4326D62520609BEE00831FBC /* HGBAudioRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4326D62420609BEE00831FBC /* HGBAudioRecorder.m */; };
 		432702FF1FBAF854004E173E /* HGBAccelerometerTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 432702FE1FBAF854004E173E /* HGBAccelerometerTool.m */; };
+		432A956E20A3D7BF003680F1 /* AppDelegate+HGBLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 432A956D20A3D7BF003680F1 /* AppDelegate+HGBLog.m */; };
+		432A957020A3D924003680F1 /* icon_log.png in Resources */ = {isa = PBXBuildFile; fileRef = 432A956F20A3D923003680F1 /* icon_log.png */; };
+		432A95BB20A3ED87003680F1 /* HGBSELogTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 432A95B920A3ED87003680F1 /* HGBSELogTool.m */; };
+		432A95BE20A3ED99003680F1 /* AppDelegate+HGBSELog.m in Sources */ = {isa = PBXBuildFile; fileRef = 432A95BD20A3ED99003680F1 /* AppDelegate+HGBSELog.m */; };
+		43352ED020A327A900108816 /* HGBLogTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 43352ECF20A327A900108816 /* HGBLogTool.m */; };
+		43352ED320A327D800108816 /* HGBLogController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43352ED220A327D800108816 /* HGBLogController.m */; };
 		433591CE1F9F328D0053F6C3 /* HGBCalenderBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 433591B71F9F327D0053F6C3 /* HGBCalenderBundle.bundle */; };
 		433591CF1F9F329E0053F6C3 /* HGBCalenderPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 433591B51F9F327D0053F6C3 /* HGBCalenderPicker.m */; };
 		433591D01F9F329E0053F6C3 /* HGBCalenderDateModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 433591BA1F9F327D0053F6C3 /* HGBCalenderDateModel.m */; };
@@ -891,6 +897,17 @@
 		4326D62420609BEE00831FBC /* HGBAudioRecorder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBAudioRecorder.m; sourceTree = "<group>"; };
 		432702FD1FBAF854004E173E /* HGBAccelerometerTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBAccelerometerTool.h; sourceTree = "<group>"; };
 		432702FE1FBAF854004E173E /* HGBAccelerometerTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBAccelerometerTool.m; sourceTree = "<group>"; };
+		432A956C20A3D7BF003680F1 /* AppDelegate+HGBLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+HGBLog.h"; sourceTree = "<group>"; };
+		432A956D20A3D7BF003680F1 /* AppDelegate+HGBLog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+HGBLog.m"; sourceTree = "<group>"; };
+		432A956F20A3D923003680F1 /* icon_log.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_log.png; sourceTree = "<group>"; };
+		432A95B920A3ED87003680F1 /* HGBSELogTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HGBSELogTool.m; sourceTree = "<group>"; };
+		432A95BA20A3ED87003680F1 /* HGBSELogTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HGBSELogTool.h; sourceTree = "<group>"; };
+		432A95BC20A3ED99003680F1 /* AppDelegate+HGBSELog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+HGBSELog.h"; sourceTree = "<group>"; };
+		432A95BD20A3ED99003680F1 /* AppDelegate+HGBSELog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+HGBSELog.m"; sourceTree = "<group>"; };
+		43352ECE20A327A900108816 /* HGBLogTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBLogTool.h; sourceTree = "<group>"; };
+		43352ECF20A327A900108816 /* HGBLogTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBLogTool.m; sourceTree = "<group>"; };
+		43352ED120A327D800108816 /* HGBLogController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBLogController.h; sourceTree = "<group>"; };
+		43352ED220A327D800108816 /* HGBLogController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBLogController.m; sourceTree = "<group>"; };
 		433591B41F9F327D0053F6C3 /* HGBCalenderPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBCalenderPicker.h; sourceTree = "<group>"; };
 		433591B51F9F327D0053F6C3 /* HGBCalenderPicker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBCalenderPicker.m; sourceTree = "<group>"; };
 		433591B61F9F327D0053F6C3 /* HGBCalenderPickerHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBCalenderPickerHeader.h; sourceTree = "<group>"; };
@@ -2681,6 +2698,53 @@
 				432702FE1FBAF854004E173E /* HGBAccelerometerTool.m */,
 			);
 			path = Accelerometer;
+			sourceTree = "<group>";
+		};
+		432A95B620A3ED87003680F1 /* SELog */ = {
+			isa = PBXGroup;
+			children = (
+				432A95B720A3ED87003680F1 /* Category */,
+				432A95B820A3ED87003680F1 /* Tool */,
+			);
+			path = SELog;
+			sourceTree = "<group>";
+		};
+		432A95B720A3ED87003680F1 /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				432A95BC20A3ED99003680F1 /* AppDelegate+HGBSELog.h */,
+				432A95BD20A3ED99003680F1 /* AppDelegate+HGBSELog.m */,
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
+		432A95B820A3ED87003680F1 /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				432A95B920A3ED87003680F1 /* HGBSELogTool.m */,
+				432A95BA20A3ED87003680F1 /* HGBSELogTool.h */,
+			);
+			path = Tool;
+			sourceTree = "<group>";
+		};
+		43352ECC20A3278900108816 /* 日志工具 */ = {
+			isa = PBXGroup;
+			children = (
+				43352ED120A327D800108816 /* HGBLogController.h */,
+				43352ED220A327D800108816 /* HGBLogController.m */,
+				432A95B620A3ED87003680F1 /* SELog */,
+				43352ECD20A3278900108816 /* Log */,
+			);
+			path = "日志工具";
+			sourceTree = "<group>";
+		};
+		43352ECD20A3278900108816 /* Log */ = {
+			isa = PBXGroup;
+			children = (
+				43D5C14A20A32957007176DF /* Category */,
+				43D5C14B20A32957007176DF /* Tool */,
+			);
+			path = Log;
 			sourceTree = "<group>";
 		};
 		433591B11F9F327D0053F6C3 /* 日历 */ = {
@@ -6917,6 +6981,24 @@
 			path = Header;
 			sourceTree = "<group>";
 		};
+		43D5C14A20A32957007176DF /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				432A956C20A3D7BF003680F1 /* AppDelegate+HGBLog.h */,
+				432A956D20A3D7BF003680F1 /* AppDelegate+HGBLog.m */,
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
+		43D5C14B20A32957007176DF /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				43352ECE20A327A900108816 /* HGBLogTool.h */,
+				43352ECF20A327A900108816 /* HGBLogTool.m */,
+			);
+			path = Tool;
+			sourceTree = "<group>";
+		};
 		43D7DD251F6914D9003DF521 /* Main */ = {
 			isa = PBXGroup;
 			children = (
@@ -7166,6 +7248,7 @@
 		43E1470320722E6700758840 /* func */ = {
 			isa = PBXGroup;
 			children = (
+				432A956F20A3D923003680F1 /* icon_log.png */,
 				43913566208089B2000FC695 /* icon_usb.png */,
 				43E1489C207381BE00758840 /* icon_audio.png */,
 				43E14895207381AA00758840 /* icon_acess.png */,
@@ -7921,6 +8004,7 @@
 		43F9F5A61F6A6A9600E565B2 /* 常用普通工具 */ = {
 			isa = PBXGroup;
 			children = (
+				43352ECC20A3278900108816 /* 日志工具 */,
 				43047495202C2FC4005D70F5 /* URL拦截 */,
 				43047487202C28EF005D70F5 /* 下载管理 */,
 				43F2218920106269008ADFE6 /* 强制转屏 */,
@@ -8682,6 +8766,7 @@
 				43D08B37205A3A54004D733C /* HGBDownLoadBundle.bundle in Resources */,
 				43E1488820736CC700758840 /* icon_net.png in Resources */,
 				433592551F9F4AE70053F6C3 /* cir0.png in Resources */,
+				432A957020A3D924003680F1 /* icon_log.png in Resources */,
 				43E147702073530C00758840 /* icon_appbadge.png in Resources */,
 				433592561F9F4AE70053F6C3 /* cir1.png in Resources */,
 				43E1474F207336FC00758840 /* icon_camera.png in Resources */,
@@ -9051,6 +9136,7 @@
 				43E5F9051FECE47C003C63AA /* HGBTabBarBage1Controller.m in Sources */,
 				4341AB5D1FD987DD009F0309 /* HGBURLTool.m in Sources */,
 				43A093D11FA8713800B4D5D9 /* HGBCenterViewController.m in Sources */,
+				432A956E20A3D7BF003680F1 /* AppDelegate+HGBLog.m in Sources */,
 				433591D11F9F329E0053F6C3 /* HGBCalenderModel.m in Sources */,
 				43E5F91B1FECE47C003C63AA /* HGBPD2ViewController.m in Sources */,
 				43F22163200F16A5008ADFE6 /* HGBDeviceMotionViewController.m in Sources */,
@@ -9153,7 +9239,9 @@
 				4326A8E82026B22C00E0D74F /* HGBContactTool.m in Sources */,
 				43BF8BD11F9070BB0097BD67 /* HGBWeexPluginConfigParser.m in Sources */,
 				43BF8BD21F9070BB0097BD67 /* HGBWeexPluginLoader.m in Sources */,
+				43352ED320A327D800108816 /* HGBLogController.m in Sources */,
 				43BF8BD31F9070BB0097BD67 /* HGBWeexPluginManager.m in Sources */,
+				432A95BE20A3ED99003680F1 /* AppDelegate+HGBSELog.m in Sources */,
 				43BF8BB41F906FA20097BD67 /* HGBCordovaController.m in Sources */,
 				4339CFA01FA9AC20008A484C /* HGBWIFIViewController.m in Sources */,
 				4356CA6D200A17C5002F3EF2 /* AppDelegate+HGBAppCheck.m in Sources */,
@@ -9204,6 +9292,7 @@
 				43E051DE20171D5B006D8B37 /* 7zFile.c in Sources */,
 				4388E00A1F7F732D00DA30DF /* HGBInstructionController.m in Sources */,
 				431CFE082023FEEB00139F76 /* UIViewController+HGB3DTouch.m in Sources */,
+				43352ED020A327A900108816 /* HGBLogTool.m in Sources */,
 				4388E00B1F7F732D00DA30DF /* HGBInstructionView.m in Sources */,
 				4388E00C1F7F732D00DA30DF /* HGBTableSelector.m in Sources */,
 				439FFBFA208D446500243BC2 /* HGBSocketController.m in Sources */,
@@ -9279,6 +9368,7 @@
 				433868191F749D2900110AC4 /* HGBLocationMapView.m in Sources */,
 				4338681A1F749D2900110AC4 /* HGBLocationProgressHUD.m in Sources */,
 				4322BD7E2009BA4B00DE8E65 /* HGBNetworkInfoTool.m in Sources */,
+				432A95BB20A3ED87003680F1 /* HGBSELogTool.m in Sources */,
 				43EF0A051F95D4CF005D5E13 /* AppDelegate+HGBPurchaseTool.m in Sources */,
 				4338681B1F749D2900110AC4 /* HGBLocationPromgressHud.m in Sources */,
 				43C515F81FA37BCC000E4589 /* HGBBlockViewController.m in Sources */,
