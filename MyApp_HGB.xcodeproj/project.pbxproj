@@ -513,7 +513,6 @@
 		43D08A912058E1CC004D733C /* HGBGZip.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D08A902058E1CC004D733C /* HGBGZip.m */; };
 		43D08B2B205A0906004D733C /* HGBNotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D08B2A205A0906004D733C /* HGBNotificationViewController.m */; };
 		43D08B34205A397F004D733C /* HGBDownLoadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D08B33205A397F004D733C /* HGBDownLoadController.m */; };
-		43D08B37205A3A54004D733C /* HGBDownLoadBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 43D08B36205A3A53004D733C /* HGBDownLoadBundle.bundle */; };
 		43D08B3A205A3A84004D733C /* HGBDownLoadTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D08B39205A3A84004D733C /* HGBDownLoadTableCell.m */; };
 		43E051C720171D5B006D8B37 /* HGBCompressedFileTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 43E0518B20171D5B006D8B37 /* HGBCompressedFileTool.m */; };
 		43E051C820171D5B006D8B37 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 43E0519120171D5B006D8B37 /* unzip.c */; };
@@ -1867,7 +1866,6 @@
 		43D08B2A205A0906004D733C /* HGBNotificationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBNotificationViewController.m; sourceTree = "<group>"; };
 		43D08B32205A397F004D733C /* HGBDownLoadController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBDownLoadController.h; sourceTree = "<group>"; };
 		43D08B33205A397F004D733C /* HGBDownLoadController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBDownLoadController.m; sourceTree = "<group>"; };
-		43D08B36205A3A53004D733C /* HGBDownLoadBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HGBDownLoadBundle.bundle; sourceTree = "<group>"; };
 		43D08B38205A3A84004D733C /* HGBDownLoadTableCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBDownLoadTableCell.h; sourceTree = "<group>"; };
 		43D08B39205A3A84004D733C /* HGBDownLoadTableCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBDownLoadTableCell.m; sourceTree = "<group>"; };
 		43D08B3C205A3B34004D733C /* HGBDownLoadHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBDownLoadHeader.h; sourceTree = "<group>"; };
@@ -2371,7 +2369,6 @@
 			isa = PBXGroup;
 			children = (
 				43D08B3B205A3B20004D733C /* Header */,
-				43D08B36205A3A53004D733C /* HGBDownLoadBundle.bundle */,
 				43D08B35205A3A35004D733C /* View */,
 				43047489202C28EF005D70F5 /* Controller */,
 				4304748A202C28EF005D70F5 /* Model */,
@@ -8855,7 +8852,6 @@
 				43F990152071F61D006C276C /* icon_third.png in Resources */,
 				43E1488320736CC700758840 /* icon_barrier.png in Resources */,
 				43C515A11FA2F9A8000E4589 /* HGBTabBar.bundle in Resources */,
-				43D08B37205A3A54004D733C /* HGBDownLoadBundle.bundle in Resources */,
 				43E1488820736CC700758840 /* icon_net.png in Resources */,
 				433592551F9F4AE70053F6C3 /* cir0.png in Resources */,
 				432A957020A3D924003680F1 /* icon_log.png in Resources */,
