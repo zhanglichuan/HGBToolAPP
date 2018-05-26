@@ -9,31 +9,28 @@
 #import <Foundation/Foundation.h>
 
 
+
 /**
  DES加密
  */
-@interface HGBKeyboardDESUtil : NSObject{
-
-}
-
+@interface HGBKeyboardDESUtil : NSObject
+#pragma mark 加密
 /**
  加密方法
 
- @param plainText 原始字符串
+ @param string 原始字符串
  @param key key
  @return 加密字符串
  */
-+ (NSString*)encrypt:(NSString*)plainText WithKey:(NSString *)key;
++ (NSString*)DESEncryptString:(NSString*)string andWithKey:(NSString *)key;
 
 
 /**
  解密方法
 
- @param encryptText  加密字符串
+ @param string  加密字符串
  @param key key
  @return 解密字符串
  */
-+ (NSString*)decrypt:(NSString*)encryptText WithKey:(NSString *)key;
-
-
++ (NSString*)DESDecryptString:(NSString*)string andWithKey:(NSString *)key;
 @end

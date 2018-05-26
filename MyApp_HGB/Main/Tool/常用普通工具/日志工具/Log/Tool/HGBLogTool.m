@@ -10,13 +10,29 @@
 #import <UIKit/UIKit.h>
 
 #define HGBLogFolder @"Log"
-
+@interface HGBLogTool()
+@property(strong,nonatomic)NSString *logPath;
+@end
 @implementation HGBLogTool
+static HGBLogTool *instance=nil;
+#pragma mark init
+/**
+ 单例
+
+ @return 实例
+ */
++ (instancetype)shareInstance
+{
+    if (instance==nil) {
+        instance=[[HGBLogTool alloc]init];
+    }
+    return instance;
+}
 #pragma mark 日志文件重定向
 /**
  将日志文件重定向
  */
-+ (void)redirectLogToDocumentFolder
+- (void)redirectLogToDocumentFolder
 {
     NSString *logListPath=[NSString stringWithFormat:@"document://%@/log.plist",HGBLogFolder];
     NSString *lastlogListPath=[HGBLogTool urlAnalysisToPath:logListPath];
@@ -26,6 +42,7 @@
     }
 
     NSString *logFilePath=[NSString stringWithFormat:@"document://%@/%@.log",HGBLogFolder,[HGBLogTool getSecondTimeStringSince1970]];
+    self.logPath=[logFilePath copy];
     [logPathList insertObject:logFilePath atIndex:0];
     [logPathList writeToFile:lastlogListPath atomically:YES];
 
@@ -48,7 +65,7 @@
 
  @return 路径
  */
-+(NSString *)getLogPathListFilePath{
+-(NSString *)getLogPathListFilePath{
      NSString *logListPath=[NSString stringWithFormat:@"document://%@/log.plist",HGBLogFolder];
     return logListPath;
 }
@@ -57,7 +74,7 @@
 
  @return 日志路径列表
  */
-+(NSArray *)getLogListPaths{
+-(NSArray *)getLogListPaths{
     NSString *logListPath=[NSString stringWithFormat:@"document://%@/log.plist",HGBLogFolder];
     NSString *lastlogListPath=[HGBLogTool urlAnalysisToPath:logListPath];
     NSMutableArray *logList=[NSMutableArray arrayWithContentsOfFile:lastlogListPath];
@@ -71,7 +88,7 @@
 
  @return 日志列表
  */
-+(NSArray *)getLogLists{
+-(NSArray *)getLogLists{
     NSString *logListPath=[NSString stringWithFormat:@"document://%@/log.plist",HGBLogFolder];
     NSString *lastlogListPath=[HGBLogTool urlAnalysisToPath:logListPath];
     NSMutableArray *logPathList=[NSMutableArray arrayWithContentsOfFile:lastlogListPath];
@@ -87,6 +104,56 @@
         }
     }
     return logList;
+}
+/**
+ 获取日志内容
+
+ @param logPath 日志地址
+ @return 日志
+ */
+-(NSString *)getLogFormLogPath:(NSString *)logPath{
+    if(logPath==nil){
+        return nil;
+    }
+    NSString *lastPath=[HGBLogTool urlAnalysisToPath:logPath];
+    if(![HGBLogTool isExitAtFilePath:lastPath]){
+        return nil;
+    }
+    NSString *log=[[NSString alloc]initWithContentsOfFile:lastPath encoding:NSUTF8StringEncoding error:nil];
+    if(log){
+        return log;
+    }else{
+        return nil;
+    }
+
+}
+/**
+ 获取当前日志内容
+
+ @return 日志
+ */
+-(NSString *)getCurrentLog{
+    if(self.logPath==nil){
+        return nil;
+    }
+    NSString *lastPath=[HGBLogTool urlAnalysisToPath:self.logPath];
+    if(![HGBLogTool isExitAtFilePath:lastPath]){
+        return nil;
+    }
+    NSString *log=[[NSString alloc]initWithContentsOfFile:lastPath encoding:NSUTF8StringEncoding error:nil];
+    if(log){
+        return log;
+    }else{
+        return nil;
+    }
+}
+/**
+ 获取当前日志地址
+
+ @return 日志
+ */
+-(NSString *)getCurrentLogPath{
+    return self.logPath;
 }
 #pragma mark 获取时间
 /**

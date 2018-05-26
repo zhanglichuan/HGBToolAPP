@@ -42,6 +42,16 @@
  */
 @property(assign,nonatomic)BOOL isMakeDisConnect;
 
+
+/**
+ 重连定时器
+ */
+@property(strong,nonatomic)NSTimer *reconnectTimer;
+/**
+ 是否可以重连
+ */
+@property(assign,nonatomic)BOOL isCanReconnect;
+
 @end
 
 @implementation HGBClientSocketTool
@@ -70,6 +80,11 @@
     }else{
         _clinetSocket.delegate=self;
     }
+    self.reconnectTimer = [NSTimer timerWithTimeInterval:90 target:self selector:@selector(setCanReconnect) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.reconnectTimer forMode:NSDefaultRunLoopMode];
+}
+-(void)setCanReconnect{
+    self.isCanReconnect=YES;
 }
 #pragma mark 客户端
 /**
@@ -77,9 +92,13 @@
 
  @param ip ip地址
  @param port 端口号
+ @return 结果
  */
-- (void)connectActionIp:(NSString *)ip port:(NSString *)port {
-
+-(BOOL)connectWithIp:(NSString *)ip andWithPort:(NSString *)port{
+    self.isCanReconnect=NO;
+    if (ip==nil||port==nil) {
+        return NO;
+    }
      self.isMakeDisConnect=NO;
     self.clinetIp=ip;
     self.clinetPort=port;
@@ -87,30 +106,7 @@
     //连接服务器
     BOOL flag=[_clinetSocket connectToHost:ip onPort:port.integerValue  withTimeout:-1 error:nil];
     self.isConnect=flag;
-
-
-
-    //此处为链接协议初始化部分数据发送
-    NSString *hostStr = [NSString stringWithFormat:@"Host: %@:%@\r\n",ip,port];
-
-    NSMutableData *packetData = [[NSMutableData alloc] init];
-    [packetData appendData:[[NSString stringWithFormat:@"GET /websocket HTTP/1.1\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [packetData appendData:[hostStr dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [packetData appendData:[@"Upgrade: websocket\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [packetData appendData:[@"Connection: Upgrade\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [packetData appendData:[@"Sec-WebSocket-Version: 13\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [packetData appendData:[@"Sec-WebSocket-Key: V4S42y8puxAEC5exqyu88w==\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-
-    NSString *originStr = [NSString stringWithFormat:@"Origin: %@:%@\r\n\r\n",ip,port];
-    [packetData appendData:[originStr dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [_clinetSocket writeData:packetData withTimeout:-1 tag:0];
-
+    return flag;
 }
 /**
  客户端断开连接
@@ -120,18 +116,27 @@
     if ([_clinetSocket isConnected]) {
         [_clinetSocket disconnect];
     }
+    [self stopMonitor];
 }
 /**
  客户端发送数据
 
  @param data 数据
+ @return 结果
  */
--(void)clientSendData:(id)data{
+-(BOOL)clientSendData:(id)data{
     NSData *sendData=[HGBClientSocketTool messageEncapsulation:data];
     if(sendData==nil){
-        return;
+        return NO;
     }
-    [_clinetSocket writeData:sendData withTimeout:-1 tag:0];
+    if([_clinetSocket isConnected]){
+         [_clinetSocket writeData:sendData withTimeout:-1 tag:0];
+        return YES;
+    }else{
+        HGBLog(@"重联中....");
+        [self reConnect];
+        return NO;
+    }
 
 }
 #pragma mark - GCDAsynSocket Delegate
@@ -141,14 +146,21 @@
     self.isConnect=YES;
 
     HGBLog(@"链接成功!!!");
+    [self clientSendData:[NSString stringWithFormat:@"command://connection"]];
     [self startMonitor];
     [_clinetSocket readDataWithTimeout:-1 tag:200];
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(socketToolDidSucessedToConnect:)]){
+        [self.delegate socketToolDidSucessedToConnect:self];
+    }
 
 }
 
 - (void)socketDidCloseReadStream:(GCDAsyncSocket *)sock {
     self.isConnect=NO;
      self.isMakeDisConnect=NO;
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(socketToolDidDisconnect:)]){
+        [self.delegate socketToolDidDisconnect:self];
+    }
 }
 //收到消息
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
@@ -168,29 +180,56 @@
 
     //客户端部分处理
     [_clinetSocket readDataWithTimeout:-1 tag:200];
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(socketTool:didReciveMessage:andWithMessageType:)]){
+        [self.delegate socketTool:self didReciveMessage:lastData andWithMessageType:type];
+    }
 
 
-
-
+}
+-(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag{
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(socketToolDidSucessSendMessage:)]){
+        [self.delegate socketToolDidSucessSendMessage:self];
+    }
 }
 -(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err{
     self.isConnect=NO;
      self.isMakeDisConnect=NO;
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(socketToolDidDisconnect:)]){
+        [self.delegate socketToolDidDisconnect:self];
+    }
 }
 -(NSTimeInterval)socket:(GCDAsyncSocket *)sock shouldTimeoutWriteWithTag:(long)tag elapsed:(NSTimeInterval)elapsed bytesDone:(NSUInteger)length{
     return 5;
 }
 #pragma mark 重新链接
+-(void)stopMonitor{
+    if(self.timer){
+        [self.timer invalidate];
+        self.timer=nil;
+    }
+}
 -(void)startMonitor{
-    self.timer = [NSTimer timerWithTimeInterval:3 target:self selector:@selector(heartConnect) userInfo:nil repeats:YES];
-    [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
+    if(self.timer==nil){
+        self.timer = [NSTimer timerWithTimeInterval:3 target:self selector:@selector(heartConnect) userInfo:nil repeats:YES];
+        [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
+    }
 }
 -(void)heartConnect{
-     [self clientSendData:@"connect"];
     if(self.isMakeDisConnect==NO){
 
         [_clinetSocket connectToHost:self.clinetIp onPort:self.clinetPort.integerValue  withTimeout:-1 error:nil];
     }
+
+}
+//重连机制
+- (void)reConnect
+{
+    if(self.isCanReconnect){
+        if (![_clinetSocket isConnected]) {
+            [_clinetSocket connectToHost:self.clinetIp onPort:self.clinetPort.integerValue  withTimeout:-1 error:nil];
+        }
+    }
+
 
 }
 #pragma mark 数据格式转换

@@ -124,7 +124,7 @@
     label2.text=@"键盘以POP的形式弹出时:keybordShowType改变:";
     [self.view addSubview:label2];
 
-    for(int i=0;i<5;i++){
+    for(int i=0;i<3;i++){
         UIButton *button=[[UIButton alloc]initWithFrame:CGRectMake(30*wScale,64+40+36*6+10+40+36*i, kWidth-60*wScale, 30)];
         button.backgroundColor=[UIColor blueColor];
         [button setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];
@@ -139,20 +139,15 @@
 
         if (i==0){
 
-            [button setTitle:@"无标题" forState:(UIControlStateNormal)];
+            [button setTitle:@"弹出-即时返回" forState:(UIControlStateNormal)];
 
         }else if (i==1){
 
-           [button setTitle:@"普通" forState:(UIControlStateNormal)];
+           [button setTitle:@"弹出-显示完成返回" forState:(UIControlStateNormal)];
         }else if (i==2){
 
-            [button setTitle:@"文本" forState:(UIControlStateNormal)];
+            [button setTitle:@"弹出-密文显示完成返回" forState:(UIControlStateNormal)];
 
-        }else if (i==3){
-
-           [button setTitle:@"密码" forState:(UIControlStateNormal)];
-        }else if (i==4){
-            [button setTitle:@"支付密码" forState:(UIControlStateNormal)];
         }
 
 
@@ -164,22 +159,14 @@
     HGBCustomKeyBord *keybord=[HGBCustomKeyBord instance];
     keybord.delegate=self;
     if (_b.tag==0){
-        keybord.keybordShowType=HGBCustomKeyBordShowType_NoTitle;
+        keybord.keybordShowType=HGBCustomKeyBordShowType_InTime;
 
 
     }else if (_b.tag==1){
-        keybord.keybordShowType=HGBCustomKeyBordShowType_Common;
+        keybord.keybordShowType=HGBCustomKeyBordShowType_CommonDone;
 
     }else if (_b.tag==2){
-        keybord.keybordShowType=HGBCustomKeyBordShowType_Text;
-
-
-    }else if (_b.tag==3){
-        keybord.keybordShowType=HGBCustomKeyBordShowType_Pass;
-
-    }else if (_b.tag==4){
-        keybord.keybordShowType=HGBCustomKeyBordShowType_PayPass;
-
+        keybord.keybordShowType=HGBCustomKeyBordShowType_EncryptDone;
     }
     [keybord popKeyBordInParent:self];
 }

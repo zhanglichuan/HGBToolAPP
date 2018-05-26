@@ -12,7 +12,6 @@
 
 #import "HGBEncryptTool.h"
 
-#import "HGBDESEncryption.h"
 
 @interface HGBEncryptViewController ()
 /**
@@ -148,14 +147,14 @@
             string=[HGBEncryptTool hashStringFromJsonObject:string andWithSalt:key];
             NSLog(@"hash-encrypt:%@",string);
         }else if (indexPath.row==5){
-            string=[HGBEncryptTool encryptStringWithAES256:string andWithKey:key];
+            string=[HGBEncryptTool encryptStringWithAES128:string andWithKey:key];
             NSLog(@"aes256-encrypt:%@",string);
-            string=[HGBEncryptTool decryptStringWithAES256:string andWithKey:key];
+            string=[HGBEncryptTool decryptStringWithAES128:string andWithKey:key];
             NSLog(@"aes256-decrypt:%@",string);
         }else if (indexPath.row==6){
-            string=[HGBEncryptTool encryptStringWithDES3:string andWithKey:key];
+            string=[HGBEncryptTool encryptStringWithDES:string andWithKey:key];
             NSLog(@"DES-encrypt:%@",string);
-            string=[HGBEncryptTool decryptStringWithDES3:string andWithKey:key];
+            string=[HGBEncryptTool decryptStringWithDES:string andWithKey:key];
             NSLog(@"DES-decrypt:%@",string);
 
         }else if (indexPath.row==7){
@@ -179,11 +178,6 @@
             NSLog(@"RSA反向-encrypt:%@",string);
             string=[HGBEncryptTool decryptStringWithReverseRSA:string andWithPublicKeyPath:pubPath];
             NSLog(@"RSA反向-decrypt:%@",string);
-        }else if (indexPath.row==11){
-            string=[HGBDESEncryption DESEncryptString:string WithKey:@"123456"];
-            NSLog(@"DES-encrypt:%@",string);
-            string=[HGBDESEncryption DESDecryptString:string WithKey:@"123456"];
-            NSLog(@"DES-decrypt:%@",string);
         }
     }
 }

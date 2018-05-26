@@ -12,83 +12,73 @@
 #import <CommonCrypto/CommonCryptor.h>
 #import "HGBKeybordBase64.h"
 
-#define gkey            @"huangguangbao@lx100$#365#$"
-#define gIv             @"01234567"
+static NSString *const kInitVector = @"00000000";
 
 
 @implementation HGBKeyboardDESUtil
+#pragma mark 加密
+/**
+ 加密方法
 
-// 加密方法
-+ (NSString*)encrypt:(NSString*)plainText WithKey:(NSString *)key{
-    NSData* data = [plainText dataUsingEncoding:NSUTF8StringEncoding];
-    size_t plainTextBufferSize = [data length];
-    const void *vplainText = (const void *)[data bytes];
+ @param string 原始字符串
+ @param key key
+ @return 加密字符串
+ */
++ (NSString*)DESEncryptString:(NSString*)string andWithKey:(NSString *)key{
+    NSString *ciphertext = nil;
+    NSData *textData = [string dataUsingEncoding:NSUTF8StringEncoding];
+    NSUInteger dataLength = [textData length];
+    unsigned char buffer[1024];
+    memset(buffer, 0, sizeof(char));
+    size_t numBytesEncrypted = 0;
+    NSData *initVector = [kInitVector dataUsingEncoding:NSUTF8StringEncoding];
+    CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmDES,
+                                          kCCOptionPKCS7Padding,
+                                          [key UTF8String], kCCKeySizeDES,
+                                          initVector.bytes,
+                                          [textData bytes], dataLength,
+                                          buffer, 1024,
+                                          &numBytesEncrypted);
 
-    CCCryptorStatus ccStatus;
-    uint8_t *bufferPtr = NULL;
-    size_t bufferPtrSize = 0;
-    size_t movedBytes = 0;
-
-    bufferPtrSize = (plainTextBufferSize + kCCBlockSize3DES) & ~(kCCBlockSize3DES - 1);
-    bufferPtr = malloc( bufferPtrSize * sizeof(uint8_t));
-    memset((void *)bufferPtr, 0x0, bufferPtrSize);
-
-    const void *vkey = (const void *) [gkey UTF8String];
-
-    if(key&&key.length!=0){
-        vkey=[key UTF8String];
+    if (cryptStatus == kCCSuccess) {
+        NSData *data = [NSData dataWithBytes:buffer length:(NSUInteger)numBytesEncrypted];
+        ciphertext = [HGBKeybordBase64 stringByEncodingData:data];
     }
-    const void *vinitVec = (const void *) [gIv UTF8String];
-
-    ccStatus = CCCrypt(kCCEncrypt,
-                       kCCAlgorithm3DES,
-                       kCCOptionPKCS7Padding,
-                       vkey,
-                       kCCKeySize3DES,
-                       vinitVec,
-                       vplainText,
-                       plainTextBufferSize,
-                       (void *)bufferPtr,
-                       bufferPtrSize,
-                       &movedBytes);
-
-    NSData *myData = [NSData dataWithBytes:(const void *)bufferPtr length:(NSUInteger)movedBytes];
-    NSString *result = [HGBKeybordBase64 stringByEncodingData:myData];
-    return result;
+    return ciphertext;
 }
 
-// 解密方法
-+ (NSString*)decrypt:(NSString*)encryptText WithKey:(NSString *)key{
-    NSData *encryptData = [HGBKeybordBase64 decodeData:[encryptText dataUsingEncoding:NSUTF8StringEncoding]];
-    size_t plainTextBufferSize = [encryptData length];
-    const void *vplainText = [encryptData bytes];
 
-    CCCryptorStatus ccStatus;
-    uint8_t *bufferPtr = NULL;
-    size_t bufferPtrSize = 0;
-    size_t movedBytes = 0;
+/**
+ 解密方法
 
-    bufferPtrSize = (plainTextBufferSize + kCCBlockSize3DES) & ~(kCCBlockSize3DES - 1);
-    bufferPtr = malloc( bufferPtrSize * sizeof(uint8_t));
-    memset((void *)bufferPtr, 0x0, bufferPtrSize);
+ @param string  加密字符串
+ @param key key
+ @return 解密字符串
+ */
++ (NSString*)DESDecryptString:(NSString*)string andWithKey:(NSString *)key{
+    NSString *plaintext = nil;
+    NSData *cipherdata = [HGBKeybordBase64 decodeString:string];
+    unsigned char buffer[1024];
+    memset(buffer, 0, sizeof(char));
+    size_t numBytesDecrypted = 0;
+    NSData *initVector = [kInitVector dataUsingEncoding:NSUTF8StringEncoding];
+    NSLog(@"*******************%@*******************",string);
+     NSLog(@"*******************%@*******************",key);
 
-    const void *vkey = (const void *) [gkey UTF8String];
-    if(key&&key.length!=0){
-        vkey=[key UTF8String];
+    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmDES,
+                                          kCCOptionPKCS7Padding,
+                                          [key UTF8String], kCCKeySizeDES,
+                                          initVector.bytes,
+                                          [cipherdata bytes], [cipherdata length],
+                                          buffer, 1024,
+                                          &numBytesDecrypted);
+    if(cryptStatus == kCCSuccess)
+    {
+        NSData *plaindata = [NSData dataWithBytes:buffer length:(NSUInteger)numBytesDecrypted];
+        plaintext = [[NSString alloc]initWithData:plaindata encoding:NSUTF8StringEncoding];
     }
-    const void *vinitVec = (const void *) [gIv UTF8String];
-
-    ccStatus = CCCrypt(kCCDecrypt, kCCAlgorithm3DES,kCCOptionPKCS7Padding,
-                       vkey,kCCKeySize3DES,
-                       vinitVec,
-                       vplainText,
-                       plainTextBufferSize,
-                       (void *)bufferPtr,
-                       bufferPtrSize,
-                       &movedBytes);
-
-    NSString *result = [[NSString alloc] initWithData:[NSData dataWithBytes:(const void *)bufferPtr
-                                                                     length:(NSUInteger)movedBytes] encoding:NSUTF8StringEncoding];
-    return result;
+    NSLog(@"*******************%@*******************",plaintext);
+    return plaintext;
 }
+
 @end

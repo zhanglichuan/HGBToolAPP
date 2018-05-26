@@ -20,6 +20,11 @@
 @implementation HGBSELogTool
 static HGBSELogTool *instance=nil;
 #pragma mark init
+/**
+ 单例
+
+ @return 实例
+ */
 + (instancetype)shareInstance
 {
     if (instance==nil) {
@@ -78,7 +83,7 @@ static HGBSELogTool *instance=nil;
 
  @return 路径
  */
-+(NSString *)getLogPathListFilePath{
+-(NSString *)getLogPathListFilePath{
     NSString *logListPath=[NSString stringWithFormat:@"document://%@/log.plist",HGBLogFolder];
     return logListPath;
 }
@@ -87,7 +92,7 @@ static HGBSELogTool *instance=nil;
 
  @return 日志路径列表
  */
-+(NSArray *)getLogListPaths{
+-(NSArray *)getLogListPaths{
     NSString *logListPath=[NSString stringWithFormat:@"document://%@/log.plist",HGBLogFolder];
     NSString *lastlogListPath=[HGBSELogTool urlAnalysisToPath:logListPath];
     NSMutableArray *logList=[NSMutableArray arrayWithContentsOfFile:lastlogListPath];
@@ -101,7 +106,7 @@ static HGBSELogTool *instance=nil;
 
  @return 日志列表
  */
-+(NSArray *)getLogLists{
+-(NSArray *)getLogLists{
     NSString *logListPath=[NSString stringWithFormat:@"document://%@/log.plist",HGBLogFolder];
     NSString *lastlogListPath=[HGBSELogTool urlAnalysisToPath:logListPath];
     NSMutableArray *logPathList=[NSMutableArray arrayWithContentsOfFile:lastlogListPath];
@@ -117,6 +122,56 @@ static HGBSELogTool *instance=nil;
         }
     }
     return logList;
+}
+/**
+ 获取日志内容
+
+ @param logPath 日志地址
+ @return 日志
+ */
+-(NSString *)getLogFormLogPath:(NSString *)logPath{
+    if(logPath==nil){
+        return nil;
+    }
+     NSString *lastPath=[HGBSELogTool urlAnalysisToPath:logPath];
+    if(![HGBSELogTool isExitAtFilePath:lastPath]){
+        return nil;
+    }
+    NSString *log=[[NSString alloc]initWithContentsOfFile:lastPath encoding:NSUTF8StringEncoding error:nil];
+    if(log){
+        return log;
+    }else{
+        return nil;
+    }
+
+}
+/**
+ 获取当前日志内容
+
+ @return 日志
+ */
+-(NSString *)getCurrentLog{
+    if(self.logPath==nil){
+        return nil;
+    }
+    NSString *lastPath=[HGBSELogTool urlAnalysisToPath:self.logPath];
+    if(![HGBSELogTool isExitAtFilePath:lastPath]){
+        return nil;
+    }
+    NSString *log=[[NSString alloc]initWithContentsOfFile:lastPath encoding:NSUTF8StringEncoding error:nil];
+    if(log){
+        return log;
+    }else{
+        return nil;
+    }
+}
+/**
+ 获取当前日志地址
+
+ @return 日志
+ */
+-(NSString *)getCurrentLogPath{
+    return self.logPath;
 }
 #pragma mark 获取时间
 /**

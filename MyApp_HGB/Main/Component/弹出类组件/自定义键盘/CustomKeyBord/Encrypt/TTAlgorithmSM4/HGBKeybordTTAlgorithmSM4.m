@@ -10,14 +10,6 @@
 #include "HGBKeybordSM4.h"
 #include "HGBKeybordPading.h"
 
-
-#ifdef HGBLogFlag
-#define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
-#else
-#define HGBLog(...);
-#endif
-
-
 @interface HGBKeybordTTAlgorithmSM4 ()
 
 //加密解密使用的密钥
@@ -106,7 +98,7 @@
     if ([secretKey length] != 16 || [iv length] != 16 || decryptiontext == nil || [decryptiontext length] == 0)
     {
 #ifdef DEBUG
-        HGBLog(@"CBC模式 decryptionWithSM4Key方法入参有问题");
+        NSLog(@"CBC模式 decryptionWithSM4Key方法入参有问题");
 #endif
         return nil;
     }
@@ -204,7 +196,7 @@
     if ([secretKey length] != 16 || [iv length] != 16 || encryptiontext == nil || [encryptiontext length] == 0)
     {
 #ifdef DEBUG
-        HGBLog(@"CBC模式 encryptionWithSM4Key方法入参有问题");
+        NSLog(@"CBC模式 encryptionWithSM4Key方法入参有问题");
 #endif
         return nil;
     }
@@ -304,7 +296,7 @@
     if ([secretKey length] != 16 || encryptiontext == nil || [encryptiontext length] == 0)
     {
 #ifdef DEBUG
-        HGBLog(@"ECB模式 encryptionWithSM4Key方法入参有问题");
+        NSLog(@"ECB模式 encryptionWithSM4Key方法入参有问题");
 #endif
         return nil;
     }
@@ -383,7 +375,7 @@
     if ([secretKey length] != 16 || decryptiontext == nil || [decryptiontext length] == 0)
     {
 #ifdef DEBUG
-        HGBLog(@"ECB模式 decryptionWithSM4Key方法入参有问题");
+        NSLog(@"ECB模式 decryptionWithSM4Key方法入参有问题");
 #endif
         return nil;
     }

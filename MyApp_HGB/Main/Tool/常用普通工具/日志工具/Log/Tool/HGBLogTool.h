@@ -9,31 +9,55 @@
 #import <Foundation/Foundation.h>
 
 @interface HGBLogTool : NSObject
+/**
+ 单例
+
+ @return 实例
+ */
++ (instancetype)shareInstance;
 #pragma mark 日志文件重定向
 /**
  将日志文件重定向
  */
-+ (void)redirectLogToDocumentFolder;
+- (void)redirectLogToDocumentFolder;
 #pragma mark 获取日志列表
 /**
  获取日志路径列表文件路径
 
  @return 路径
  */
-+(NSString *)getLogPathListFilePath;
+-(NSString *)getLogPathListFilePath;
 /**
  获取日志路径列表
 
  @return 日志路径列表
  */
-+(NSArray *)getLogListPaths;
+-(NSArray *)getLogListPaths;
 /**
  获取日志列表
 
  @return 日志列表
  */
-+(NSArray *)getLogLists;
+-(NSArray *)getLogLists;
+/**
+ 获取日志内容
 
+ @param logPath 日志地址
+ @return 日志
+ */
+-(NSString *)getLogFormLogPath:(NSString *)logPath;
+/**
+ 获取当前日志内容
+
+ @return 日志
+ */
+-(NSString *)getCurrentLog;
+/**
+ 获取当前日志地址
+
+ @return 日志
+ */
+-(NSString *)getCurrentLogPath;
 #pragma mark url
 /**
  判断路径是否是URL

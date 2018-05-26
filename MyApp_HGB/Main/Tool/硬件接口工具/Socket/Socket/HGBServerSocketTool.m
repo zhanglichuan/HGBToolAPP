@@ -140,6 +140,9 @@
     //-1代表不超时
     //tag标示作用
     [newSocket readDataWithTimeout:-1 tag:0];
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(socketToolDidSucessedToListen:)]){
+        [self.delegate socketToolDidSucessedToListen:self];
+    }
 }
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port{
 
@@ -169,10 +172,18 @@
     HGBLog(@"%d-%@",type,lastData);
 
     [_serverSocket readDataWithTimeout:-1 tag:200];
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(socketTool:didReciveMessage:andWithMessageType:)]){
+        [self.delegate socketTool:self didReciveMessage:lastData andWithMessageType:type];
+    }
 
 
 
 
+}
+-(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag{
+    if(self.delegate&&[self.delegate respondsToSelector:@selector(socketToolDidSucessSendMessage:)]){
+        [self.delegate socketToolDidSucessSendMessage:self];
+    }
 }
 -(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err{
     self.isListen=NO;

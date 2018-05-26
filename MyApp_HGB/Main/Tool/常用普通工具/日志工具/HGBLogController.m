@@ -116,11 +116,11 @@
     if(indexPath.section==0){
 
         if (indexPath.row==0){
-            [HGBLogTool redirectLogToDocumentFolder];
+            [[HGBLogTool shareInstance] redirectLogToDocumentFolder];
         }else if (indexPath.row==1){
-            NSLog(@"%@",[HGBLogTool getLogListPaths]);
+            NSLog(@"%@",[[HGBLogTool shareInstance] getLogListPaths]);
         }else if (indexPath.row==2){
-             NSLog(@"%@",[HGBLogTool getLogLists]);
+             NSLog(@"%@",[[HGBLogTool shareInstance] getLogLists]);
         }
 
     }else if(indexPath.section==1){
@@ -129,9 +129,9 @@
             [HGBSELogTool shareInstance];
             HGBSELog(@"huang");
         }else if (indexPath.row==1){
-            NSLog(@"%@",[HGBSELogTool getLogListPaths]);
+            NSLog(@"%@",[[HGBSELogTool shareInstance] getLogListPaths]);
         }else if (indexPath.row==2){
-            NSLog(@"%@",[HGBSELogTool getLogLists]);
+            NSLog(@"%@",[[HGBSELogTool shareInstance] getLogLists]);
         }
 
     }

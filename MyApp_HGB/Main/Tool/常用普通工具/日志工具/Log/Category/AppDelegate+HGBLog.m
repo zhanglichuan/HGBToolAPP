@@ -16,6 +16,6 @@
  @param launchOptions 加载参数
  */
 -(void)init_Log_ServerWithOptions:(NSDictionary *)launchOptions{
-    [HGBLogTool redirectLogToDocumentFolder];
+    [[HGBLogTool shareInstance] redirectLogToDocumentFolder];
 }
 @end

@@ -113,8 +113,8 @@
     if(indexPath.section==0){
 
         if (indexPath.row==0){
-            [[HGBAppStatusTool shareInstance] monitorAppStatusWithReslutBlock:^(HGBAppStatus status) {
-                NSLog(@"status:%d",status);
+            [[HGBAppStatusTool shareInstance] monitorAppStatusWithReslutBlock:^(HGBAppStatus status, NSDictionary *returnMessage) {
+                 NSLog(@"status:%d",status);
             }];
         }
 

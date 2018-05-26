@@ -222,9 +222,9 @@
     }else if (self.quickContentType==CONTENTTYPE_FORMAT){
         [request setValue:@"application/form-data" forHTTPHeaderField:@"Content-Type"];
     }else if(self.quickContentType==CONTENTTYPE_FILEDATA){
+         HGBLog(@"%@",self.pramDic);
         //文件上传数据
         if (self.fileData.length > 0) {
-            request.HTTPBody = self.fileData;
             HGBLog(@"%@-%@-%@",self.fileName,self.updateName,self.mineType);
             
             request=[[AFHTTPRequestSerializer serializer]multipartFormRequestWithMethod:@"POST" URLString:self.requestUrl parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
@@ -237,12 +237,50 @@
                 if(self.pramDic&&[self.pramDic allKeys].count>0){
                     NSArray *keys=[self.pramDic allKeys];
                     for(NSString *key in keys){
-                        NSString *obj=[self.pramDic objectForKey:key];
-                        [formData appendPartWithFormData:[obj dataUsingEncoding:NSUTF8StringEncoding] name:key];
+                        id obj=[self.pramDic objectForKey:key];
+                        NSData *data;
+                        if([obj isKindOfClass:[NSString class]]){
+                            NSString *string=(NSString *)obj;
+                            data=[string dataUsingEncoding:NSUTF8StringEncoding];
+                        }else if ([obj isKindOfClass:[NSArray class]]){
+                            NSString *string=[HGBNetworkRequest ObjectToJSONString:obj];
+                            data=[string dataUsingEncoding:NSUTF8StringEncoding];
+                        }else if ([obj isKindOfClass:[NSDictionary class]]){
+                            NSString *string=[HGBNetworkRequest ObjectToJSONString:obj];
+                            data=[string dataUsingEncoding:NSUTF8StringEncoding];
+                        }else if ([obj isKindOfClass:[NSData class]]){
+                            data=(NSData *)obj;
+                        }
+                        [formData appendPartWithFormData:data name:key];
                     }
                 }
             } error:nil];
             return;
+        }else if(self.pramDic&&[self.pramDic allKeys].count>0){
+            request=[[AFHTTPRequestSerializer serializer]multipartFormRequestWithMethod:@"POST" URLString:self.requestUrl parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+                if(self.pramDic&&[self.pramDic allKeys].count>0){
+                    NSArray *keys=[self.pramDic allKeys];
+                    for(NSString *key in keys){
+                         id obj=[self.pramDic objectForKey:key];
+                        NSData *data;
+                        if([obj isKindOfClass:[NSString class]]){
+                            NSString *string=(NSString *)obj;
+                            data=[string dataUsingEncoding:NSUTF8StringEncoding];
+                        }else if ([obj isKindOfClass:[NSArray class]]){
+                            NSString *string=[HGBNetworkRequest ObjectToJSONString:obj];
+                            data=[string dataUsingEncoding:NSUTF8StringEncoding];
+                        }else if ([obj isKindOfClass:[NSDictionary class]]){
+                            NSString *string=[HGBNetworkRequest ObjectToJSONString:obj];
+                            data=[string dataUsingEncoding:NSUTF8StringEncoding];
+                        }else if ([obj isKindOfClass:[NSData class]]){
+                            data=(NSData *)obj;
+                        }
+                        [formData appendPartWithFormData:data name:key];
+                    }
+                }
+            } error:nil];
+            return;
+
         }
     }
 

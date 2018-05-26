@@ -8,6 +8,11 @@
 
 #import "HGBAppStatusTool.h"
 #import <UIKit/UIKit.h>
+
+#define UIApplicationOpenURLNotification @"openURL"
+#define UIApplicationHandleOpenURLNotification @"handleOpenURL"
+
+
 @interface HGBAppStatusTool ()
 /**
  监听App状态回调
@@ -43,6 +48,8 @@ static HGBAppStatusTool*instance=nil;
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(appWillBack:) name:UIApplicationWillResignActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(appBack:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(appTerminate:) name:UIApplicationWillTerminateNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(appOpenURL:) name:UIApplicationHandleOpenURLNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(appOpenURL:) name:UIApplicationOpenURLNotification object:nil];
 
 }
 /**
@@ -51,7 +58,7 @@ static HGBAppStatusTool*instance=nil;
  @param _n 消息
  */
 -(void)appLanuch:(NSNotification *)_n{
-    self.reslut(HGBAppStatusLanuch);
+    self.reslut(HGBAppStatusLanuch,_n.userInfo);
 }
 /**
  app将要进入前台
@@ -59,7 +66,7 @@ static HGBAppStatusTool*instance=nil;
  @param _n 消息
  */
 -(void)appWillActive:(NSNotification *)_n{
-    self.reslut(HGBAppStatusWillActive);
+    self.reslut(HGBAppStatusWillActive,_n.userInfo);
 }
 /**
  app将要进入后台
@@ -67,7 +74,7 @@ static HGBAppStatusTool*instance=nil;
  @param _n 消息
  */
 -(void)appWillBack:(NSNotification *)_n{
-    self.reslut(HGBAppStatusWillBackGround);
+    self.reslut(HGBAppStatusWillBackGround,_n.userInfo);
 }
 /**
  app进入前台
@@ -75,7 +82,7 @@ static HGBAppStatusTool*instance=nil;
  @param _n 消息
  */
 -(void)appActive:(NSNotification *)_n{
-    self.reslut(HGBAppStatusActive);
+    self.reslut(HGBAppStatusActive,_n.userInfo);
 }
 /**
  app进入后台
@@ -83,7 +90,7 @@ static HGBAppStatusTool*instance=nil;
  @param _n 消息
  */
 -(void)appBack:(NSNotification *)_n{
-    self.reslut(HGBAppStatusBackGround);
+    self.reslut(HGBAppStatusBackGround,_n.userInfo);
 }
 /**
  app将要终止
@@ -91,7 +98,15 @@ static HGBAppStatusTool*instance=nil;
  @param _n 消息
  */
 -(void)appTerminate:(NSNotification *)_n{
-    self.reslut(HGBAppStatusTerminate);
+    self.reslut(HGBAppStatusTerminate,_n.userInfo);
+}
+/**
+ app打开URL
+
+ @param _n 消息
+ */
+-(void)appOpenURL:(NSNotification *)_n{
+    self.reslut(HGBAppStatusOpenURL,_n.userInfo);
 }
 #pragma mark getter-setter
 -(NSMutableArray *)resluts{

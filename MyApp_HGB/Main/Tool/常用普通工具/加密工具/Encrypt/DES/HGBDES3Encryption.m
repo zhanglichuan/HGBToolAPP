@@ -18,8 +18,7 @@
 
 
 @interface HGBDES3Encryption()
-@property(strong,nonatomic)NSString *key;
-@property(strong,nonatomic)NSString *iv;
+
 @end
 @implementation HGBDES3Encryption
 #pragma mark 初始化

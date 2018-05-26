@@ -159,7 +159,7 @@
  @param _b 按钮
  */
 -(void)startServerListen:(UIButton *)_b{
-    [[HGBServerSocketTool shareInstance]listenToPort:@"15123"];
+    [[HGBServerSocketTool shareInstance]listenToPort:@"8389"];
 }
 /**
 链接服务
@@ -167,7 +167,7 @@
  @param _b 按钮
  */
 -(void)connectServerListen:(UIButton *)_b{
-    [[HGBClientSocketTool shareInstance]connectActionIp:@"127.0.0.1" port:@"15123"];
+    [[HGBClientSocketTool shareInstance]connectWithIp:@"127.0.0.1" andWithPort:@"8389"];
 }
 /**
  服务端发送消息

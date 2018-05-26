@@ -13,7 +13,7 @@
 #import "AppDelegate+HGBDataBase.h"
 #import "AppDelegate+HGBSEDataBase.h"
 #import "AppDelegate+HGBPush.h"
-#import "AppDelegate+HGBPurchaseTool.h"
+#import "AppDelegate+HGBPurchase.h"
 
 #import "AppDelegate+HGBBaiduMap.h"
 #import "AppDelegate+HGBUMengAnalytics.h"
@@ -26,6 +26,12 @@
 #import "AppDelegate+HGB3DTouch.h"
 #import "AppDelegate+HGBURLProtocol.h"
 #import "AppDelegate+HGBSELog.h"
+
+
+#define UIApplicationOpenURLNotification @"openURL"
+#define UIApplicationHandleOpenURLNotification @"handleOpenURL"
+
+
 @interface AppDelegate ()
 
 @end
@@ -98,6 +104,21 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     
+}
+-(BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+    [[NSNotificationCenter defaultCenter]postNotificationName:UIApplicationHandleOpenURLNotification object:self userInfo:@{@"url":url}];
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+    [[NSNotificationCenter defaultCenter]postNotificationName:UIApplicationOpenURLNotification object:self userInfo:@{@"url":url}];
+    return YES;
+}
+
+-(BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
+    [[NSNotificationCenter defaultCenter]postNotificationName:UIApplicationOpenURLNotification object:self userInfo:@{@"url":url}];
+    return  YES;
 }
 
 @end

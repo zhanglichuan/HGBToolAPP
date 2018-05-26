@@ -14,6 +14,14 @@
 #endif
 
 @interface HGBDES3Encryption : NSObject
+/**
+ 秘钥
+ */
+@property(strong,nonatomic)NSString *key;
+/**
+ 加密向量
+ */
+@property(strong,nonatomic)NSString *iv;
 #pragma mark 加密
 /**
  加密方法
@@ -33,17 +41,5 @@
  @return 解密字符串
  */
 + (NSString*)DES3DecryptString:(NSString*)string WithKey:(NSString *)key;
-#pragma mark 设置
-/**
- 设置秘钥
 
- @param key 秘钥
- */
-+(void)setKey:(NSString *)key;
-/**
- 设置加密向量
-
- @param iv 加密向量
- */
-+(void)setIv:(NSString *)iv;
 @end

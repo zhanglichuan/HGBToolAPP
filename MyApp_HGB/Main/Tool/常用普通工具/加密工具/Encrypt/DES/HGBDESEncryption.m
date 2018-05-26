@@ -10,6 +10,8 @@
 #import <CommonCrypto/CommonCryptor.h>
 #import "HGBBase64.h"
 
+static NSString *const kInitVector = @"00000000";
+
 
 #ifdef HGBLogFlag
 #define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
@@ -19,8 +21,7 @@
 
 
 @interface HGBDESEncryption()
-@property(strong,nonatomic)NSString *key;
-@property(strong,nonatomic)NSString *iv;
+
 @end
 @implementation HGBDESEncryption
 #pragma mark 初始化
@@ -75,33 +76,33 @@ static HGBDESEncryption *instance=nil;
     }
     [HGBDESEncryption shareInstance];
 
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    NSUInteger dataLength = [data length];
+
 
     const void *vkey = (const void *) [instance.key UTF8String];
 
     if(key&&key.length!=0){
         vkey=[key UTF8String];
     }
-
-    unsigned char buffer[1024];
-    memset(buffer, 0, sizeof(char));
-    size_t numBytesEncrypted = 0;
-    CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmDES,
-                                          kCCOptionPKCS7Padding,
-                                          vkey, kCCKeySizeDES,
-                                          (Byte *)[[[NSString stringWithFormat:@"%s",vkey] dataUsingEncoding:NSUTF8StringEncoding] bytes],
-                                          [data bytes], dataLength,
-                                          buffer, 1024,
-                                          &numBytesEncrypted);
-    NSString *result;
-    if (cryptStatus == kCCSuccess) {
-        NSData *myData = [NSData dataWithBytes:buffer length:(NSUInteger)numBytesEncrypted];
-        result =[HGBBase64 stringByEncodingData:myData];
-    }
+    NSString *result = nil;
+//    NSData *textData = [string dataUsingEncoding:NSUTF8StringEncoding];
+//    NSUInteger dataLength = [textData length];
+//    unsigned char buffer[1024];
+//    memset(buffer, 0, sizeof(char));
+//    size_t numBytesEncrypted = 0;
+//    NSData *initVector = [kInitVector dataUsingEncoding:NSUTF8StringEncoding];
+//    CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmDES,
+//                                          kCCOptionPKCS7Padding,
+//                                          [key UTF8String], kCCKeySizeDES,
+//                                          initVector.bytes,
+//                                          [textData bytes], dataLength,
+//                                          buffer, 1024,
+//                                          &numBytesEncrypted);
+//
+//    if (cryptStatus == kCCSuccess) {
+//        NSData *data = [NSData dataWithBytes:buffer length:(NSUInteger)numBytesEncrypted];
+//        result = [HGBBase64 stringByEncodingData:data];
+//    }
     return result;
-
-
 
 }
 
@@ -124,23 +125,25 @@ static HGBDESEncryption *instance=nil;
      [HGBDESEncryption shareInstance];
 
 
-    NSData *encryptData = [HGBBase64 decodeData:[string dataUsingEncoding:NSUTF8StringEncoding]];
-
-    unsigned char buffer[1024];
-    memset(buffer, 0, sizeof(char));
-    size_t numBytesDecrypted = 0;
-    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmDES,
-                                          kCCOptionPKCS7Padding,
-                                          [key UTF8String], kCCKeySizeDES,
-                                          (Byte *)[[key dataUsingEncoding:NSUTF8StringEncoding] bytes],
-                                          [encryptData bytes], [encryptData length],
-                                          buffer, 1024,
-                                          &numBytesDecrypted);
-    NSString *result;
-    if(cryptStatus == kCCSuccess) {
-        NSData *plaindata = [NSData dataWithBytes:buffer length:(NSUInteger)numBytesDecrypted];
-        result = [[NSString alloc]initWithData:plaindata encoding:NSUTF8StringEncoding];
-    }
+    NSString *result = nil;
+//    NSData *cipherdata = [HGBBase64 decodeString:string];
+//    unsigned char buffer[1024];
+//    memset(buffer, 0, sizeof(char));
+//    size_t numBytesDecrypted = 0;
+//    NSData *initVector = [kInitVector dataUsingEncoding:NSUTF8StringEncoding];
+//
+//    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmDES,
+//                                          kCCOptionPKCS7Padding,
+//                                          [key UTF8String], kCCKeySizeDES,
+//                                          initVector.bytes,
+//                                          [cipherdata bytes], [cipherdata length],
+//                                          buffer, 1024,
+//                                          &numBytesDecrypted);
+//    if(cryptStatus == kCCSuccess)
+//    {
+//        NSData *plaindata = [NSData dataWithBytes:buffer length:(NSUInteger)numBytesDecrypted];
+//        result = [[NSString alloc]initWithData:plaindata encoding:NSUTF8StringEncoding];
+//    }
     return result;
 }
 #pragma mark get

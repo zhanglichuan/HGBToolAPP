@@ -39,7 +39,22 @@
  @return 结果
  */
 -(BOOL)reset;
-
+#pragma mark 回滚相关
+/**
+ 开启数据库事务
+ @return 结果
+ */
+-(BOOL)beginDataBaseBusiness;
+/**
+ 确认数据库事务
+ @return 结果
+ */
+-(BOOL)commitDataBaseBusiness;
+/**
+ 回滚数据库事务
+ @return 结果
+ */
+-(BOOL)rollbackDataBaseBusiness;
 #pragma mark 打开数据库
 /**
  打开数据库-数据库仅能打开一个,该数据打开时上一数据库关闭,上一数据库关闭失败，该数据打开失败

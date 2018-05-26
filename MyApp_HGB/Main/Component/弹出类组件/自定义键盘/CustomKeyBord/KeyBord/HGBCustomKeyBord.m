@@ -12,10 +12,15 @@
 #import "HGBNumOnlyKeyBord.h"
 #import "HGBSymbolKeyBord.h"
 #import "HGBCustomKeyBordHeader.h"
-#import "HGBCustomKeyBordSquareTextView.h"
-#import "HGBKeybordEncryptTool.h"
 
-@interface HGBCustomKeyBord()<HGBWordKeyboardDelegate,HGBNumKeyboardDelegate,HGBSymbolKeyBordDelegate,HGBNumOnlyKeyBordDelegate,HGBCustomKeyBordSquareTextViewDelegate>
+#import "HGBKeyboard3DESUtil.h"
+#import "HGBKeyboardDESUtil.h"
+#import "HGBKeyboardAES128Util.h"
+#import "HGBKeybordTTAlgorithmSM4.h"
+#import "HGBKeybordMD5.h"
+
+
+@interface HGBCustomKeyBord()<HGBWordKeyboardDelegate,HGBNumKeyboardDelegate,HGBSymbolKeyBordDelegate,HGBNumOnlyKeyBordDelegate>
 /**
  相应
  */
@@ -39,27 +44,26 @@
  */
 @property (nonatomic, strong) HGBSymbolKeyBord   *symbolPad;
 /**
- 表头
+ 弹出视图
+ */
+@property(strong,nonatomic)UIView *backView;
+/**
+ 标题
  */
 @property(strong,nonatomic)UIView *titleView;
+/**
+ 输入显示
+ */
+@property(strong,nonatomic)UILabel *showLabel;
+
+
+
 /**
  弹出标志
  */
 @property(assign,nonatomic)BOOL popFlag;
 
-/**
- 弹出视图
- */
-@property(strong,nonatomic)UIView *backView;
-/**
- 显示输入
- */
-@property(strong,nonatomic)UITextField *showText;
 
-/**
- 格子显示输入
- */
-@property(strong,nonatomic)HGBCustomKeyBordSquareTextView *squaresText;
 /**
  背景按钮
  */
@@ -69,10 +73,20 @@
  键盘位置
  */
 @property(assign,nonatomic)CGFloat keybordy;
+
 /**
- 加密密钥
+ 键盘尺寸
  */
-@property(strong,nonatomic)NSString *customKey;
+@property(assign,nonatomic)CGRect keybordFrame;
+/**
+ 键盘尺寸
+ */
+@property(assign,nonatomic)CGRect mainKeybordFrame;
+
+/**
+ 输入字符串
+ */
+@property(strong,nonatomic)NSString *value;
 @end
 
 @implementation HGBCustomKeyBord
@@ -80,29 +94,27 @@ static  HGBCustomKeyBord *obj = nil;
 #pragma mark init
 +(instancetype)instance{
     CGRect frame;
-    if(kHeight>kWidth){
+    if(kWidth<kHeight){
         frame=CGRectMake(0, 0,kWidth,kWidth*0.576+72*hScale+2);
     }else{
-        frame=CGRectMake(kWidth-kHeight*0.7, 0,kHeight*0.7,kHeight*0.7*0.576+72*hScale+2);
+        frame=CGRectMake(0, 0,kHeight*0.8,kHeight*0.8*0.576+72*hScale+2);
     }
-
-     HGBCustomKeyBord *keyBord=[[HGBCustomKeyBord alloc]initWithFrame:frame];
-
-
-    return keyBord;
+    HGBCustomKeyBord *keyboard=[[HGBCustomKeyBord alloc]initWithFrame:frame];
+    return keyboard;
 }
 - (instancetype)init{
     self.keybordy=72*hScale+2;
     CGRect frame;
-    if(kHeight>kWidth){
+    if(kWidth<kHeight){
         frame=CGRectMake(0, 0,kWidth,kWidth*0.576+72*hScale+2);
     }else{
-        frame=CGRectMake(kWidth-kHeight*0.7, 0,kHeight*0.7,kHeight*0.7*0.576+72*hScale+2);
+        frame=CGRectMake(0, 0,kHeight*0.8,kHeight*0.8*0.576+72*hScale+2);
     }
     self = [self initWithFrame:frame];
     if (self) {
         self.keybordy=72*hScale+2;
     }
+    obj=self;
     return self;
 }
 - (instancetype)initWithFrame:(CGRect)frame
@@ -110,14 +122,13 @@ static  HGBCustomKeyBord *obj = nil;
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor colorWithRed:209.0/256 green:214.0/256 blue:218.0/256 alpha:153.0/256];
-       
+
         self.keybordy=72*hScale+2;
-        
+
         //        self.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        HGBNumKeyBord *numPad = [[HGBNumKeyBord alloc] initWithFrame:CGRectMake(0,self.keybordy, frame.size.width,frame.size.height-self.keybordy)];
+        HGBNumKeyBord *numPad = [[HGBNumKeyBord alloc] initWithFrame:self.mainKeybordFrame];
         numPad.tag=10;
         numPad.delegate = self;
-        numPad.frame=CGRectMake(numPad.frame.origin.x, self.keybordy, numPad.frame.size.width, numPad.frame.size.height);
         self.numPad = numPad;
         [self addSubview:numPad];
         [self setTitleView];
@@ -134,7 +145,7 @@ static  HGBCustomKeyBord *obj = nil;
         [self.wordPad removeFromSuperview];
         [self.symbolPad removeFromSuperview];
         [self.numOnlyPad removeFromSuperview];
-        
+
     }else if(_keybordType==HGBCustomKeyBordType_WordNum){
         self.wordPad.random=self.random;
         self.wordPad.delegate=self;
@@ -163,7 +174,7 @@ static  HGBCustomKeyBord *obj = nil;
         [self.numPad removeFromSuperview];
         [self.symbolPad removeFromSuperview];
         [self.numOnlyPad removeFromSuperview];
-        
+
     }else if (keybordType==HGBCustomKeyBordType_WordNumSymbol){
         self.wordPad.random=self.random;
         self.wordPad.delegate=self;
@@ -172,57 +183,57 @@ static  HGBCustomKeyBord *obj = nil;
         [self.symbolPad removeFromSuperview];
         [self.numOnlyPad removeFromSuperview];
     }
-    
+
 }
 -(HGBNumOnlyKeyBord *)numOnlyPad{
     if(!_numOnlyPad){
-        _numOnlyPad=[[HGBNumOnlyKeyBord alloc] initWithFrame:CGRectMake(0, self.keybordy, self.bounds.size.width, self.bounds.size.height-self.keybordy)];
+        _numOnlyPad=[[HGBNumOnlyKeyBord alloc] initWithFrame:self.mainKeybordFrame];
         _numOnlyPad.tag=10;
-        
+
         if (self.random) _numOnlyPad.random = self.random;
-        
+
     }
     _numOnlyPad.delegate=self;
-    _numOnlyPad.frame=CGRectMake(0, self.keybordy, self.bounds.size.width, self.bounds.size.height-self.keybordy);
+    _numOnlyPad.frame=self.mainKeybordFrame;
     return _numOnlyPad;
 }
 - (HGBNumKeyBord *)numPad{
     if (!_numPad) {
-        _numPad = [[HGBNumKeyBord alloc] initWithFrame:CGRectMake(0, self.keybordy, self.bounds.size.width, self.bounds.size.height-self.keybordy)];
+        _numPad = [[HGBNumKeyBord alloc] initWithFrame:self.mainKeybordFrame];
         _numPad.tag=10;
         if (self.random) _numPad.random = self.random;
-        
-        
+
+
     }
     _numPad.delegate = self;
     _numPad.keybordType=self.keybordType;
-    _numPad.frame=CGRectMake(0, self.keybordy, self.bounds.size.width, self.bounds.size.height-self.keybordy);
+    _numPad.frame=self.mainKeybordFrame;
     return _numPad;
 }
 - (HGBWordKeyBord *)wordPad{
     if (!_wordPad) {
-        _wordPad = [[HGBWordKeyBord alloc] initWithFrame:CGRectMake(0, self.keybordy, self.bounds.size.width, self.bounds.size.height-self.keybordy)];
+        _wordPad = [[HGBWordKeyBord alloc] initWithFrame:self.mainKeybordFrame];
         _wordPad.tag=10;
         if (self.random) _wordPad.random = self.random;
-        
-        
+
+
     }
     _wordPad.delegate = self;
     _wordPad.keybordType=self.keybordType;
-    _wordPad.frame=CGRectMake(0, self.keybordy, self.bounds.size.width, self.bounds.size.height-self.keybordy);
+    _wordPad.frame=self.mainKeybordFrame;
     return _wordPad;
 }
 -(HGBSymbolKeyBord *)symbolPad{
     if(!_symbolPad){
-        _symbolPad = [[HGBSymbolKeyBord alloc] initWithFrame:CGRectMake(0, self.keybordy, self.bounds.size.width, self.bounds.size.height-self.keybordy)];
+        _symbolPad = [[HGBSymbolKeyBord alloc] initWithFrame:self.mainKeybordFrame];
         _symbolPad.tag=10;
         if (self.random) _symbolPad.random = self.random;
-        
-        
+
+
     }
     _symbolPad.delegate = self;
     _symbolPad.keybordType=self.keybordType;
-    _symbolPad.frame=CGRectMake(0, self.keybordy, self.bounds.size.width, self.bounds.size.height-self.keybordy);
+    _symbolPad.frame=self.mainKeybordFrame;
     return _symbolPad;
 }
 - (UITextField *)responder{
@@ -230,7 +241,7 @@ static  HGBCustomKeyBord *obj = nil;
     UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
     UIView *firstResponder = [keyWindow valueForKey:@"firstResponder"];
     _responder = (UITextField *)firstResponder;
-//    _responder
+    //    _responder
     //    }
     return _responder;
 }
@@ -264,6 +275,8 @@ static  HGBCustomKeyBord *obj = nil;
     if([obj superview]){
         return;
     }
+
+    
     self.backButton=[UIButton buttonWithType:(UIButtonTypeSystem)];
     self.backButton.frame=parent.view.frame;
     [self.backButton addTarget:self action:@selector(backButtonHandle:) forControlEvents:(UIControlEventTouchDown)];
@@ -273,120 +286,20 @@ static  HGBCustomKeyBord *obj = nil;
     self.backView.backgroundColor = [UIColor colorWithRed:209.0/256 green:214.0/256 blue:218.0/256 alpha:153.0/256];
     CGRect backFrame=CGRectZero;
     CGRect selfFrame=self.frame;
-    if(showType==HGBCustomKeyBordShowType_Common){
-        backFrame=self.frame;
-        selfFrame=self.frame;
-        self.keybordy=self.keybordy;
-        [self.backView addSubview:self];
-    }else if(showType==HGBCustomKeyBordShowType_NoTitle){
-        if([self.titleView superview]){
-            [self.titleView removeFromSuperview];
-        }
-        self.keybordy=2;
-        self.frame=CGRectMake(self.frame.origin.x, self.keybordy, self.frame.size.width,  kWidth*0.576+4);
-        backFrame=self.frame;
-        selfFrame=self.frame;
-        UIView *keybordPadView=[self viewWithTag:10];
-         keybordPadView.frame=CGRectMake(keybordPadView.frame.origin.x, 0, keybordPadView.frame.size.width,  selfFrame.size.height);
-        [self.backView addSubview:self];
-        
-    }else if(showType==HGBCustomKeyBordShowType_Text){
-        if([self.titleView superview]){
-            [self.titleView removeFromSuperview];
-        }
-        UIView *headview=[[UIView alloc]initWithFrame:CGRectMake(0*wScale,0, kWidth, 96*hScale)];
-        headview.backgroundColor=[UIColor colorWithRed:209.0/256 green:214.0/256 blue:218.0/256 alpha:153.0/256];
-        self.showText=[[UITextField alloc]initWithFrame:CGRectMake(20*wScale,(96*hScale-80*hScale)*0.5+8*hScale, kWidth-40*wScale, 80*hScale)];
-        self.showText.inputView=self;
-        self.showText.backgroundColor=[UIColor whiteColor];
-        self.showText.layer.masksToBounds=YES;
-        
-        self.showText.layer.borderColor=[[UIColor grayColor]CGColor];
-        self.showText.layer.borderWidth=1;
-        self.showText.layer.cornerRadius=5;
-        [self.showText becomeFirstResponder];
-        [headview addSubview:self.showText];
-        [self.backView addSubview:headview];
-        
-        self.keybordy=0;
-        self.frame=CGRectMake(self.frame.origin.x, 96*hScale+2, self.frame.size.width, kWidth*0.576+2);
-        backFrame=self.frame;
-        backFrame.size.height=self.frame.size.height+96*hScale+2;
-        selfFrame=self.frame;
-        UIView *keybordPadView=[self viewWithTag:10];
-        keybordPadView.frame=CGRectMake(keybordPadView.frame.origin.x, 0, self.frame.size.width, selfFrame.size.height);
-        
-    }else if (showType==HGBCustomKeyBordShowType_Pass){
-        if([self.titleView superview]){
-            [self.titleView removeFromSuperview];
-        }
-        UIView *headview=[[UIView alloc]initWithFrame:CGRectMake(0*wScale,0, kWidth, 96*hScale)];
-        headview.backgroundColor=[UIColor colorWithRed:209.0/256 green:214.0/256 blue:218.0/256 alpha:153.0/256];
-        self.showText=[[UITextField alloc]initWithFrame:CGRectMake(20*wScale,(96*hScale-80*hScale)*0.5+8*hScale, kWidth-40*wScale, 80*hScale)];
-        self.showText.inputView=self;
-        self.showText.backgroundColor=[UIColor whiteColor];
-        self.showText.secureTextEntry=YES;
-        self.showText.layer.masksToBounds=YES;
-        
-        self.showText.layer.borderColor=[[UIColor grayColor]CGColor];
-        self.showText.layer.borderWidth=1;
-        self.showText.layer.cornerRadius=5;
-        [self.showText becomeFirstResponder];
-        [headview addSubview:self.showText];
-        [self.backView addSubview:headview];
-        
-        self.keybordy=0;
-        self.frame=CGRectMake(self.frame.origin.x, 96*hScale+2, self.frame.size.width,  kWidth*0.576+2);
-        backFrame=self.frame;
-        backFrame.size.height=self.frame.size.height+96*hScale+2;
-        selfFrame=self.frame;
-        UIView *keybordPadView=[self viewWithTag:10];
-         keybordPadView.frame=CGRectMake(keybordPadView.frame.origin.x, 0, keybordPadView.frame.size.width,  selfFrame.size.height);
-        _numOnlyPad.frame=CGRectMake(_numOnlyPad.frame.origin.x, self.keybordy, _numOnlyPad.frame.size.width,  _numOnlyPad.frame.size.height);
-    }else if (showType==HGBCustomKeyBordShowType_PayPass){
-        if([self.titleView superview]){
-            [self.titleView removeFromSuperview];
-        }
-        UIView *titleView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, kWidth, 90*hScale)];
-        titleView.backgroundColor=[UIColor whiteColor];
-        [self.backView addSubview:titleView];
-        
-        UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [closeBtn setImage:[UIImage imageNamed:@"HGBCustomKeyBordBundle.bundle/icon_keyboard_close"] forState:(UIControlStateNormal)];
-        closeBtn.frame=CGRectMake(5*wScale, 5*hScale, 80*hScale, 80*hScale);
-        [closeBtn addTarget:self action:@selector(disappearSwitchBtnClick) forControlEvents:(UIControlEventTouchUpInside)];
-        
-        
-        UILabel *titleLab=[[UILabel alloc]initWithFrame:CGRectMake(0, 10*hScale, kWidth, 70*hScale)];
-        titleLab.text=@"请输入支付密码";
-        titleLab.textAlignment=NSTextAlignmentCenter;
-        [titleView addSubview:titleLab];
-        
-        [titleView addSubview:closeBtn];
-        
-        UIView *headview=[[UIView alloc]initWithFrame:CGRectMake(0*wScale,90*hScale, kWidth, 180*hScale)];
-        
-        headview.layer.masksToBounds=YES;
-        headview.layer.borderWidth=0.5;
-        headview.layer.borderColor=[[UIColor grayColor]CGColor];
-        headview.backgroundColor=[UIColor whiteColor];
-        self.squaresText=[[HGBCustomKeyBordSquareTextView alloc]initWithFrame:CGRectMake(50*wScale,(160*hScale-120*hScale)*0.5+5*hScale, kWidth-100*wScale, 120*hScale) length:6];
-        self.squaresText.keybord=self;
-        self.squaresText.squareViewDelegate=self;
-        [headview addSubview:self.squaresText];
-        [self.backView addSubview:headview];
-        
-        self.keybordy=0;
-        self.frame=CGRectMake(self.frame.origin.x, 270*hScale, self.frame.size.width,  kWidth*0.576);
-        backFrame=self.frame;
-        backFrame.size.height=self.frame.size.height+270*hScale;
-        selfFrame=self.frame;
-        UIView *keybordPadView=[self viewWithTag:10];
-        keybordPadView.frame=CGRectMake(keybordPadView.frame.origin.x, 0, keybordPadView.frame.size.width,  selfFrame.size.height);
-        
-        
+
+    backFrame=self.frame;
+    selfFrame=self.frame;
+    self.keybordy=self.keybordy;
+    [self.backView addSubview:self];
+    if(self.keybordShowType==HGBCustomKeyBordShowType_EncryptDone||self.keybordShowType==HGBCustomKeyBordShowType_CommonDone){
+
+        self.showLabel=[[UILabel alloc]initWithFrame:CGRectMake(15*wScale, 0, kWidth-30*wScale, 72*hScale)];
+        self.showLabel.backgroundColor=[UIColor whiteColor];
+        self.showLabel.layer.masksToBounds=YES;
+//        self.showLabel.layer.borderWidth=1;
+//        self.showLabel.layer.borderColor=[[UIColor lightGrayColor]CGColor];
+        self.showLabel.textColor=[UIColor blackColor];
     }
-    
     
 
     backFrame.origin.y=kHeight;
@@ -394,15 +307,17 @@ static  HGBCustomKeyBord *obj = nil;
     self.backView.userInteractionEnabled=YES;
 
 
-    
-    
+
+
     [UIView animateWithDuration:0.2 animations:^{
-        self.backView.frame=CGRectMake(0,kHeight-self.backView.frame.size.height, kWidth,self.backView.frame.size.height);
-        
-        
-        
+        self.backView.frame=CGRectMake(0,kHeight-self.backView.frame.size.height, self.keybordFrame.size.width,self.backView.frame.size.height);
+
+
+
     }];
     [parent.view addSubview:self.backView];
+
+    obj=self;
     
     obj=self;
 
@@ -452,108 +367,87 @@ static  HGBCustomKeyBord *obj = nil;
 }
 #pragma mark 数据传输
 -(void)keyboardOnlyNumPadReturnMessage:(NSString *)message{
-    if((self.keybordShowType!=HGBCustomKeyBordShowType_PayPass)||[message isEqualToString:@"ok"]){
-        if(self.delegate&&[self.delegate respondsToSelector:@selector(customKeybord:didReturnMessage:)]){
-            [self.delegate customKeybord:self didReturnMessage:[self encryptMessage:message]];
-        }
-        
-    }
-    
-    if([message isEqualToString:@"ok"]){
-        if([self.backButton superview]){
-            [self.backButton removeFromSuperview];
-        }
-        [UIView animateWithDuration:0.2 animations:^{
-            if([self.backView superview]){
-               self.backView.frame=CGRectMake(0,kHeight, kWidth,self.backView.frame.size.height);
-            }
-            
-        } completion:^(BOOL finished) {
-            if([self.backView superview]){
-                [self.backView removeFromSuperview];
-            }
-            obj=nil;
-        }];
-        if([self.showText superview]){
-            [self.showText resignFirstResponder];
-        }
-        if([self.squaresText superview]){
-            [self.squaresText resignFirstResponder];
-        }
-        [[UIApplication sharedApplication].keyWindow endEditing:YES];
-        
-    }
+    [self keyboardDidReturnMessage:message];
 }
 -(void)keyboardNumPadReturnMessage:(NSString *)message{
-    if((self.keybordShowType!=HGBCustomKeyBordShowType_PayPass)||[message isEqualToString:@"ok"]){
-        if(self.delegate&&[self.delegate respondsToSelector:@selector(customKeybord:didReturnMessage:)]){
-            [self.delegate customKeybord:self didReturnMessage:[self encryptMessage:message]];
-        }
-        
-    }
-    if([message isEqualToString:@"ok"]){
-        if([self.backButton superview]){
-            [self.backButton removeFromSuperview];
-        }
-        [UIView animateWithDuration:0.2 animations:^{
-            if([self.backView superview]){
-                self.backView.frame=CGRectMake(0,kHeight, kWidth,self.backView.frame.size.height);
-            }
-        } completion:^(BOOL finished) {
-            if([self.backView superview]){
-                [self.backView removeFromSuperview];
-            }
-            obj=nil;
-        }];
-        if([self.showText superview]){
-            [self.showText resignFirstResponder];
-        }
-        if([self.squaresText superview]){
-            [self.squaresText resignFirstResponder];
-        }
-
-        [[UIApplication sharedApplication].keyWindow endEditing:YES];
-    }
+    [self keyboardDidReturnMessage:message];
 }
 -(void)keyboardWordPadReturnMessage:(NSString *)message{
-    if((self.keybordShowType!=HGBCustomKeyBordShowType_PayPass)||[message isEqualToString:@"ok"]){
-        if(self.delegate&&[self.delegate respondsToSelector:@selector(customKeybord:didReturnMessage:)]){
-            [self.delegate customKeybord:self didReturnMessage:[self encryptMessage:message]];
-        }
-        
-    }
-    if([message isEqualToString:@"ok"]){
-        if([self.backButton superview]){
-            [self.backButton removeFromSuperview];
-        }
-        [UIView animateWithDuration:0.2 animations:^{
-            if([self.backView superview]){
-                self.backView.frame=CGRectMake(0,kHeight, kWidth,self.backView.frame.size.height);
-            }
-        } completion:^(BOOL finished) {
-            if([self.backView superview]){
-                [self.backView removeFromSuperview];
-            }
-            obj=nil;
-        }];
-        
-        if([self.showText superview]){
-            [self.showText resignFirstResponder];
-        }
-        if([self.squaresText superview]){
-            [self.squaresText resignFirstResponder];
-        }
-        [[UIApplication sharedApplication].keyWindow endEditing:YES];
-    }
-    
+   [self keyboardDidReturnMessage:message];
 }
 -(void)keyboardSymbolPadReturnMessage:(NSString *)message{
-    if((self.keybordShowType!=HGBCustomKeyBordShowType_PayPass)||[message isEqualToString:@"ok"]){
+    [self keyboardDidReturnMessage:message];
+}
+-(void)keyboardDidReturnMessage:(NSString *)message{
+    if(self.keybordShowType==HGBCustomKeyBordShowType_InTime){
         if(self.delegate&&[self.delegate respondsToSelector:@selector(customKeybord:didReturnMessage:)]){
             [self.delegate customKeybord:self didReturnMessage:[self encryptMessage:message]];
         }
-        
+    }else if (self.keybordShowType==HGBCustomKeyBordShowType_EncryptDone){
+        if(![self.showLabel superview]){
+            [self.titleView addSubview:self.showLabel];
+        }
+        if([message isEqualToString:@"ok"]){
+            if(self.delegate&&[self.delegate respondsToSelector:@selector(customKeybord:didReturnMessage:)]){
+                [self.delegate customKeybord:self didReturnMessage:[self encryptMessage:self.value]];
+            }
+
+        }else if ([message isEqualToString:@"del"]){
+            if (self.value.length>0) {
+                self.value=[self.value substringToIndex:self.value.length-1];
+
+            }else{
+                self.value=@"";
+            }
+            NSString *point=@"";
+            for(int i=0;i<self.value.length;i++){
+                point=[point stringByAppendingString:@"●"];
+            }
+
+           self.showLabel.text=point;
+        }else if ([message isEqualToString:@"dels"]){
+            self.value=@"";
+            self.showLabel.text=@"";
+        }else{
+            self.value=[self.value stringByAppendingString:message];
+            NSString *point=@"";
+            for(int i=0;i<self.value.length;i++){
+                point=[point stringByAppendingString:@"●"];
+            }
+            self.showLabel.text=point;
+        }
+    }else if (self.keybordShowType==HGBCustomKeyBordShowType_CommonDone){
+        if(![self.showLabel superview]){
+            [self.titleView addSubview:self.showLabel];
+        }
+        if([message isEqualToString:@"ok"]){
+            if(self.delegate&&[self.delegate respondsToSelector:@selector(customKeybord:didReturnMessage:)]){
+                [self.delegate customKeybord:self didReturnMessage:[self encryptMessage:self.value]];
+            }
+
+        }else if ([message isEqualToString:@"del"]){
+            if (self.value.length>0) {
+                self.value=[self.value substringToIndex:self.value.length-1];
+
+            }else{
+                self.value=@"";
+            }
+            self.showLabel.text=self.value;
+        }else if ([message isEqualToString:@"dels"]){
+            self.value=@"";
+            self.showLabel.text=@"";
+        }else{
+            self.value=[self.value stringByAppendingString:message];
+            self.showLabel.text=self.value;
+        }
     }
+    if([self.showLabel superview]){
+        if(self.showLabel.text.length==0){
+            [self.showLabel removeFromSuperview];
+        }
+    }
+
+
     if([message isEqualToString:@"ok"]){
         if([self.backButton superview]){
             [self.backButton removeFromSuperview];
@@ -562,28 +456,17 @@ static  HGBCustomKeyBord *obj = nil;
             if([self.backView superview]){
                 self.backView.frame=CGRectMake(0,kHeight, kWidth,self.backView.frame.size.height);
             }
+
         } completion:^(BOOL finished) {
             if([self.backView superview]){
                 [self.backView removeFromSuperview];
             }
             obj=nil;
         }];
-        if([self.showText superview]){
-            [self.showText resignFirstResponder];
-        }
-        if([self.squaresText superview]){
-            [self.squaresText resignFirstResponder];
-        }
 
         [[UIApplication sharedApplication].keyWindow endEditing:YES];
+
     }
-}
--(void)squaresTextView:(HGBCustomKeyBordSquareTextView *)squaresText didFinishWithResult:(NSString *)result{
-    
-    if(self.delegate&&[self.delegate respondsToSelector:@selector(customKeybord:didReturnMessage:)]){
-        [self.delegate customKeybord:self didReturnMessage:[self encryptMessage:result]];
-    }
-    [self disappearSwitchBtnClick];
 
 }
 #pragma mark 设置
@@ -601,18 +484,87 @@ static  HGBCustomKeyBord *obj = nil;
     self.wordPad.random=self.random;
 }
 #pragma mark 加密设置
+/**
+ 加密
+
+ @param message 消息
+ @return 加密后消息
+ */
 -(NSString *)encryptMessage:(NSString *)message{
     NSString *msg=[message copy];
     if(self.encryptKey&&self.encryptKey.length!=0){
-        if(self.keybordEncryptType==HGBCustomKeyBordEncryptType__TTAlgorithmSM4){
-            if(self.encryptKey.length==16){
-                msg=[HGBKeybordEncryptTool encryptStringWithTTAlgorithmSM4_ECB:msg andWithKey:self.encryptKey];
-            }
-        }else if (self.keybordEncryptType==HGBCustomKeyBordEncryptType_DES){
-            msg=[HGBKeybordEncryptTool encryptStringWithDES:msg andWithKey:self.encryptKey];
+        if(self.keybordEncryptType==HGBCustomKeyBordEncryptType_DES){
+            msg=[HGBKeyboardDESUtil DESEncryptString:message andWithKey:self.encryptKey];
+        }else if (self.keybordEncryptType==HGBCustomKeyBordEncryptType_3DES){
+            msg=[HGBKeyboard3DESUtil DES3EncryptString:message andWithKey:self.encryptKey];
 
-        }else if (self.keybordEncryptType==HGBCustomKeyBordEncryptType_AES){
-            msg=[HGBKeybordEncryptTool encryptStringWithAES256:msg andWithKey:self.encryptKey];
+        }else if (self.keybordEncryptType==HGBCustomKeyBordEncryptType_AES128){
+            msg=[HGBKeyboardAES128Util AES128EncryptString:message andWithKey:self.encryptKey];
+
+        }else if (self.keybordEncryptType==HGBCustomKeyBordEncryptType_TTAlgorithmSM4){
+            HGBKeybordTTAlgorithmSM4 *sm4=[HGBKeybordTTAlgorithmSM4 ecbSM4WithKey:self.encryptKey];
+            msg=[sm4 encryption:message];
+
+
+        }else if (self.keybordEncryptType==HGBCustomKeyBordEncryptType_MD532UP){
+            msg=[HGBKeybordMD5 MD5ForUpper32Bate:message];
+
+
+        }else if (self.keybordEncryptType==HGBCustomKeyBordEncryptType_MD532LOW){
+            msg=[HGBKeybordMD5 MD5ForLower32Bate:message];
+
+
+        }else if (self.keybordEncryptType==HGBCustomKeyBordEncryptType_MD516UP){
+           msg=[HGBKeybordMD5 MD5ForUpper16Bate:message];
+
+
+        }else if (self.keybordEncryptType==HGBCustomKeyBordEncryptType_MD516LOW){
+            msg=[HGBKeybordMD5 MD5ForLower16Bate:message];
+
+
+        }else{
+            msg=message;
+        }
+    }else{
+        msg=message;
+    }
+    return msg;
+}
+#pragma mark 解密
+/**
+ 解密
+
+ @param message 消息
+ @return 解密后消息
+ */
+-(NSString *)decryptMessage:(NSString *)message{
+    NSString*msg= [HGBCustomKeyBord decryptMessage:message andWithKey:self.encryptKey andWithEncryptType:(self.keybordEncryptType)];
+    return msg;
+}
+/**
+ 解密
+
+ @param message 信息
+ @param key 秘钥
+ @param encryptType 加密类型
+ @return 解密后信息
+ */
++(NSString *)decryptMessage:(NSString *)message andWithKey:(NSString *)key andWithEncryptType:(HGBCustomKeyBordEncryptType)encryptType{
+    NSString *msg=[message copy];
+    if(key&&key.length!=0){
+        if(encryptType==HGBCustomKeyBordEncryptType_DES){
+            msg=[HGBKeyboardDESUtil DESDecryptString:message andWithKey:key];
+        }else if (encryptType==HGBCustomKeyBordEncryptType_3DES){
+            msg=[HGBKeyboard3DESUtil DES3DecryptString:message andWithKey:key];
+
+        }else if (encryptType==HGBCustomKeyBordEncryptType_AES128){
+            msg=[HGBKeyboardAES128Util AES128DecryptString:message andWithKey:key];
+
+
+        }else if (encryptType==HGBCustomKeyBordEncryptType_TTAlgorithmSM4){
+            HGBKeybordTTAlgorithmSM4 *sm4=[HGBKeybordTTAlgorithmSM4 ecbSM4WithKey:key];
+            msg=[sm4 decryption:message];
+
 
         }else{
             msg=message;
@@ -628,8 +580,6 @@ static  HGBCustomKeyBord *obj = nil;
      NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
     
     self.titleView=[[UIView alloc]initWithFrame:CGRectMake(0,2, kWidth, 72*hScale)];
-    //    self.titleView.layer.cornerRadius = 5;
-    //    self.titleView.layer.masksToBounds = YES;
     self.titleView.backgroundColor=[UIColor whiteColor];
     UIImageView *promptImageView=[[UIImageView alloc]initWithFrame:CGRectMake(24*wScale, 21*hScale, 30*wScale, 30*hScale)];
     NSString *icon = [[infoDictionary valueForKeyPath:@"CFBundleIcons.CFBundlePrimaryIcon.CFBundleIconFiles"] lastObject];
@@ -682,12 +632,8 @@ static  HGBCustomKeyBord *obj = nil;
     if(self.delegate&&[self.delegate respondsToSelector:@selector(customKeybord:didReturnMessage:)]){
         [self.delegate customKeybord:self didReturnMessage:@"ok"];
     }
-    if([self.showText superview]){
-        [self.showText resignFirstResponder];
-    }
-    if([self.squaresText superview]){
-        [self.squaresText resignFirstResponder];
-    }
+
+
     if([self.backButton superview]){
         [self.backButton removeFromSuperview];
     }
@@ -707,12 +653,32 @@ static  HGBCustomKeyBord *obj = nil;
     
 }
 -(void)backButtonHandle:(UIButton *)_b{
-    if([self.showText superview]){
-        [self.showText resignFirstResponder];
-    }
-    if([self.squaresText superview]){
-        [self.squaresText resignFirstResponder];
-    }
     [self disappearSwitchBtnClick];
+}
+#pragma mark get
+-(NSString *)value{
+    if (_value==nil) {
+        _value=@"";
+    }
+    return _value;
+}
+-(CGRect)keybordFrame{
+    CGRect frame;
+    if(kWidth<kHeight){
+        frame=CGRectMake(0, 0,kWidth,kWidth*0.576+72*hScale+2);
+    }else{
+        frame=CGRectMake(0, 0,kHeight*0.8,kHeight*0.8*0.576+72*hScale+2);
+    }
+    return frame;
+
+}
+-(CGRect)mainKeybordFrame{
+    CGRect frame;
+    if(kWidth<kHeight){
+        frame=CGRectMake(0,self.keybordy, kWidth,self.keybordFrame.size.height-self.keybordy);
+    }else{
+        frame=CGRectMake(0,self.keybordy, kHeight*0.8,self.keybordFrame.size.height-self.keybordy);
+    }
+    return frame;
 }
 @end

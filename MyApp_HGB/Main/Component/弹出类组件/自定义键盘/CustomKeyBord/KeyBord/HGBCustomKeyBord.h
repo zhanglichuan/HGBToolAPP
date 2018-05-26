@@ -54,6 +54,23 @@
  创建
  */
 +(instancetype)instance;
+#pragma mark 解密
+/**
+ 解密
+
+ @param message 消息
+ @return 解密后消息
+ */
+-(NSString *)decryptMessage:(NSString *)message;
+/**
+ 解密
+
+ @param message 信息
+ @param key 秘钥
+ @param encryptType 加密类型
+ @return 解密后信息
+ */
++(NSString *)decryptMessage:(NSString *)message andWithKey:(NSString *)key andWithEncryptType:(HGBCustomKeyBordEncryptType)encryptType;
 /**
  弹出键盘
  @param parent 父控制器

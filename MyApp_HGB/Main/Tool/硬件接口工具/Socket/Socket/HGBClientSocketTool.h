@@ -34,8 +34,46 @@ typedef enum HGBClientSocketToolDataType
 
 
 
-@interface HGBClientSocketTool : NSObject
+@class HGBClientSocketTool;
+@protocol HGBClientSocketToolDelegate <NSObject>
+@optional
 
+/**
+ 连接成功
+
+ @param socketTool socket工具
+ */
+- (void)socketToolDidSucessedToConnect:(HGBClientSocketTool*)socketTool;
+/**
+ 断开连接
+
+ @param socketTool socket工具
+ */
+- (void)socketToolDidDisconnect:(HGBClientSocketTool*)socketTool;
+
+
+/**
+ 发送信息成功
+  @param socketTool socket工具
+ */
+- (void)socketToolDidSucessSendMessage:(HGBClientSocketTool*)socketTool;
+
+
+/**
+ 收到消息
+  @param socketTool socket工具
+ @param message 信息
+ @param messageType 数据类型
+ */
+- (void)socketTool:(HGBClientSocketTool*)socketTool didReciveMessage:(id )message andWithMessageType:(HGBClientSocketToolDataType )messageType;
+
+@end
+
+@interface HGBClientSocketTool : NSObject
+/**
+ 代理
+ */
+@property(strong,nonatomic)id<HGBClientSocketToolDelegate>delegate;
 
 /**
  是否链接
@@ -62,8 +100,9 @@ typedef enum HGBClientSocketToolDataType
 
  @param ip ip地址
  @param port 端口号
+ @return 结果
  */
-- (void)connectActionIp:(NSString *)ip port:(NSString *)port;
+-(BOOL)connectWithIp:(NSString *)ip andWithPort:(NSString *)port;
 /**
  客户端断开连接
  */
@@ -72,6 +111,7 @@ typedef enum HGBClientSocketToolDataType
  客户端发送数据
 
  @param data 数据
+ @return 结果
  */
--(void)clientSendData:(id)data;
+-(BOOL)clientSendData:(id)data;
 @end

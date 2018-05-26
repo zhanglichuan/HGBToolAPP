@@ -5,4 +5,5 @@ pod 'AFNetworking', '~> 3.0.4'
 pod 'UMengAnalytics-NO-IDFA'
 pod 'BaiduMapKit'
 pod 'WeexSDK'
+pod 'Masonry'
 end

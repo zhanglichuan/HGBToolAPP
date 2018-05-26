@@ -17,11 +17,18 @@ typedef enum HGBAppStatus
     HGBAppStatusActive,//进入前台
     HGBAppStatusWillBackGround,//将要进入后台
     HGBAppStatusBackGround,//进入后台
-    HGBAppStatusTerminate//将要终止
+    HGBAppStatusTerminate,//将要终止
+    HGBAppStatusOpenURL//打开URL
 
 }HGBAppStatus;
 
-typedef void (^HGBAppStatusToolReslutBlock)(HGBAppStatus status);
+/**
+ app状态结果
+
+ @param status 状态
+ @param returnMessage 返回信息
+ */
+typedef void (^HGBAppStatusToolReslutBlock)(HGBAppStatus status,NSDictionary *returnMessage);
 
 
 

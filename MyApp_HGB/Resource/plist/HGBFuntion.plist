@@ -447,6 +447,14 @@
 			<key>name</key>
 			<string>日志工具</string>
 		</dict>
+		<dict>
+			<key>page</key>
+			<string>HGBAppManagerController</string>
+			<key>image</key>
+			<string>icon_app</string>
+			<key>name</key>
+			<string>app管理</string>
+		</dict>
 	</array>
 	<key>file</key>
 	<array>
@@ -545,6 +553,14 @@
 			<string>icon_filemanager</string>
 			<key>name</key>
 			<string>文件管理</string>
+		</dict>
+		<dict>
+			<key>page</key>
+			<string>HGBMonitorFileController</string>
+			<key>image</key>
+			<string>icon_appstatus</string>
+			<key>name</key>
+			<string>监听文件变化</string>
 		</dict>
 	</array>
 	<key>third</key>

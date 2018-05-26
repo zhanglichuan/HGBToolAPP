@@ -33,7 +33,42 @@ typedef enum HGBServerSocketToolDataType
 
 
 
+
+
+@class HGBServerSocketTool;
+@protocol HGBServerSocketToolDelegate <NSObject>
+@optional
+
+/**
+ 连接成功
+
+ @param socketTool socket工具
+ */
+- (void)socketToolDidSucessedToListen:(HGBServerSocketTool*)socketTool;
+
+
+/**
+ 发送信息成功
+ @param socketTool socket工具
+ */
+- (void)socketToolDidSucessSendMessage:(HGBServerSocketTool*)socketTool;
+
+
+/**
+ 收到消息
+ @param socketTool socket工具
+ @param message 信息
+ @param messageType 数据类型
+ */
+- (void)socketTool:(HGBServerSocketTool*)socketTool didReciveMessage:(id )message andWithMessageType:(HGBServerSocketToolDataType )messageType;
+
+@end
+
 @interface HGBServerSocketTool : NSObject
+/**
+ 代理
+ */
+@property(strong,nonatomic)id<HGBServerSocketToolDelegate>delegate;
 #pragma mark 服务端
 /**
  是否已监听

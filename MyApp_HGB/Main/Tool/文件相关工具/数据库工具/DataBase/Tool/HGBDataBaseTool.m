@@ -91,6 +91,62 @@ static HGBDataBaseTool *instance=nil;
     NSString *dataBasePath=[NSString stringWithFormat:@"document://%@database.db",bundleId];
     return [self openDataBaseWithSource:dataBasePath];
 }
+#pragma mark 回滚相关
+/**
+ 开启数据库事务
+ @return 结果
+ */
+-(BOOL)beginDataBaseBusiness{
+
+    char *error;
+    const char *sql="begin";
+    //执行
+    if(sqlite3_exec(db, sql, NULL, NULL, &error)==SQLITE_OK){
+        //        HGBLog(@"创建表格成功");
+        return YES;
+    }else{
+        HGBLog(@"开启事务失败");
+        HGBLog(@"error:%s",error);
+        return NO;
+    }
+
+}
+/**
+ 确认数据库事务
+ @return 结果
+ */
+-(BOOL)commitDataBaseBusiness{
+    char *error;
+    const char *sql="commit";
+    //执行
+    if(sqlite3_exec(db, sql, NULL, NULL, &error)==SQLITE_OK){
+        //        HGBLog(@"创建表格成功");
+        return YES;
+    }else{
+        HGBLog(@"事务提交失败");
+        HGBLog(@"error:%s",error);
+        return NO;
+    }
+
+}
+/**
+ 回滚数据库事务
+ @return 结果
+ */
+-(BOOL)rollbackDataBaseBusiness{
+    char *error;
+    const char *sql="rollback";
+    //执行
+    if(sqlite3_exec(db, sql, NULL, NULL, &error)==SQLITE_OK){
+        //        HGBLog(@"创建表格成功");
+        return YES;
+    }else{
+        HGBLog(@"事务回滚失败");
+        HGBLog(@"error:%s",error);
+        return NO;
+    }
+
+}
 #pragma mark 打开数据库
 /**
  打开数据库-数据库仅能打开一个,该数据打开时上一数据库关闭,上一数据库关闭失败，该数据打开失败

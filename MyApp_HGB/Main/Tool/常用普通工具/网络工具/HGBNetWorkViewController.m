@@ -67,7 +67,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"网络请求工具:":@[@"post",@"get",@"upload",@"download",@"test1",@"https-test"]};
+    self.dataDictionary=@{@"网络请求工具:":@[@"post",@"get",@"upload",@"download",@"批量文件上传",@"https-test"]};
     self.keys=@[@"网络请求工具:"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -144,17 +144,10 @@
                 NSLog(@"%@",returnMessage);
             }];
         }else if (indexPath.row==4){
-            NSDictionary *params=@{
-                @"req_msg":@{
-                    @"data":@{
-                        @"sec":@"MTIzNDU2Nzg="
-                    }
-                }
-                };
-            [[HGBNetWorkTool shareInstance]setHeaders:@{@"APPID":@"6FAC47080A078CB400B64C70FDF6C1AD",@"DEVICEID":@"13E2539A-5040-4C59-B678-9AADADF6BAB8",@"TOKEN":@"7bc61d8f7b2e4b15a18470d84d15c9ce",@"SIGN":@"",@"SECURITY_VERSION":@"1"}];
-            [HGBNetWorkTool shareInstance].cerFilePath=@"project://xychannel.cer";
-//            [HGBNetWorkTool shareInstance].cerFilePassword=@"123456";
-            [[HGBNetWorkTool shareInstance] post:@"https://192.168.188.200:8443/MobileApiSystem/mobileinit/initController/init" params:nil andWithSuccessBlock:^(id responseObject) {
+
+            NSData *fileData1=[[NSData alloc]initWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"xychannel" ofType:@"cer"]];
+             NSData *fileData2=[[NSData alloc]initWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"csr" ofType:@"crt"]];
+            [[HGBNetWorkTool shareInstance]uploadFilesWithUrl:@"http://192.168.1.107:8081/file_upload" andWithFileItems:@{@"file1":fileData1,@"file2":fileData2} andWithSuccessBlock:^(id responseObject) {
                 NSString *string=[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
                 NSLog(@"%@",string);
             } failedBlock:^(NSError *error) {

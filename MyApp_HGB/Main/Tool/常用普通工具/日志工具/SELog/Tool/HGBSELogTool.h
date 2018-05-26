@@ -18,6 +18,11 @@ typedef void (^HGBSELogToolLogBlock)(NSString *log);
 
 @interface HGBSELogTool : NSObject
 #pragma mark init
+/**
+ 单例
+
+ @return 实例
+ */
 + (instancetype)shareInstance;
 /**
  日志块
@@ -30,19 +35,39 @@ typedef void (^HGBSELogToolLogBlock)(NSString *log);
 
  @return 路径
  */
-+(NSString *)getLogPathListFilePath;
+-(NSString *)getLogPathListFilePath;
 /**
  获取日志路径列表
 
  @return 日志路径列表
  */
-+(NSArray *)getLogListPaths;
+-(NSArray *)getLogListPaths;
 /**
  获取日志列表
 
  @return 日志列表
  */
-+(NSArray *)getLogLists;
+-(NSArray *)getLogLists;
+
+/**
+ 获取日志内容
+
+ @param logPath 日志地址
+ @return 日志
+ */
+-(NSString *)getLogFormLogPath:(NSString *)logPath;
+/**
+ 获取当前日志内容
+
+ @return 日志
+ */
+-(NSString *)getCurrentLog;
+/**
+ 获取当前日志地址
+
+ @return 日志
+ */
+-(NSString *)getCurrentLogPath;
 
 #pragma mark url
 /**

@@ -41,26 +41,29 @@ typedef enum
  */
 typedef enum
 {
-    HGBCustomKeyBordShowType_Common,//普通
-    HGBCustomKeyBordShowType_Text,//文本框
-     HGBCustomKeyBordShowType_Pass,//密码
-    HGBCustomKeyBordShowType_PayPass,//支付密码格
-    HGBCustomKeyBordShowType_NoTitle//无标题
-    
+    HGBCustomKeyBordShowType_InTime,//普通
+    HGBCustomKeyBordShowType_CommonDone,//显示完成后统一返回
+    HGBCustomKeyBordShowType_EncryptDone,//秘文显示完成后统一返回
 }HGBCustomKeyBordShowType;
 
 
 /**
- *	键盘显示类型Type
+ *    键盘显示类型Type
  */
 typedef enum
 {
-    HGBCustomKeyBordEncryptType__TTAlgorithmSM4,//国密加密
+    HGBCustomKeyBordEncryptType_TTAlgorithmSM4,//国密加密
     HGBCustomKeyBordEncryptType_DES,//DES加密
-    HGBCustomKeyBordEncryptType_AES//AES加密
+    HGBCustomKeyBordEncryptType_3DES,//3DES加密
+    HGBCustomKeyBordEncryptType_AES128,//AES128加密
+    HGBCustomKeyBordEncryptType_MD532UP,//MD532UP
+    HGBCustomKeyBordEncryptType_MD532LOW,//MD532LOW/
+    HGBCustomKeyBordEncryptType_MD516UP,//MD516UP
+    HGBCustomKeyBordEncryptType_MD516LOW//MD516LOW/
 
 
 }HGBCustomKeyBordEncryptType;
+
 
 
 typedef void(^ CompleteBlock)(void);

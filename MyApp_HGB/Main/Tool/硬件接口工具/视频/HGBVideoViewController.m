@@ -9,6 +9,7 @@
 #import "HGBVideoViewController.h"
 #import "HGBCommonSelectCell.h"
 #import "HGBVideoTool.h"
+#import "HGBVideoPlayer.h"
 #define Identify_Cell @"cell"
 
 @interface HGBVideoViewController ()<HGBVideoToolDelegate>
@@ -64,7 +65,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"视频":@[@"视频录制",@"视频播放"]};
+    self.dataDictionary=@{@"视频":@[@"视频录制",@"视频播放",@"视频播放2"]};
     self.keys=@[@"视频"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -114,6 +115,12 @@
             [[HGBVideoTool shareInstance] startVideoInParent:self];
         }else if(indexPath.row==1){
             [[HGBVideoTool shareInstance] openPlayerWithSource:@"project://test.mp4"];
+        }else if(indexPath.row==2){
+            HGBVideoPlayer *player=[[HGBVideoPlayer alloc]init];
+            player.url=@"project://test.mp4";
+            player.title=@"test";
+            UINavigationController *nav=[[UINavigationController alloc]initWithRootViewController:player];
+            [self presentViewController:nav animated:YES completion:nil];
         }
 
     }

@@ -23,7 +23,7 @@ typedef enum HGBNetWorkToolErrorType
 {
     HGBNetWorkToolErrorTypeParams=0,//参数错误
     HGBNetWorkToolErrorTypeError=99,//错误
-    HHGBNetWorkToolErrorTypePathError=24,//路径不合法
+    HGBNetWorkToolErrorTypePathError=24,//路径不合法
     HGBNetWorkToolErrorTypeExistPath=21//路径已存在
 
 }HGBNetWorkToolErrorType;
@@ -108,6 +108,8 @@ typedef enum HGBNetWorkToolErrorType
  */
 -(void)uploadFileWithUrl:(NSString *)url WithData:(NSData *)fileData fileName:(NSString *)fileName andWithSuccessBlock:(NetworkRequestSuccess)successBlock failedBlock:(NetworkRequestFailed)failedBlock;
 
+
+
 /**
  *  图片上传请求
  *
@@ -118,6 +120,18 @@ typedef enum HGBNetWorkToolErrorType
  *  @param failedBlock 请求失败后的回调（请将请求失败后想做的事情写到这个block中）
  */
 -(void)uploadImageWithUrl:(NSString *)url WithImage:(UIImage *)image fileName:(NSString *)fileName andWithSuccessBlock:(NetworkRequestSuccess)successBlock failedBlock:(NetworkRequestFailed)failedBlock;
+
+/**
+ *  批量文件上传请求
+ *
+ *  @param url     请求路径
+ *  @param fileItems  文件数据集
+ *  @param successBlock 请求成功后的回调（请将请求成功后想做的事情写到这个block中）
+ *  @param failedBlock 请求失败后的回调（请将请求失败后想做的事情写到这个block中）
+ */
+-(void)uploadFilesWithUrl:(NSString *)url andWithFileItems:(NSDictionary *)fileItems andWithSuccessBlock:(NetworkRequestSuccess)successBlock failedBlock:(NetworkRequestFailed)failedBlock;
+
+
 /**
  下载
 

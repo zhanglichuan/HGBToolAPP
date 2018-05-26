@@ -283,6 +283,77 @@ static HGBNetWorkTool *instance=nil;
     }];
 }
 /**
+ *  批量文件上传请求
+ *
+ *  @param url     请求路径
+ *  @param fileItems  文件数据集
+ *  @param successBlock 请求成功后的回调（请将请求成功后想做的事情写到这个block中）
+ *  @param failedBlock 请求失败后的回调（请将请求失败后想做的事情写到这个block中）
+ */
+-(void)uploadFilesWithUrl:(NSString *)url andWithFileItems:(NSDictionary *)fileItems andWithSuccessBlock:(NetworkRequestSuccess)successBlock failedBlock:(NetworkRequestFailed)failedBlock{
+
+
+    BOOL isError = false;
+    //参数转换
+    if(fileItems==nil||(![fileItems isKindOfClass:[NSDictionary class]])){
+         HGBLog(@"参数格式错误");
+        isError=NO;
+        failedBlock(nil);
+        return;
+
+    }
+    NSMutableDictionary *params=[NSMutableDictionary dictionary];
+    NSArray *keys=[fileItems allKeys];
+    for (NSString *key in keys) {
+        id obj =[fileItems objectForKey:key];
+        if([obj isKindOfClass:[NSData class]]){
+            [params setObject:obj forKey:key];
+        }else if([obj isKindOfClass:[UIImage class]]){
+            UIImage *image=(UIImage *)obj;
+            NSData *fileData = UIImageJPEGRepresentation(image,0);
+            UIImage *fileImage=image;
+            while ((fileData.length / 1024) > 1000) {
+                fileImage = [HGBNetWorkTool scaleImage:fileImage toScale:0.5];
+                fileData = UIImageJPEGRepresentation(fileImage, 1);
+            }
+             [params setObject:fileData forKey:key];
+        }else if([obj isKindOfClass:[NSString class]]){
+            [params setObject:obj forKey:key];
+        }else if([obj isKindOfClass:[NSArray class]]){
+            [params setObject:obj forKey:key];
+
+        }else if([obj isKindOfClass:[NSDictionary class]]){
+            [params setObject:obj forKey:key];
+        }
+    }
+
+    HGBNetworkRequest *request = [[HGBNetworkRequest alloc]init];
+    request.cerFilePassword=self.cerFilePassword;
+    request.cerFilePath=self.cerFilePath;
+    //请求链接
+    request.requestUrl = url;
+
+    //请求配置
+    request.requestMethod = @"POST";
+
+    request.quickContentType=CONTENTTYPE_FILEDATA;
+
+    //请求参数
+    request.updateName=@"uploadFile";
+    if (isError==NO) {
+         request.pramDic=params;
+    }
+
+    //请求
+    [request requestWithSuccessBlock:^(id responseObject) {
+        successBlock(responseObject);
+
+    } failedBlock:^(NSError *error) {
+        failedBlock(error);
+
+    }];
+}
+/**
  下载
 
  @param url 下载链接
@@ -309,7 +380,7 @@ static HGBNetWorkTool *instance=nil;
 
     }
     if(![filePath hasPrefix:NSHomeDirectory()]){
-        completeBlock(NO,@{ReslutCode:@(HHGBNetWorkToolErrorTypePathError).stringValue,ReslutMessage:@"下载保存地址无效"});
+        completeBlock(NO,@{ReslutCode:@(HGBNetWorkToolErrorTypePathError).stringValue,ReslutMessage:@"下载保存地址无效"});
         return;
     }
     NSString *directoryPath=[filePath stringByDeletingLastPathComponent];

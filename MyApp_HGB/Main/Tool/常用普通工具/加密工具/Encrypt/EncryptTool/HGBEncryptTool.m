@@ -9,16 +9,20 @@
 #import "HGBEncryptTool.h"
 
 #import "HGBBase64.h"
-#import "HGBRSAEncrytor.h"
-#import "HGBDES3Encryption.h"
-#import "HGBAES256Encrytion.h"
-
 #import "HGBMD5Encryption.h"
+#import "HGBSHAEncryption.h"
+#import "HGBHashEncryption.h"
+#import "HGBDESEncryption.h"
+#import "HGBAES128Encrytion.h"
+#import "HGBRSAEncrytor.h"
+#import "JSRSA.h"
+
+
 #import <CoreGraphics/CoreGraphics.h>
 #import <CommonCrypto/CommonDigest.h>
 #import "HGBTTAlgorithmSM4.h"
-#import "HGBHashEncryption.h"
-#import "JSRSA.h"
+
+
 
 #ifdef HGBLogFlag
 #define HGBLog(FORMAT,...) fprintf(stderr,"**********HGBErrorLog-satrt***********\n{\n文件名称:%s;\n方法:%s;\n行数:%d;\n提示:%s\n}\n**********HGBErrorLog-end***********\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],[[NSString stringWithUTF8String:__func__] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
@@ -94,62 +98,282 @@
     return decryptString;
 
 }
-#pragma mark Base64-DataToSting
-/**
- Base64编码-DataToSting
- 
- @param data 数据
- @return 编码后字符串
- */
-+(NSString *)encryptDataToStringWithBase64:(NSData *)data{
-    if(data==nil){
-         HGBLog(@"数据不能为空");
-        return nil;
-    }
-    return [HGBBase64 stringByEncodingData:data];
-}
 
+#pragma mark  MD5
 /**
- Base64解码-DataToSting
- 
+ MD5加密-32小写
+
  @param string 字符串
- @return 解码后字符串
+ @return 加密后字符串
  */
-+(NSData *)decryptStringToDataWithBase64:(NSString *)string{
++(NSString *)encryptStringWithMD5_32LOW:(NSString *)string{
     if(string==nil){
         HGBLog(@"字符串不能为空");
         return nil;
     }
-    return [HGBBase64 decodeString:string];
+    NSString *encryptString= [HGBMD5Encryption MD5ForLower32Bate:string];
+    return encryptString;
 }
-#pragma mark Base64-data
 /**
- Base64编码-data
- @param data 数据
- @return 编码后字符串
+ MD5加密-32大写
+
+ @param string 字符串
+ @return 加密后字符串
  */
-+(NSData *)encryptDataWithBase64:(NSData *)data{
-    if(data==nil){
-        HGBLog(@"数据不能为空");
++(NSString *)encryptStringWithMD5_32UP:(NSString *)string{
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
         return nil;
     }
-    return [HGBBase64 encodeData:data];
+    NSString *encryptString= [HGBMD5Encryption MD5ForUpper32Bate:string];
+    return encryptString;
+}
+/**
+ MD5加密-16小写
+
+ @param string 字符串
+ @return 加密后字符串
+ */
++(NSString *)encryptStringWithMD5_16LOW:(NSString *)string{
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    NSString *encryptString= [HGBMD5Encryption MD5ForLower16Bate:string];
+    return encryptString;
+}
+/**
+ MD5加密-16大写
+
+ @param string 字符串
+ @return 加密后字符串
+ */
++(NSString *)encryptStringWithMD5_16UP:(NSString *)string{
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    NSString *encryptString= [HGBMD5Encryption MD5ForUpper16Bate:string];
+    return encryptString;
+}
+#pragma mark sha1加密
+/**
+ *  sha1加密
+ *
+ *  @param string 需要加密的字符串
+ *
+ *  @return 加密后的字符串
+ */
++ (NSString*)encryptStringWithsha1:(NSString*)string
+{
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+
+
+    return [HGBSHAEncryption sha1LowerEncryptString:string];
+
+}
+#pragma mark 哈希字符串拼接
+/**
+ 哈希字符串拼接
+
+ @param object 对象
+ @param salt salt
+ @return hash字符串
+ */
++(NSString *)hashStringFromJsonObject:(id )object andWithSalt:(NSString *)salt{
+    if(salt==nil||salt.length==0){
+        HGBLog(@"salt不能为空");
+        return nil;
+    }
+    if(!([object isKindOfClass:[NSString class]]||[object isKindOfClass:[NSArray class]]||[object isKindOfClass:[NSDictionary class]])){
+        HGBLog(@"参数格式不对");
+        return nil;
+    }
+    [HGBHashEncryption setHashEncrypType:HGBHashEncryptType_MD4_32Lower];
+    NSString *reslut= [HGBHashEncryption hashStringFromJsonObject:object andWithSalt:salt];
+    return reslut;
 }
 
+#pragma mark DES
 /**
- Base64解码-data
+ DES加密
  
- @param data 数据
- @return 解码后字符串
+ @param string 字符串
+ @param key  加密密钥
+ @return 加密后字符串
  */
-+(NSData *)decryptDataWithBase64:(NSData *)data{
-    if(data==nil){
-        HGBLog(@"数据不能为空");
++(NSString *)encryptStringWithDES:(NSString *)string andWithKey:(NSString *)key{
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
         return nil;
     }
-    return [HGBBase64 decodeData:data];
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
+        return nil;
+    }
+    NSString *encryptString= [HGBDESEncryption DESEncryptString:string WithKey:key];
+    return encryptString;
+}
+/**
+ DES解密
+ 
+ @param string 字符串
+ @param key  解密密钥
+ @return 解密后字符串
+ */
++(NSString *)decryptStringWithDES:(NSString *)string andWithKey:(NSString *)key{
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
+        return nil;
+    }
+    NSString *decryptString= [HGBDESEncryption DESDecryptString:string WithKey:key];
+    return decryptString;
+}
+#pragma mark AES128
+/**
+ AES128加密
+
+ @param string 字符串
+ @param key  加密密钥
+ @return 加密后字符串
+ */
++(NSString *)encryptStringWithAES128:(NSString *)string andWithKey:(NSString *)key{
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
+        return nil;
+    }
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    NSString *encryptString= [HGBAES128Encrytion AES128EncryptString:string andWithKey:key];
+    return encryptString;
+}
+/**
+ AES128解密
+
+ @param string 字符串
+ @param key  解密密钥
+ @return 解密后字符串
+ */
++(NSString *)decryptStringWithAES128:(NSString *)string
+                          andWithKey:(NSString *)key{
+    if(key==nil||key.length==0){
+        HGBLog(@"密钥不能为空");
+        return nil;
+    }
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    NSString *decryptString= [HGBAES128Encrytion AES128DecryptString:string andWithKey:key];
+    return decryptString;
 }
 
+#pragma mark SM4国密算法-CBC
+
+/**
+ *  TTAlgorithmSM4-CBC加密
+ *
+ *  @param key   要存的对象的key值-16位
+ *  @param string 要保存的value值
+ *  @param iv 初始化向量-16位
+ *  @return 获取的对象
+ */
++ (NSString *)encryptStringWithTTAlgorithmSM4_CBC:(NSString *)string andWithKey:(NSString *)key andWithIV:(NSString *)iv{
+    if(key==nil||key.length!=16||iv==nil||iv.length!=16){
+        HGBLog(@"密钥或向量为空或不为16位");
+        return nil;
+    }
+    if(string==nil){
+        HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    
+    NSData *encryptData=[string dataUsingEncoding:NSUTF8StringEncoding];
+    string=[[NSString alloc]initWithData:encryptData encoding:NSUTF8StringEncoding];
+    
+    HGBTTAlgorithmSM4 *sm4 = [HGBTTAlgorithmSM4 cbcSM4WithKey:key iv:iv];
+    NSString *encryptionString = [sm4 encryption:string];
+    return encryptionString;
+}
+/**
+ *  TTAlgorithmSM4-CBC解密
+ *
+ *  @param key 对象的key值-16位
+ *  @param string 初始化向量
+ *  @param iv 初始化向量-16位
+ *  @return 获取的对象
+ */
+
++(NSString *)decryptStringWithTTAlgorithmSM4_CBC:(NSString *)string andWithKey:(NSString *)key andWithIV:(NSString *)iv{
+    if(key==nil||key.length!=16||iv==nil||iv.length!=16){
+        HGBLog(@"密钥或向量为空或不为16位");
+        return nil;
+    }
+    if(string==nil){
+         HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    HGBTTAlgorithmSM4 *sm4 = [HGBTTAlgorithmSM4 cbcSM4WithKey:key iv:iv];
+    NSString *decryptionString = [sm4 decryption:string];
+    return decryptionString;
+
+}
+#pragma mark SM4国密算法-ECB
+/**
+ *  TTAlgorithmSM4-ECB加密
+ *
+ *  @param key   要存的对象的key值-16位
+ *  @param string 要保存的value值
+ *  @return 获取的对象
+ */
++ (NSString *)encryptStringWithTTAlgorithmSM4_ECB:(NSString *)string andWithKey:(NSString *)key{
+    if(key==nil||key.length!=16){
+         HGBLog(@"密钥不能为空或不为16位");
+        return nil;
+    }
+    if(string==nil){
+         HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    
+    NSData *encryptData=[string dataUsingEncoding:NSUTF8StringEncoding];
+    string=[[NSString alloc]initWithData:encryptData encoding:NSUTF8StringEncoding];
+    
+    HGBTTAlgorithmSM4 *sm4 = [HGBTTAlgorithmSM4 ecbSM4WithKey:key];
+    NSString *encryptionString = [sm4 encryption:string];
+    return encryptionString;
+}
+/**
+ *  TTAlgorithmSM4-ECB解密
+ *
+ *  @param key 对象的key值-16位
+ *  @param string 初始化向量
+ *  @return 获取的对象
+ */
+
++(NSString *)decryptStringWithTTAlgorithmSM4_ECB:(NSString *)string andWithKey:(NSString *)key{
+    if(key==nil||key.length!=16){
+         HGBLog(@"密钥为空或不为16位");
+        return nil;
+    }
+    if(string==nil){
+         HGBLog(@"字符串不能为空");
+        return nil;
+    }
+    HGBTTAlgorithmSM4
+    *sm4 = [HGBTTAlgorithmSM4 ecbSM4WithKey:key];
+    NSString *decryptionString = [sm4 decryption:string];
+    return decryptionString;
+}
 #pragma mark RSA-file 公钥加密 私钥解密
 /**
  RSA加密－不编码
@@ -240,10 +464,10 @@
         HGBLog(@"字符串不能为空");
         return nil;
     }
-//    [HGBRSAEncrytor shareInstance].privateKeyPath=filePath;
-//    [HGBRSAEncrytor shareInstance].privateKeyPassword=pass;
-//    NSString* encryptString = [HGBRSAEncrytor publicKeyEncryptString:string];
-//    return encryptString;
+    //    [HGBRSAEncrytor shareInstance].privateKeyPath=filePath;
+    //    [HGBRSAEncrytor shareInstance].privateKeyPassword=pass;
+    //    NSString* encryptString = [HGBRSAEncrytor publicKeyEncryptString:string];
+    //    return encryptString;
 
 
     [JSRSA sharedInstance].privateKey=filePath;
@@ -262,16 +486,16 @@
 +(NSString *)encryptStringWithReverseRSAEncoding:(NSString *)string andWithPrivateKeyPath:(NSString *)filePath andWithPassWord:(NSString *)pass{
     if(filePath==nil||filePath.length==0||(![filePath containsString:@"p12"])){
         return nil;
-         HGBLog(@"私钥地址不对");
+        HGBLog(@"私钥地址不对");
     }
     if(string==nil){
-         HGBLog(@"字符串不能为空");
+        HGBLog(@"字符串不能为空");
         return nil;
     }
-//    [HGBRSAEncrytor shareInstance].privateKeyPath=filePath;
-//    [HGBRSAEncrytor shareInstance].privateKeyPassword=pass;
-//    NSString* encryptString = [HGBRSAEncrytor publicKeyEncryptString:string];
-//    return [HGBEncryptTool specialStringEncodingWithString:encryptString];
+    //    [HGBRSAEncrytor shareInstance].privateKeyPath=filePath;
+    //    [HGBRSAEncrytor shareInstance].privateKeyPassword=pass;
+    //    NSString* encryptString = [HGBRSAEncrytor publicKeyEncryptString:string];
+    //    return [HGBEncryptTool specialStringEncodingWithString:encryptString];
     [JSRSA sharedInstance].privateKey=filePath;
     NSString *encryptString=[[JSRSA sharedInstance]privateEncrypt:string];
     return [HGBEncryptTool specialStringEncodingWithString:encryptString];
@@ -295,13 +519,13 @@
         HGBLog(@"字符串不能为空");
         return nil;
     }
-//    [HGBRSAEncrytor shareInstance].publicKeyPath=filePath;
-//    NSString* decryptString = [HGBRSAEncrytor publicKeyDecryptStringString:string];
-//    if(decryptString==nil||decryptString.length==0){
-//        decryptString=[HGBEncryptTool specialStringDecodingWithString:string];
-//        decryptString = [HGBRSAEncrytor publicKeyDecryptStringString:string];
-//    }
-//    return decryptString;
+    //    [HGBRSAEncrytor shareInstance].publicKeyPath=filePath;
+    //    NSString* decryptString = [HGBRSAEncrytor publicKeyDecryptStringString:string];
+    //    if(decryptString==nil||decryptString.length==0){
+    //        decryptString=[HGBEncryptTool specialStringDecodingWithString:string];
+    //        decryptString = [HGBRSAEncrytor publicKeyDecryptStringString:string];
+    //    }
+    //    return decryptString;
 
     [JSRSA sharedInstance].publicKey=filePath;
     NSString *decryptString=[[JSRSA sharedInstance]publicDecrypt:string];
@@ -452,332 +676,6 @@
     }
     return decryptString;
 }
-
-#pragma mark DES3
-/**
- DES3加密
- 
- @param string 字符串
- @param key  加密密钥
- @return 加密后字符串
- */
-+(NSString *)encryptStringWithDES3:(NSString *)string andWithKey:(NSString *)key{
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    if(key==nil||key.length==0){
-        HGBLog(@"密钥不能为空");
-        return nil;
-    }
-    NSString *encryptString= [HGBDES3Encryption DES3EncryptString:string WithKey:key];
-    return encryptString;
-}
-/**
- DES3解密
- 
- @param string 字符串
- @param key  解密密钥
- @return 解密后字符串
- */
-+(NSString *)decryptStringWithDES3:(NSString *)string andWithKey:(NSString *)key{
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    if(key==nil||key.length==0){
-        HGBLog(@"密钥不能为空");
-        return nil;
-    }
-    NSString *decryptString= [HGBDES3Encryption DES3DecryptString:string WithKey:key];
-    return decryptString;
-}
-#pragma mark AES256-string
-/**
- AES256加密
- 
- @param string 字符串
- @param key  加密密钥
- @return 加密后字符串
- */
-+(NSString *)encryptStringWithAES256:(NSString *)string andWithKey:(NSString *)key{
-    if(key==nil||key.length==0){
-        HGBLog(@"密钥不能为空");
-        return nil;
-    }
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    NSString *encryptString= [HGBAES256Encrytion AES256EncryptString:string WithKey:key];
-    return encryptString;
-}
-/**
- AES256解密
- 
- @param string 字符串
- @param key  解密密钥
- @return 解密后字符串
- */
-+(NSString *)decryptStringWithAES256:(NSString *)string
-                     andWithKey:(NSString *)key{
-    if(key==nil||key.length==0){
-        HGBLog(@"密钥不能为空");
-        return nil;
-    }
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    NSString *decryptString= [HGBAES256Encrytion AES256DecryptString:string WithKey:key];
-    return decryptString;
-}
-#pragma mark AES-data
-/**
- AES256加密
- 
- @param data 数据
- @param key  加密密钥
- @return 加密后数据
- */
-+(NSData *)encryptDataWithAES256:(NSData *)data andWithKey:(NSString *)key{
-    if(data==nil){
-        HGBLog(@"数据不能为空");
-        return nil;
-    }
-    if(key==nil||key.length==0){
-        HGBLog(@"密钥不能为空");
-        return nil;
-    }
-    NSData *encryptData= [HGBAES256Encrytion AES256EncryptData:data WithKey:key];
-    return encryptData;
-}
-/**
- AES256解密
- 
- @param data 数据
- @param key  解密密钥
- @return 解密后数据
- */
-+(NSData *)decryptDataWithAES256:(NSData *)data andWithKey:(NSString *)key{
-    if(data==nil){
-        HGBLog(@"数据不能为空");
-        return nil;
-    }
-    if(key==nil||key.length==0){
-        HGBLog(@"密钥不能为空");
-        return nil;
-    }
-    NSData *decryptData= [HGBAES256Encrytion AES256DecryptData:data WithKey:key];
-    return decryptData;
-}
-
-#pragma mark  MD5-32
-/**
- MD5加密-32小写
- 
- @param string 字符串
- @return 加密后字符串
- */
-+(NSString *)encryptStringWithMD5_32LOW:(NSString *)string{
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    NSString *encryptString= [HGBMD5Encryption MD5ForLower32Bate:string];
-    return encryptString;
-}
-/**
- MD5加密-32大写
- 
- @param string 字符串
- @return 加密后字符串
- */
-+(NSString *)encryptStringWithMD5_32UP:(NSString *)string{
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    NSString *encryptString= [HGBMD5Encryption MD5ForUpper32Bate:string];
-    return encryptString;
-}
-#pragma mark  MD5-16
-/**
- MD5加密-16小写
- 
- @param string 字符串
- @return 加密后字符串
- */
-+(NSString *)encryptStringWithMD5_16LOW:(NSString *)string{
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    NSString *encryptString= [HGBMD5Encryption MD5ForLower16Bate:string];
-    return encryptString;
-}
-/**
- MD5加密-16大写
- 
- @param string 字符串
- @return 加密后字符串
- */
-+(NSString *)encryptStringWithMD5_16UP:(NSString *)string{
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    NSString *encryptString= [HGBMD5Encryption MD5ForUpper16Bate:string];
-    return encryptString;
-}
-#pragma mark sha1加密
-/**
- *  sha1加密
- *
- *  @param string 需要加密的字符串
- *
- *  @return 加密后的字符串
- */
-+ (NSString*)encryptStringWithsha1:(NSString*)string
-{
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    const char *cstr = [string cStringUsingEncoding:NSUTF8StringEncoding];
-    NSData *data = [NSData dataWithBytes:cstr length:string.length];
-    
-    uint8_t digest[CC_SHA1_DIGEST_LENGTH];
-    
-    CC_SHA1(data.bytes, (int)data.length, digest);
-    
-    NSMutableString* output = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
-    
-    for(int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++)
-        [output appendFormat:@"%02x", digest[i]];
-    
-    return output;
-    
-}
-#pragma mark 哈希字符串拼接
-/**
- 哈希字符串拼接
-
- @param object 对象
- @param salt salt
- @return hash字符串
- */
-+(NSString *)hashStringFromJsonObject:(id )object andWithSalt:(NSString *)salt{
-    if(salt==nil||salt.length==0){
-        HGBLog(@"salt不能为空");
-        return nil;
-    }
-    if(!([object isKindOfClass:[NSString class]]||[object isKindOfClass:[NSArray class]]||[object isKindOfClass:[NSDictionary class]])){
-        HGBLog(@"参数格式不对");
-        return nil;
-    }
-    [HGBHashEncryption setHashEncrypType:HGBHashEncryptType_MD4_32Lower];
-    NSString *reslut= [HGBHashEncryption hashStringFromJsonObject:object andWithSalt:salt];
-    return reslut;
-}
-#pragma mark SM4国密算法-CBC
-
-/**
- *  TTAlgorithmSM4-CBC加密
- *
- *  @param key   要存的对象的key值-16位
- *  @param string 要保存的value值
- *  @param iv 初始化向量-16位
- *  @return 获取的对象
- */
-+ (NSString *)encryptStringWithTTAlgorithmSM4_CBC:(NSString *)string andWithKey:(NSString *)key andWithIV:(NSString *)iv{
-    if(key==nil||key.length!=16||iv==nil||iv.length!=16){
-        HGBLog(@"密钥或向量为空或不为16位");
-        return nil;
-    }
-    if(string==nil){
-        HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    
-    NSData *encryptData=[string dataUsingEncoding:NSUTF8StringEncoding];
-    string=[[NSString alloc]initWithData:encryptData encoding:NSUTF8StringEncoding];
-    
-    HGBTTAlgorithmSM4 *sm4 = [HGBTTAlgorithmSM4 cbcSM4WithKey:key iv:iv];
-    NSString *encryptionString = [sm4 encryption:string];
-    return encryptionString;
-}
-/**
- *  TTAlgorithmSM4-CBC解密
- *
- *  @param key 对象的key值-16位
- *  @param string 初始化向量
- *  @param iv 初始化向量-16位
- *  @return 获取的对象
- */
-
-+(NSString *)decryptStringWithTTAlgorithmSM4_CBC:(NSString *)string andWithKey:(NSString *)key andWithIV:(NSString *)iv{
-    if(key==nil||key.length!=16||iv==nil||iv.length!=16){
-        HGBLog(@"密钥或向量为空或不为16位");
-        return nil;
-    }
-    if(string==nil){
-         HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    HGBTTAlgorithmSM4 *sm4 = [HGBTTAlgorithmSM4 cbcSM4WithKey:key iv:iv];
-    NSString *decryptionString = [sm4 decryption:string];
-    return decryptionString;
-
-}
-#pragma mark SM4国密算法-ECB
-/**
- *  TTAlgorithmSM4-ECB加密
- *
- *  @param key   要存的对象的key值-16位
- *  @param string 要保存的value值
- *  @return 获取的对象
- */
-+ (NSString *)encryptStringWithTTAlgorithmSM4_ECB:(NSString *)string andWithKey:(NSString *)key{
-    if(key==nil||key.length!=16){
-         HGBLog(@"密钥不能为空或不为16位");
-        return nil;
-    }
-    if(string==nil){
-         HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    
-    NSData *encryptData=[string dataUsingEncoding:NSUTF8StringEncoding];
-    string=[[NSString alloc]initWithData:encryptData encoding:NSUTF8StringEncoding];
-    
-    HGBTTAlgorithmSM4 *sm4 = [HGBTTAlgorithmSM4 ecbSM4WithKey:key];
-    NSString *encryptionString = [sm4 encryption:string];
-    return encryptionString;
-}
-/**
- *  TTAlgorithmSM4-ECB解密
- *
- *  @param key 对象的key值-16位
- *  @param string 初始化向量
- *  @return 获取的对象
- */
-
-+(NSString *)decryptStringWithTTAlgorithmSM4_ECB:(NSString *)string andWithKey:(NSString *)key{
-    if(key==nil||key.length!=16){
-         HGBLog(@"密钥为空或不为16位");
-        return nil;
-    }
-    if(string==nil){
-         HGBLog(@"字符串不能为空");
-        return nil;
-    }
-    HGBTTAlgorithmSM4
-    *sm4 = [HGBTTAlgorithmSM4 ecbSM4WithKey:key];
-    NSString *decryptionString = [sm4 decryption:string];
-    return decryptionString;
-}
-
 #pragma mark 判断文件是否存在
 /**
  *  判断文件是否存在
