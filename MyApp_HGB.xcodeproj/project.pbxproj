@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		18BC5C6022840C14004B2C8F /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 18BC5C5D22840C13004B2C8F /* libstdc++.6.0.9.tbd */; };
+		18BC5C6122840C14004B2C8F /* libstdc++.6.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 18BC5C5E22840C13004B2C8F /* libstdc++.6.tbd */; };
+		18BC5C6222840C14004B2C8F /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 18BC5C5F22840C13004B2C8F /* libstdc++.tbd */; };
 		28EB0D3337CCDE553A9BEC4D /* libPods-MyApp_HGB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62290A92E780FAA87E241D8E /* libPods-MyApp_HGB.a */; };
 		43047471202AD0AE005D70F5 /* HGBFileManageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43047470202AD0AE005D70F5 /* HGBFileManageViewController.m */; };
 		43047491202C28F0005D70F5 /* HGBDownLoadTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304748E202C28EF005D70F5 /* HGBDownLoadTool.m */; };
@@ -288,7 +291,6 @@
 		4391355F208084FB000FC695 /* PTUSBHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 43913552208084FB000FC695 /* PTUSBHub.m */; };
 		43913560208084FB000FC695 /* PTProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 43913553208084FB000FC695 /* PTProtocol.m */; };
 		43913561208084FB000FC695 /* PTChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 43913556208084FB000FC695 /* PTChannel.m */; };
-		43913562208084FB000FC695 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4391355C208084FB000FC695 /* Info.plist */; };
 		4391356520808515000FC695 /* HGBClientUSBController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4391356420808515000FC695 /* HGBClientUSBController.m */; };
 		43913567208089B3000FC695 /* icon_usb.png in Resources */ = {isa = PBXBuildFile; fileRef = 43913566208089B2000FC695 /* icon_usb.png */; };
 		4393D11B1F96F9D7000841C1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4393D11A1F96F9D7000841C1 /* CFNetwork.framework */; };
@@ -759,7 +761,6 @@
 		43F9901A2071F61D006C276C /* icon_handware.png in Resources */ = {isa = PBXBuildFile; fileRef = 43F9900D2071F61D006C276C /* icon_handware.png */; };
 		43F9901B2071F61D006C276C /* icon_fullscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 43F9900E2071F61D006C276C /* icon_fullscreen.png */; };
 		43F9901C2071F61D006C276C /* icon_other.png in Resources */ = {isa = PBXBuildFile; fileRef = 43F9900F2071F61D006C276C /* icon_other.png */; };
-		43F9901D2071F61D006C276C /* icon_file.png in Resources */ = {isa = PBXBuildFile; fileRef = 43F990102071F61D006C276C /* icon_file.png */; };
 		43F9901E2071F61D006C276C /* icon_popscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 43F990112071F61D006C276C /* icon_popscreen.png */; };
 		43F9901F2071F61D006C276C /* icon_info.png in Resources */ = {isa = PBXBuildFile; fileRef = 43F990122071F61D006C276C /* icon_info.png */; };
 		43F990202071F61D006C276C /* icon_annimation.png in Resources */ = {isa = PBXBuildFile; fileRef = 43F990132071F61D006C276C /* icon_annimation.png */; };
@@ -817,6 +818,9 @@
 
 /* Begin PBXFileReference section */
 		177F50B5B0C594EE29B8AEC5 /* Pods-MyApp_HGB.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyApp_HGB.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MyApp_HGB/Pods-MyApp_HGB.debug.xcconfig"; sourceTree = "<group>"; };
+		18BC5C5D22840C13004B2C8F /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = "libstdc++.6.0.9.tbd"; sourceTree = "<group>"; };
+		18BC5C5E22840C13004B2C8F /* libstdc++.6.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = "libstdc++.6.tbd"; sourceTree = "<group>"; };
+		18BC5C5F22840C13004B2C8F /* libstdc++.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = "libstdc++.tbd"; sourceTree = "<group>"; };
 		4304746F202AD0AE005D70F5 /* HGBFileManageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HGBFileManageViewController.h; sourceTree = "<group>"; };
 		43047470202AD0AE005D70F5 /* HGBFileManageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HGBFileManageViewController.m; sourceTree = "<group>"; };
 		4304748E202C28EF005D70F5 /* HGBDownLoadTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HGBDownLoadTool.m; sourceTree = "<group>"; };
@@ -2334,12 +2338,14 @@
 				43C2F98D1FAB25B6001113FD /* libUMSocialLog.a in Frameworks */,
 				43C2F98E1FAB25B6001113FD /* UShareUI.framework in Frameworks */,
 				43EC85081FA97F6C00115B40 /* AddressBook.framework in Frameworks */,
+				18BC5C6022840C14004B2C8F /* libstdc++.6.0.9.tbd in Frameworks */,
 				43EC85061FA97F6700115B40 /* AddressBookUI.framework in Frameworks */,
 				43EC85041FA97F6100115B40 /* Contacts.framework in Frameworks */,
 				43EC85021FA97F5A00115B40 /* ContactsUI.framework in Frameworks */,
 				4393D11B1F96F9D7000841C1 /* CFNetwork.framework in Frameworks */,
 				43F9F6D41F6A7E5E00E565B2 /* MapKit.framework in Frameworks */,
 				43CDBE5320AE8A6E00C68779 /* libssl.a in Frameworks */,
+				18BC5C6122840C14004B2C8F /* libstdc++.6.tbd in Frameworks */,
 				43F9F6C41F6A7E2200E565B2 /* libz.tbd in Frameworks */,
 				43F9F6D21F6A7E4C00E565B2 /* CoreLocation.framework in Frameworks */,
 				43F9F6D01F6A7E4600E565B2 /* Foundation.framework in Frameworks */,
@@ -2349,12 +2355,23 @@
 				43F9F6C81F6A7E3000E565B2 /* CoreGraphics.framework in Frameworks */,
 				43F9F6C61F6A7E2A00E565B2 /* libstdc++.tbd in Frameworks */,
 				28EB0D3337CCDE553A9BEC4D /* libPods-MyApp_HGB.a in Frameworks */,
+				18BC5C6222840C14004B2C8F /* libstdc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		18BC5C5C22840C13004B2C8F /* libsted++ */ = {
+			isa = PBXGroup;
+			children = (
+				18BC5C5D22840C13004B2C8F /* libstdc++.6.0.9.tbd */,
+				18BC5C5E22840C13004B2C8F /* libstdc++.6.tbd */,
+				18BC5C5F22840C13004B2C8F /* libstdc++.tbd */,
+			);
+			path = "libsted++";
+			sourceTree = "<group>";
+		};
 		43047487202C28EF005D70F5 /* 下载管理 */ = {
 			isa = PBXGroup;
 			children = (
@@ -3781,6 +3798,7 @@
 		4345C7381F67B91500ABF35D /* MyApp_HGB */ = {
 			isa = PBXGroup;
 			children = (
+				18BC5C5C22840C13004B2C8F /* libsted++ */,
 				43F7A22F1F791DAC00EA0228 /* MyApp_HGB.entitlements */,
 				4345C7781F67D35E00ABF35D /* Main */,
 				4345C7901F67D38E00ABF35D /* Resource */,
@@ -8751,12 +8769,12 @@
 		4345C72E1F67B91400ABF35D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = agree.com.cn;
 				TargetAttributes = {
 					4345C7351F67B91500ABF35D = {
 						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = 964DMKR46F;
+						DevelopmentTeam = SZMHRDU2GG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
@@ -8783,6 +8801,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -8886,7 +8905,6 @@
 				43E1476020734BC800758840 /* icon_indexpath.png in Resources */,
 				433591CE1F9F328D0053F6C3 /* HGBCalenderBundle.bundle in Resources */,
 				43E1489220736FE600758840 /* icon_error.png in Resources */,
-				43913562208084FB000FC695 /* Info.plist in Resources */,
 				43E1487C20736CC700758840 /* icon_thread.png in Resources */,
 				43E1476F2073530C00758840 /* icon_navbar.png in Resources */,
 				43F9905C20720CB0006C276C /* icon_common.png in Resources */,
@@ -8947,7 +8965,6 @@
 				43E148BD207381DD00758840 /* icon_wi-fi.png in Resources */,
 				4388E02F1F7F84E200DA30DF /* HGBCommonScanBundle.bundle in Resources */,
 				43E1488120736CC700758840 /* icon_block.png in Resources */,
-				43F9901D2071F61D006C276C /* icon_file.png in Resources */,
 				43E1472320723E1400758840 /* icon_alertpop.png in Resources */,
 				4388E0301F7F84E200DA30DF /* HGBWebView.bundle in Resources */,
 				43F98FDD2071C62B006C276C /* launchBackgroundImage@3x.png in Resources */,
@@ -9664,6 +9681,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -9674,6 +9692,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -9681,6 +9700,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -9721,6 +9741,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -9731,6 +9752,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -9738,6 +9760,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -9776,7 +9799,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: ICBC-AXA Life Insurance Co., Ltd. (H45RR4P7ZL)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 964DMKR46F;
+				DEVELOPMENT_TEAM = SZMHRDU2GG;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MyApp_HGB/Main/Third/分享/UMShare/lib/UMSocial/UMSocialSDK",
@@ -9800,6 +9823,7 @@
 					"$(PROJECT_DIR)/MyApp_HGB/Main/Tool/文件相关工具/文件压缩解压工具/HGBCompressedFile/vendor/Unrar",
 					"$(PROJECT_DIR)/MyApp_HGB/Main/Tool/硬件接口工具/音频/Audio/arm/lib",
 					"$(PROJECT_DIR)/MyApp_HGB/Main/Tool/常用普通工具/加密工具/Encrypt/RSA2/lib",
+					"$(PROJECT_DIR)/MyApp_HGB/libsted++",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -9885,7 +9909,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: ICBC-AXA Life Insurance Co., Ltd. (H45RR4P7ZL)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 964DMKR46F;
+				DEVELOPMENT_TEAM = SZMHRDU2GG;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MyApp_HGB/Main/Third/分享/UMShare/lib/UMSocial/UMSocialSDK",
@@ -9909,6 +9933,7 @@
 					"$(PROJECT_DIR)/MyApp_HGB/Main/Tool/文件相关工具/文件压缩解压工具/HGBCompressedFile/vendor/Unrar",
 					"$(PROJECT_DIR)/MyApp_HGB/Main/Tool/硬件接口工具/音频/Audio/arm/lib",
 					"$(PROJECT_DIR)/MyApp_HGB/Main/Tool/常用普通工具/加密工具/Encrypt/RSA2/lib",
+					"$(PROJECT_DIR)/MyApp_HGB/libsted++",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
